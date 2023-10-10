@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "528948528935",
+    "project_id": "photois-e0f82",
+    "storage_bucket": "photois-e0f82.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:528948528935:android:e7a3313fc07928ff208b02",
+        "android_client_info": {
+          "package_name": "com.example.photois"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "528948528935-pr8l94kjpm1rq8e1m43nmovo60tv76og.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgRK-orl-13j1r1yV3bDam77G3_IGCjMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "528948528935-pr8l94kjpm1rq8e1m43nmovo60tv76og.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "528948528935-df4uv17oddt125narc9ondmil6b7gcfj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cau.photois.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
