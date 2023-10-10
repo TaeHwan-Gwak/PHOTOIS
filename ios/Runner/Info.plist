@@ -54,7 +54,7 @@
     			<key>CFBundleURLSchemes</key>
     			<array>
     				<!-- 구글 -->
-    				<string>com.googleusercontent.apps.603003941684-92h2c5808sb3lknsh0eq1unkrl3ju482</string>
+                    <string>com.googleusercontent.apps.603003941684-92h2c5808sb3lknsh0eq1unkrl3ju482</string>
     			</array>
     		</dict>
     	</array>
