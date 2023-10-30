@@ -39,6 +39,7 @@ dependencies:
   cloud_firestore: ^4.9.3
   firebase_auth: ^4.10.1
   google_sign_in: ^6.1.5
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +67,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/config/.env
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
