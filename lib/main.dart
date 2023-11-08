@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:photois/firebase_options.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'SplashScreen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,9 +17,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Start Screen',
-      theme: ThemeData(primaryColor: Colors.blue, fontFamily: 'BMHANNAPro'),
-      home: MyHomePage(),
+      title: 'PHOTOIS',
+      theme:
+          ThemeData(primarySwatch: Colors.blueGrey, fontFamily: 'BMHANNAPro'),
+      home: const splashScreen(),
     );
   }
 }
@@ -38,4 +40,3 @@ class MyHomePage extends StatelessWidget {
     );
   }
 }
-
