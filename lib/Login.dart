@@ -1,7 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'Login_extra1.dart';
-import 'MainScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 Future<UserCredential> signInWithGoogle() async {
@@ -9,7 +7,8 @@ Future<UserCredential> signInWithGoogle() async {
   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
   // Obtain the auth details from the request
-  final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+  final GoogleSignInAuthentication? googleAuth =
+      await googleUser?.authentication;
 
   // Create a new credential
   final credential = GoogleAuthProvider.credential(
@@ -21,17 +20,12 @@ Future<UserCredential> signInWithGoogle() async {
   return await FirebaseAuth.instance.signInWithCredential(credential);
 }
 
-class LoginMainScreen extends StatefulWidget {
-  const LoginMainScreen({super.key});
+class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
 
-  @override
-  State<LoginMainScreen> createState() => _LoginMainScreenState();
-}
-
-class _LoginMainScreenState extends State<LoginMainScreen> {
   @override
   Widget build(BuildContext context) {
-    final String imageLogoName = 'assets/images/PHOTOIS_LOGO.png';
+    const String imageLogoName = 'assets/images/PHOTOIS_LOGO.png';
 
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
@@ -43,42 +37,75 @@ class _LoginMainScreenState extends State<LoginMainScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              child: Image.asset(
-                imageLogoName,
-                width: screenWidth * 0.9,
-                height: screenHeight * 0.1,
-              ),
+            const SizedBox(
+              height: 100,
             ),
-            Divider(
+            Image.asset(
+              imageLogoName,
+              width: screenWidth * 0.9,
+              height: screenHeight * 0.1,
+            ),
+            const Divider(
                 thickness: 6, indent: 40, endIndent: 40, color: Colors.black),
-            Text(
+            const Text(
               "당신만의 사진 스팟",
               style: TextStyle(fontSize: 30),
             ),
-            SizedBox(
-              height: 170,
+            const SizedBox(
+              height: 200,
             ),
-            ElevatedButton(
-                onPressed: signInWithGoogle,
-                child: Text("Google")),
-            /*
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => loginExtra1()));
+            InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, '/login+1');
                 },
-                child: Text("kakao")),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MyHomePage()));
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.teal,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 0,
+                        blurRadius: 5.0,
+                        offset:
+                            const Offset(0, 10), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: Image.asset(
+                    "assets/images/kakao_login.png",
+                    width: 250,
+                    fit: BoxFit.fill,
+                  ),
+                )),
+            const SizedBox(
+              height: 15,
+            ),
+            InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, '/login+1');
+                  //signInWithGoogle
                 },
-                child: Text("google"))
-
-             */
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.teal,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 0,
+                        blurRadius: 5.0,
+                        offset:
+                            const Offset(0, 10), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: Image.asset(
+                    "assets/images/google_login.png",
+                    width: 250,
+                    fit: BoxFit.fill,
+                  ),
+                )),
           ],
         ),
       ),

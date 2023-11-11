@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'Login_extra3.dart';
 
-class loginExtra2 extends StatefulWidget {
-  const loginExtra2({super.key});
+class LoginExtra2 extends StatefulWidget {
+  const LoginExtra2({super.key});
 
   @override
-  State<loginExtra2> createState() => _loginExtra2State();
+  State<LoginExtra2> createState() => _LoginExtra2State();
 }
 
-class _loginExtra2State extends State<loginExtra2> {
+class _LoginExtra2State extends State<LoginExtra2> {
   final _formKey = GlobalKey<FormState>();
-  String nickName = '';
-  var _color = Colors.white;
+  int checkPhotographer = -1;
+  String instagramID = '';
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +19,7 @@ class _loginExtra2State extends State<loginExtra2> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -51,34 +49,38 @@ class _loginExtra2State extends State<loginExtra2> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: _color,
+                    backgroundColor: (checkPhotographer == 1)
+                        ? Colors.redAccent
+                        : Colors.white,
                     shadowColor: Colors.black,
-                    minimumSize: Size(130, 40),
+                    minimumSize: const Size(130, 40),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
                   onPressed: () {
                     setState(() {
-                      _color = Colors.blueGrey;
+                      checkPhotographer = 1;
                     });
                   },
-                  child: Text('포토그래퍼'),
+                  child: const Text('포토그래퍼'),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: _color,
+                    backgroundColor: (checkPhotographer == 2)
+                        ? Colors.redAccent
+                        : Colors.white,
                     shadowColor: Colors.black,
-                    minimumSize: Size(130, 40),
+                    minimumSize: const Size(130, 40),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
                   onPressed: () {
                     setState(() {
-                      _color = Colors.blueGrey;
+                      checkPhotographer = 2;
                     });
                   },
-                  child: Text('일반 사용자'),
+                  child: const Text('일반 사용자'),
                 ),
               ],
             ),
@@ -86,13 +88,25 @@ class _loginExtra2State extends State<loginExtra2> {
               height: 50,
             ),
             const Text(
-              " 인스타그램 아이디",
+              " 인스타그램 아이디(선택)",
               style: TextStyle(fontSize: 15),
             ),
             Form(
               key: _formKey,
               child: TextFormField(
-                decoration: const InputDecoration(),
+                decoration: const InputDecoration(
+                    counterText: '정확하게 기입해주세요',
+                    counterStyle: TextStyle(),
+                    errorBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.red,
+                            width: 2,
+                            strokeAlign: BorderSide.strokeAlignOutside)),
+                    focusedErrorBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                      color: Colors.red,
+                      width: 2,
+                    ))),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter some text.';
@@ -100,7 +114,7 @@ class _loginExtra2State extends State<loginExtra2> {
                   return null;
                 },
                 onSaved: (value) {
-                  nickName = value!;
+                  instagramID = value!;
                 },
               ),
             )
@@ -109,10 +123,14 @@ class _loginExtra2State extends State<loginExtra2> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const loginExtra3()));
+          if (checkPhotographer != -1) {
+            Navigator.pushNamed(context, '/login+3');
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('포토그래퍼 여부를 선택해주세요'),
+            ));
+          }
         },
-        tooltip: 'Increment',
         child: const Icon(Icons.arrow_forward_ios),
       ),
     );

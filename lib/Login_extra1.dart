@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'Login_extra2.dart';
 
-class loginExtra1 extends StatefulWidget {
-  const loginExtra1({super.key});
+class LoginExtra1 extends StatefulWidget {
+  const LoginExtra1({super.key});
 
   @override
-  State<loginExtra1> createState() => _loginExtra1State();
+  State<LoginExtra1> createState() => _LoginExtra1State();
 }
 
-class _loginExtra1State extends State<loginExtra1> {
+class _LoginExtra1State extends State<LoginExtra1> {
   final _formKey = GlobalKey<FormState>();
-  String nickName = '';
+  String nickName = ''; //###
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +43,18 @@ class _loginExtra1State extends State<loginExtra1> {
               key: _formKey,
               child: TextFormField(
                 maxLength: 11,
-                decoration: const InputDecoration(),
+                decoration: const InputDecoration(
+                    errorBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.red,
+                            width: 2,
+                            strokeAlign: BorderSide.strokeAlignOutside)),
+                    errorStyle: TextStyle(),
+                    focusedErrorBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                      color: Colors.red,
+                      width: 2,
+                    ))),
                 inputFormatters: [
                   FilteringTextInputFormatter(
                     RegExp('[a-z A-Z ㄱ-ㅎ|가-힣|0-9]'),
@@ -53,7 +63,7 @@ class _loginExtra1State extends State<loginExtra1> {
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter some text.';
+                    return '닉네임 입력은 필수입니다.';
                   }
                   return null;
                 },
@@ -67,10 +77,12 @@ class _loginExtra1State extends State<loginExtra1> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const loginExtra2()));
+          final formKeyState = _formKey.currentState!;
+          if (formKeyState.validate()) {
+            formKeyState.save();
+            Navigator.pushNamed(context, '/login+2');
+          }
         },
-        tooltip: 'Increment',
         child: const Icon(Icons.arrow_forward_ios),
       ),
     );

@@ -10,7 +10,7 @@ class Tab1 extends StatefulWidget {
 class _Tab1State extends State<Tab1> {
   @override
   Widget build(BuildContext context) {
-    final String imageLogoName = 'assets/images/PHOTOIS_LOGO.png';
+    const String imageLogoName = 'assets/images/PHOTOIS_LOGO.png';
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
 
@@ -20,21 +20,20 @@ class _Tab1State extends State<Tab1> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 10,
+            const SizedBox(
+              height: 20,
             ),
-            Container(
-              child: Image.asset(
-                imageLogoName,
-                width: screenWidth * 0.3,
-                height: screenHeight * 0.06,
-              ),
+            Image.asset(
+              imageLogoName,
+              width: screenWidth * 0.3,
+              height: screenHeight * 0.06,
             ),
-            Divider(thickness: 3, indent: 0, endIndent: 0, color: Colors.black),
-            SizedBox(
-              height: 10,
+            const Divider(
+                thickness: 3, indent: 0, endIndent: 0, color: Colors.black),
+            const SizedBox(
+              height: 5,
             ),
-            Text(
+            const Text(
               " 주변 인기사진 스팟",
               style: TextStyle(fontSize: 18),
             ),

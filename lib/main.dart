@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:photois/firebase_options.dart';
-import 'SplashScreen.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:photois/routes.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,25 +18,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PHOTOIS',
-      theme:
-          ThemeData(primarySwatch: Colors.blueGrey, fontFamily: 'BMHANNAPro'),
-      home: const splashScreen(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Image(
-          image: AssetImage('assets/images/PHOTOIS_LOGO.png'),
-          fit: BoxFit.scaleDown,
-        ),
-      ),
+      theme: ThemeData(primarySwatch: Colors.grey, fontFamily: 'BMHANNAPro'),
+      initialRoute: '/',
+      routes: routes,
     );
   }
 }

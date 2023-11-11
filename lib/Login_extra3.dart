@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import 'MainScreen.dart';
 
-class loginExtra3 extends StatelessWidget {
-  const loginExtra3({super.key});
+class LoginExtra3 extends StatefulWidget {
+  const LoginExtra3({super.key});
 
+  @override
+  State<LoginExtra3> createState() => _LoginExtra3State();
+}
+
+class _LoginExtra3State extends State<LoginExtra3> {
+  int checkCategory = -1;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +16,7 @@ class loginExtra3 extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -32,16 +37,121 @@ class loginExtra3 extends StatelessWidget {
               " 선호하는 카테고리를 선택해주세요",
               style: TextStyle(fontSize: 15),
             ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor:
+                        (checkCategory == 1) ? Colors.redAccent : Colors.white,
+                    shadowColor: Colors.black,
+                    minimumSize: const Size(130, 40),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      checkCategory = 1;
+                    });
+                  },
+                  child: const Text('나홀로 인생샷'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor:
+                        (checkCategory == 2) ? Colors.redAccent : Colors.white,
+                    shadowColor: Colors.black,
+                    minimumSize: const Size(130, 40),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      checkCategory = 2;
+                    });
+                  },
+                  child: const Text('애인과 커플샷'),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor:
+                        (checkCategory == 3) ? Colors.redAccent : Colors.white,
+                    shadowColor: Colors.black,
+                    minimumSize: const Size(130, 40),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      checkCategory = 3;
+                    });
+                  },
+                  child: const Text('친구와 우정샷'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor:
+                        (checkCategory == 4) ? Colors.redAccent : Colors.white,
+                    shadowColor: Colors.black,
+                    minimumSize: const Size(130, 40),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      checkCategory = 4;
+                    });
+                  },
+                  child: const Text('가족과 추억샷'),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 320,
+            ),
+            Center(
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.black,
+                    shadowColor: Colors.black,
+                    minimumSize: const Size(130, 50),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(3)),
+                  ),
+                  onPressed: () {
+                    if (checkCategory != -1) {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/main', (Route<dynamic> route) => false);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('카테고리 중 하나를 선택해주세요'),
+                      ));
+                    }
+                  },
+                  child: const Center(
+                      child: Text(
+                    '완료',
+                    style: TextStyle(color: Colors.white),
+                  ))),
+            )
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const MyHomePage()));
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.arrow_forward_ios),
       ),
     );
   }
