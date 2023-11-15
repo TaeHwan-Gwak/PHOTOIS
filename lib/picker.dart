@@ -120,7 +120,7 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () {
                   getImage(ImageSource.gallery);
                 },
-                child: const Text('갤러리에서 이미지 가져오기'),
+                child: const Text('갤러리'),
               ),
               if (_image != null)
                 Column(
