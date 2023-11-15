@@ -1,16 +1,17 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
-
-
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:native_exif/native_exif.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
   runApp(const MyApp());
 }
 
@@ -22,22 +23,74 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  XFile? _image; //이미지를 담을 변수 선언
-  final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
+  XFile? _image;
+  final ImagePicker picker = ImagePicker();
+  Exif? exif;
+  Map<String, Object>? attributes;
+  DateTime? shootingDate;
+  ExifLatLong? coordinates;
 
-  //이미지를 가져오는 함수
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> showError(Object e) async {
+    debugPrintStack(label: e.toString(), stackTrace: e is Error ? e.stackTrace : null);
+
+    return showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Text(e.toString()),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future getImage(ImageSource imageSource) async {
-    //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
     final XFile? pickedFile = await picker.pickImage(source: imageSource);
     if (pickedFile != null) {
+      File _file = File(pickedFile.path);
+
+      // Firebase Storage에 이미지 업로드
+      await FirebaseStorage.instance.ref("test/test_image").putFile(_file);
+
+      // Exif 데이터 가져오기
+      exif = await Exif.fromPath(pickedFile.path);
+      attributes = await exif!.getAttributes();
+      shootingDate = await exif!.getOriginalDate();
+      coordinates = await exif!.getLatLong();
+
       setState(() {
-        _image = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
-        File _file = File(pickedFile.path);
-        FirebaseStorage.instance
-            .ref("test/test_image")
-            .putFile(_file);
+        _image = XFile(pickedFile.path);
       });
     }
+  }
+
+  Future closeImage() async {
+    await exif?.close();
+    shootingDate = null;
+    attributes = {};
+    exif = null;
+    coordinates = null;
+
+    setState(() {});
   }
 
   @override
@@ -47,45 +100,47 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('PHOTOIS'),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 30, width: double.infinity),
-            _buildPhotoArea(),
-            SizedBox(height: 20),
-            _buildButton(),
-          ],
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _image != null
+                  ? Container(
+                width: 300,
+                height: 300,
+                child: Image.file(File(_image!.path)),
+              )
+                  : Container(
+                width: 300,
+                height: 300,
+                color: Colors.grey,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  getImage(ImageSource.gallery);
+                },
+                child: const Text('갤러리에서 이미지 가져오기'),
+              ),
+              if (_image != null)
+                Column(
+                  children: [
+                    Text("The selected image has ${attributes?.length ?? 0} attributes."),
+                    Text("It was taken at ${shootingDate.toString()}"),
+                    Text(attributes?["UserComment"]?.toString() ?? ''),
+                    Text("Attributes: $attributes"),
+                    Text("Coordinates: $coordinates"),
+                    ElevatedButton(
+                      onPressed: closeImage,
+                      style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red)),
+                      child: const Text('이미지 닫기'),
+                    )
+                  ],
+                ),
+            ],
+          ),
         ),
       ),
-    );
-  }
-
-  Widget _buildPhotoArea() {
-    return _image != null
-        ? Container(
-      width: 300,
-      height: 300,
-      child: Image.file(File(_image!.path)), //가져온 이미지를 화면에 띄워주는 코드
-    )
-        : Container(
-      width: 300,
-      height: 300,
-      color: Colors.grey,
-    );
-  }
-
-  Widget _buildButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(width: 30),
-        ElevatedButton(
-          onPressed: () {
-            getImage(ImageSource.gallery); //getImage 함수를 호출해서 갤러리에서 사진 가져오기
-          },
-          child: Text("갤러리"),
-        ),
-      ],
     );
   }
 }
