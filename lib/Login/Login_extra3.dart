@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:photois/data.dart';
 
 class LoginExtra3 extends StatefulWidget {
   const LoginExtra3({super.key});
@@ -8,11 +10,12 @@ class LoginExtra3 extends StatefulWidget {
 }
 
 class _LoginExtra3State extends State<LoginExtra3> {
-  int checkCategory = -1;
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put((UserInfo()));
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -46,8 +49,9 @@ class _LoginExtra3State extends State<LoginExtra3> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor:
-                        (checkCategory == 1) ? Colors.redAccent : Colors.white,
+                    backgroundColor: (controller.checkCategory.value == 1)
+                        ? Colors.redAccent
+                        : Colors.white,
                     shadowColor: Colors.black,
                     minimumSize: const Size(130, 40),
                     shape: RoundedRectangleBorder(
@@ -55,7 +59,7 @@ class _LoginExtra3State extends State<LoginExtra3> {
                   ),
                   onPressed: () {
                     setState(() {
-                      checkCategory = 1;
+                      controller.checkCategory.value = 1;
                     });
                   },
                   child: const Text('나홀로 인생샷'),
@@ -63,8 +67,9 @@ class _LoginExtra3State extends State<LoginExtra3> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor:
-                        (checkCategory == 2) ? Colors.redAccent : Colors.white,
+                    backgroundColor: (controller.checkCategory.value == 2)
+                        ? Colors.redAccent
+                        : Colors.white,
                     shadowColor: Colors.black,
                     minimumSize: const Size(130, 40),
                     shape: RoundedRectangleBorder(
@@ -72,7 +77,7 @@ class _LoginExtra3State extends State<LoginExtra3> {
                   ),
                   onPressed: () {
                     setState(() {
-                      checkCategory = 2;
+                      controller.checkCategory.value = 2;
                     });
                   },
                   child: const Text('애인과 커플샷'),
@@ -88,8 +93,9 @@ class _LoginExtra3State extends State<LoginExtra3> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor:
-                        (checkCategory == 3) ? Colors.redAccent : Colors.white,
+                    backgroundColor: (controller.checkCategory.value == 3)
+                        ? Colors.redAccent
+                        : Colors.white,
                     shadowColor: Colors.black,
                     minimumSize: const Size(130, 40),
                     shape: RoundedRectangleBorder(
@@ -97,7 +103,7 @@ class _LoginExtra3State extends State<LoginExtra3> {
                   ),
                   onPressed: () {
                     setState(() {
-                      checkCategory = 3;
+                      controller.checkCategory.value = 3;
                     });
                   },
                   child: const Text('친구와 우정샷'),
@@ -105,8 +111,9 @@ class _LoginExtra3State extends State<LoginExtra3> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor:
-                        (checkCategory == 4) ? Colors.redAccent : Colors.white,
+                    backgroundColor: (controller.checkCategory.value == 4)
+                        ? Colors.redAccent
+                        : Colors.white,
                     shadowColor: Colors.black,
                     minimumSize: const Size(130, 40),
                     shape: RoundedRectangleBorder(
@@ -114,7 +121,7 @@ class _LoginExtra3State extends State<LoginExtra3> {
                   ),
                   onPressed: () {
                     setState(() {
-                      checkCategory = 4;
+                      controller.checkCategory.value = 4;
                     });
                   },
                   child: const Text('가족과 추억샷'),
@@ -135,7 +142,7 @@ class _LoginExtra3State extends State<LoginExtra3> {
                         borderRadius: BorderRadius.circular(3)),
                   ),
                   onPressed: () {
-                    if (checkCategory != -1) {
+                    if (controller.checkCategory.value != 0) {
                       Navigator.pushNamedAndRemoveUntil(
                           context, '/main', (Route<dynamic> route) => false);
                     } else {

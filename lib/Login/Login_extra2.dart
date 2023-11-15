@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:photois/data.dart';
 
 class LoginExtra2 extends StatefulWidget {
   const LoginExtra2({super.key});
@@ -9,11 +11,10 @@ class LoginExtra2 extends StatefulWidget {
 
 class _LoginExtra2State extends State<LoginExtra2> {
   final _formKey = GlobalKey<FormState>();
-  int checkPhotographer = -1;
-  String instagramID = '';
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put((UserInfo()));
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -49,7 +50,7 @@ class _LoginExtra2State extends State<LoginExtra2> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: (checkPhotographer == 1)
+                    backgroundColor: (controller.checkPhotographer.value == 1)
                         ? Colors.redAccent
                         : Colors.white,
                     shadowColor: Colors.black,
@@ -59,7 +60,7 @@ class _LoginExtra2State extends State<LoginExtra2> {
                   ),
                   onPressed: () {
                     setState(() {
-                      checkPhotographer = 1;
+                      controller.checkPhotographer.value = 1;
                     });
                   },
                   child: const Text('포토그래퍼'),
@@ -67,7 +68,7 @@ class _LoginExtra2State extends State<LoginExtra2> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: (checkPhotographer == 2)
+                    backgroundColor: (controller.checkPhotographer.value == 2)
                         ? Colors.redAccent
                         : Colors.white,
                     shadowColor: Colors.black,
@@ -77,7 +78,7 @@ class _LoginExtra2State extends State<LoginExtra2> {
                   ),
                   onPressed: () {
                     setState(() {
-                      checkPhotographer = 2;
+                      controller.checkPhotographer.value = 2;
                     });
                   },
                   child: const Text('일반 사용자'),
@@ -114,7 +115,7 @@ class _LoginExtra2State extends State<LoginExtra2> {
                   return null;
                 },
                 onSaved: (value) {
-                  instagramID = value!;
+                  controller.instagramID.value = value!;
                 },
               ),
             )
@@ -123,7 +124,7 @@ class _LoginExtra2State extends State<LoginExtra2> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (checkPhotographer != -1) {
+          if (controller.checkPhotographer.value != 0) {
             Navigator.pushNamed(context, '/login+3');
           } else {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

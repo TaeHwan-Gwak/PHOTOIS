@@ -83,8 +83,8 @@ class LoginPage extends StatelessWidget {
             ),
             InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, '/login+1');
-                  //signInWithGoogle
+                  Navigator.pushNamed(context, '/main');
+                  //signInWithGoogle;
                 },
                 child: Container(
                   decoration: BoxDecoration(

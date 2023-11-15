@@ -6,75 +6,54 @@ import 'Tab_4.dart';
 import 'Tab_5.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  const MainPage({super.key});
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
+  int _selectedIndex = 0;
+
+  static List<Widget> pages = <Widget>[
+    const Tab1(),
+    const Tab2(),
+    const Tab3(),
+    const Tab4(),
+    const Tab5()
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      if (index == 2) {
+        Navigator.pushNamed(context, '/tab3');
+      } else {
+        _selectedIndex = index;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 5,
-      child: Scaffold(
-        body: const TabBarView(
-          children: [
-            Tab(child: Tab1()),
-            Tab(child: Tab_2()),
-            Tab(child: Tab_3()),
-            Tab(child: Tab_4()),
-            Tab(child: Tab_5()),
-          ],
-        ),
-        extendBodyBehindAppBar: true,
-        bottomNavigationBar: Container(
-          color: Colors.white, //색상
-          child: Container(
-            height: 70,
-            padding: const EdgeInsets.only(bottom: 10, top: 5),
-            child: const TabBar(
-              indicatorSize: TabBarIndicatorSize.label,
-              indicatorColor: Colors.indigoAccent,
-              indicatorWeight: 3,
-              labelColor: Colors.indigoAccent,
-              unselectedLabelColor: Colors.black38,
-              labelStyle: TextStyle(
-                fontSize: 11,
-              ),
-              tabs: [
-                Tab(
-                  icon: Icon(
-                    Icons.home,
-                  ),
-                  text: 'HOME',
-                ),
-                Tab(
-                  icon: Icon(Icons.map),
-                  text: 'AROUND',
-                ),
-                Tab(
-                  icon: Icon(
-                    Icons.add_a_photo,
-                  ),
-                  text: 'ADD',
-                ),
-                Tab(
-                  icon: Icon(
-                    Icons.chat,
-                  ),
-                  text: 'PAGE',
-                ),
-                Tab(
-                  icon: Icon(
-                    Icons.account_box,
-                  ),
-                  text: 'MY',
-                )
-              ],
-            ),
-          ),
-        ),
+    return Scaffold(
+      body: pages[_selectedIndex],
+      extendBodyBehindAppBar: true,
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        iconSize: 18.0,
+        unselectedItemColor: Colors.black,
+        unselectedFontSize: 10.0,
+        selectedItemColor: Colors.lightBlue,
+        selectedFontSize: 12.0,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'HOME'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'AROUND'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_a_photo), label: 'ADD'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'PAGE'),
+          BottomNavigationBarItem(icon: Icon(Icons.account_box), label: 'MY'),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }

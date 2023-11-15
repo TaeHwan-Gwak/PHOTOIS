@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Tab_5 extends StatelessWidget {
-  const Tab_5({Key? key});
+class Tab5 extends StatelessWidget {
+  const Tab5({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -148,9 +148,12 @@ class Tab_5 extends StatelessWidget {
                                                 width: 56,
                                                 height: 29,
                                                 decoration: ShapeDecoration(
-                                                  color: const Color(0xFFE5386D),
+                                                  color:
+                                                      const Color(0xFFE5386D),
                                                   shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(20),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
                                                   ),
                                                 ),
                                               ),
@@ -161,7 +164,8 @@ class Tab_5 extends StatelessWidget {
                                               child: Container(
                                                 width: 22,
                                                 height: 22,
-                                                decoration: const ShapeDecoration(
+                                                decoration:
+                                                    const ShapeDecoration(
                                                   color: Colors.white,
                                                   shape: OvalBorder(),
                                                 ),
@@ -212,9 +216,12 @@ class Tab_5 extends StatelessWidget {
                                                 width: 56,
                                                 height: 29,
                                                 decoration: ShapeDecoration(
-                                                  color: const Color(0xFFD7D7D7),
+                                                  color:
+                                                      const Color(0xFFD7D7D7),
                                                   shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(20),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
                                                   ),
                                                 ),
                                               ),
@@ -225,7 +232,8 @@ class Tab_5 extends StatelessWidget {
                                               child: Container(
                                                 width: 22,
                                                 height: 22,
-                                                decoration: const ShapeDecoration(
+                                                decoration:
+                                                    const ShapeDecoration(
                                                   color: Colors.white,
                                                   shape: OvalBorder(),
                                                 ),
@@ -235,12 +243,13 @@ class Tab_5 extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-
                                     Positioned(
                                       left: 329,
                                       top: 29,
                                       child: Transform(
-                                        transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(-3.14),
+                                        transform: Matrix4.identity()
+                                          ..translate(0.0, 0.0)
+                                          ..rotateZ(-3.14),
                                         child: SizedBox(
                                           width: 56,
                                           height: 29,
@@ -250,14 +259,20 @@ class Tab_5 extends StatelessWidget {
                                                 left: 0,
                                                 top: 0,
                                                 child: Transform(
-                                                  transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(-3.14),
+                                                  transform: Matrix4.identity()
+                                                    ..translate(0.0, 0.0)
+                                                    ..rotateZ(-3.14),
                                                   child: Container(
                                                     width: 56,
                                                     height: 29,
                                                     decoration: ShapeDecoration(
-                                                      color: const Color(0xFFEAEAEA),
-                                                      shape: RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.circular(20),
+                                                      color: const Color(
+                                                          0xFFEAEAEA),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
                                                       ),
                                                     ),
                                                   ),
@@ -267,11 +282,14 @@ class Tab_5 extends StatelessWidget {
                                                 left: -30,
                                                 top: -3,
                                                 child: Transform(
-                                                  transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(-3.14),
+                                                  transform: Matrix4.identity()
+                                                    ..translate(0.0, 0.0)
+                                                    ..rotateZ(-3.14),
                                                   child: Container(
                                                     width: 22,
                                                     height: 22,
-                                                    decoration: const ShapeDecoration(
+                                                    decoration:
+                                                        const ShapeDecoration(
                                                       color: Colors.white,
                                                       shape: OvalBorder(),
                                                     ),
@@ -325,7 +343,8 @@ class Tab_5 extends StatelessWidget {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5),
                                   ),
-                                  color: Colors.yellow, // Set the button background color to yellow
+                                  color: Colors
+                                      .yellow, // Set the button background color to yellow
                                   shadows: const [
                                     BoxShadow(
                                       color: Color(0x3F000000),
@@ -409,7 +428,8 @@ class Tab_5 extends StatelessWidget {
                             // Add your logout logic here
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.white, // Set the button background color to white
+                            primary: Colors
+                                .white, // Set the button background color to white
                             onPrimary: Colors.black,
                             elevation: 5, // Add elevation for shadow effect
                             shadowColor: Colors.grey, // Set the shadow color
@@ -436,7 +456,8 @@ class Tab_5 extends StatelessWidget {
                             // Add your withdrawal logic here
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.white, // Set the button background color to white
+                            primary: Colors
+                                .white, // Set the button background color to white
                             onPrimary: const Color(0xFFD50000),
                             elevation: 5, // Add elevation for shadow effect
                             shadowColor: Colors.grey, // Set the shadow color
