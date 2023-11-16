@@ -49,7 +49,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: (controller.category.value == 1)
+                    backgroundColor: (controller.spotCategory.value == 1)
                         ? Colors.redAccent
                         : Colors.white,
                     shadowColor: Colors.black,
@@ -59,7 +59,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                   ),
                   onPressed: () {
                     setState(() {
-                      controller.category.value = 1;
+                      controller.spotCategory.value = 1;
                       Get.back();
                     });
                   },
@@ -68,7 +68,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: (controller.category.value == 2)
+                    backgroundColor: (controller.spotCategory.value == 2)
                         ? Colors.redAccent
                         : Colors.white,
                     shadowColor: Colors.black,
@@ -78,7 +78,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                   ),
                   onPressed: () {
                     setState(() {
-                      controller.category.value = 2;
+                      controller.spotCategory.value = 2;
                       Get.back();
                     });
                   },
@@ -95,7 +95,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: (controller.category.value == 3)
+                    backgroundColor: (controller.spotCategory.value == 3)
                         ? Colors.redAccent
                         : Colors.white,
                     shadowColor: Colors.black,
@@ -105,7 +105,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                   ),
                   onPressed: () {
                     setState(() {
-                      controller.category.value = 3;
+                      controller.spotCategory.value = 3;
                       Get.back();
                     });
                   },
@@ -114,7 +114,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: (controller.category.value == 4)
+                    backgroundColor: (controller.spotCategory.value == 4)
                         ? Colors.redAccent
                         : Colors.white,
                     shadowColor: Colors.black,
@@ -124,7 +124,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                   ),
                   onPressed: () {
                     setState(() {
-                      controller.category.value = 4;
+                      controller.spotCategory.value = 4;
                       Get.back();
                     });
                   },

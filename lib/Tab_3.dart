@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:photois/data.dart';
 
 class Tab3 extends StatefulWidget {
@@ -17,6 +18,8 @@ class _Tab3State extends State<Tab3> {
     "assets/images/google_login.png",
     "assets/images/google_login.png",
   ];
+
+  List<String> weather = ["맑음", "흐림", "구름", "비", "눈"];
 
   List<String> category = [
     "나홀로 인생샷",
@@ -124,15 +127,27 @@ class _Tab3State extends State<Tab3> {
               child: ListTile(
                 title: const Text("위치"),
                 subtitle: const Text("사진 해당 주소"),
-                onTap: () {},
+                onTap: () {
+                  Get.toNamed('/spotAddress');
+                },
                 trailing: const Icon(Icons.navigate_next),
               ),
             ),
             Card(
               child: ListTile(
                 title: const Text("시간과 날씨"),
-                subtitle: const Text("사진 해당 시간과 날씨"),
-                onTap: () {},
+                subtitle: Obx(() {
+                  if (controller.spotDate.value == DateTime(0, 0, 0)) {
+                    return const Text("사진 해당 시간과 날씨");
+                  } else {
+                    return Obx(() => Text(
+                        '${DateFormat('yy.MM.dd').format(controller.spotDate.value)}  ${controller.spotTime.value + controller.getStartHour()}~${controller.spotTime.value + controller.getStartHour() + 1}시 (${weather[controller.spotWeather.value - 1]})',
+                        style: const TextStyle(color: Colors.redAccent)));
+                  }
+                }),
+                onTap: () {
+                  Get.toNamed('/spotTime');
+                },
                 trailing: const Icon(Icons.navigate_next),
               ),
             ),
@@ -140,14 +155,15 @@ class _Tab3State extends State<Tab3> {
               child: ListTile(
                 title: const Text("카테고리"),
                 subtitle: Obx(() {
-                  if (controller.category.value == 0) {
+                  if (controller.spotCategory.value == 0) {
                     return const Text("사진 해당 카테고리");
                   } else {
-                    return Text(category[controller.category.value - 1]);
+                    return Text(category[controller.spotCategory.value - 1],
+                        style: const TextStyle(color: Colors.redAccent));
                   }
                 }),
                 onTap: () {
-                  Navigator.pushNamed(context, '/category');
+                  Get.toNamed('/spotCategory');
                 },
                 trailing: const Icon(Icons.navigate_next),
               ),

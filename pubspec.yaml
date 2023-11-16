@@ -51,6 +51,8 @@ dependencies:
   get: ^4.6.6
   native_exif: ^0.5.0
   path_provider: ^2.1.1
+  table_calendar: ^3.0.1
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
@@ -98,6 +100,10 @@ flutter:
     - family: BMHANNAPro
       fonts:
         - asset: assets/fonts/BMHANNAProOTF.otf
+    - family: MyFlutterApp
+      fonts:
+        - asset: assets/fonts/MyFlutterApp.ttf
+
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf
