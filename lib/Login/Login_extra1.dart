@@ -83,7 +83,7 @@ class _LoginExtra1State extends State<LoginExtra1> {
           final formKeyState = _formKey.currentState!;
           if (formKeyState.validate()) {
             formKeyState.save();
-            Navigator.pushNamed(context, '/login+2');
+            Get.toNamed('/login2');
           }
         },
         child: const Icon(Icons.arrow_forward_ios),

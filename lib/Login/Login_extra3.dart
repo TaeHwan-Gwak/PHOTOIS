@@ -128,9 +128,7 @@ class _LoginExtra3State extends State<LoginExtra3> {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 320,
-            ),
+            const Spacer(),
             Center(
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -143,8 +141,7 @@ class _LoginExtra3State extends State<LoginExtra3> {
                   ),
                   onPressed: () {
                     if (controller.checkCategory.value != 0) {
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/main', (Route<dynamic> route) => false);
+                      Get.offAllNamed('/main');
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text('카테고리 중 하나를 선택해주세요'),
@@ -156,6 +153,9 @@ class _LoginExtra3State extends State<LoginExtra3> {
                     '완료',
                     style: TextStyle(color: Colors.white),
                   ))),
+            ),
+            const SizedBox(
+              height: 20,
             )
           ],
         ),

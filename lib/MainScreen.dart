@@ -4,6 +4,7 @@ import 'Tab_2.dart';
 import 'Tab_3.dart';
 import 'Tab_4.dart';
 import 'Tab_5.dart';
+import 'package:get/get.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -26,7 +27,7 @@ class _MainPageState extends State<MainPage> {
   void _onItemTapped(int index) {
     setState(() {
       if (index == 2) {
-        Navigator.pushNamed(context, '/tab3');
+        Get.to(const Tab3());
       } else {
         _selectedIndex = index;
       }

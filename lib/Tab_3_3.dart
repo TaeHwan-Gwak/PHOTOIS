@@ -60,6 +60,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                   onPressed: () {
                     setState(() {
                       controller.category.value = 1;
+                      Get.back();
                     });
                   },
                   child: const Text('나홀로 인생샷'),
@@ -78,6 +79,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                   onPressed: () {
                     setState(() {
                       controller.category.value = 2;
+                      Get.back();
                     });
                   },
                   child: const Text('애인과 커플샷'),
@@ -104,6 +106,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                   onPressed: () {
                     setState(() {
                       controller.category.value = 3;
+                      Get.back();
                     });
                   },
                   child: const Text('친구와 우정샷'),
@@ -122,6 +125,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                   onPressed: () {
                     setState(() {
                       controller.category.value = 4;
+                      Get.back();
                     });
                   },
                   child: const Text('가족과 추억샷'),

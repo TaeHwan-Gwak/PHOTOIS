@@ -125,7 +125,7 @@ class _LoginExtra2State extends State<LoginExtra2> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (controller.checkPhotographer.value != 0) {
-            Navigator.pushNamed(context, '/login+3');
+            Get.toNamed('/login3');
           } else {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text('포토그래퍼 여부를 선택해주세요'),

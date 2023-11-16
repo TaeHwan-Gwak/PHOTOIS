@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:get/get.dart';
 
 Future<UserCredential> signInWithGoogle() async {
   // Trigger the authentication flow
@@ -56,7 +57,7 @@ class LoginPage extends StatelessWidget {
             ),
             InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, '/login+1');
+                  Get.offNamed('/login1');
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -83,7 +84,7 @@ class LoginPage extends StatelessWidget {
             ),
             InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, '/main');
+                  Get.offNamed('/main');
                   //signInWithGoogle;
                 },
                 child: Container(
