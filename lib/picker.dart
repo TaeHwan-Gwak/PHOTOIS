@@ -69,7 +69,7 @@ class _MyAppState extends State<MyApp> {
       File _file = File(pickedFile.path);
 
       // Firebase Storage에 이미지 업로드
-      await FirebaseStorage.instance.ref("test/test_image").putFile(_file);
+      await FirebaseStorage.instance.ref("test/test_image.jpeg").putFile(_file);
 
       // Exif 데이터 가져오기
       exif = await Exif.fromPath(pickedFile.path);
