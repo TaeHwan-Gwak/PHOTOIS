@@ -213,7 +213,7 @@ class _SelectTimeState extends State<SelectTime> {
                         controller.spotWeather.value = 4;
                       });
                     },
-                    icon: const Icon(MyFlutterApp.drizzle),
+                    icon: const Icon(MyFlutterApp.rainy),
                     iconSize: 40,
                   ),
                 ),
@@ -254,7 +254,7 @@ class MyFlutterApp {
       IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData cloudSun =
       IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData drizzle =
+  static const IconData rainy =
       IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData sun =
       IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);

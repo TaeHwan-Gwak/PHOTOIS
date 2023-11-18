@@ -141,7 +141,7 @@ class _Tab3State extends State<Tab3> {
                     return const Text("사진 해당 시간과 날씨");
                   } else {
                     return Obx(() => Text(
-                        '${DateFormat('yy.MM.dd').format(controller.spotDate.value)}  ${controller.spotTime.value + controller.getStartHour()}~${controller.spotTime.value + controller.getStartHour() + 1}시 (${weather[controller.spotWeather.value - 1]})',
+                        '${DateFormat('yy.MM.dd').format(controller.spotDate.value)}  ${controller.spotTime.value + controller.getStartHour()}~${controller.spotTime.value + controller.getStartHour() + 1}시  (${weather[controller.spotWeather.value - 1]})',
                         style: const TextStyle(color: Colors.redAccent)));
                   }
                 }),
