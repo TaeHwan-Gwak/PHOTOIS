@@ -1,10 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:photois/screen/mypage/my_page.dart';
+import 'package:photois/service/account.dart';
+import 'package:photois/setting.dart';
+
 import 'Tab_1.dart';
 import 'Tab_2.dart';
 import 'Tab_3.dart';
 import 'Tab_4.dart';
-import 'Tab_5.dart';
-import 'package:get/get.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -16,13 +20,39 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  static List<Widget> pages = <Widget>[
-    const Tab1(),
-    const Tab2(),
-    const Tab3(),
-    const Tab4(),
-    const Tab5()
-  ];
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      late String uid;
+      if (kDebugMode && kDevUseTempUser) {
+        uid = 'test';
+      } else {
+        //TODO: pass uid from login
+        uid = Get.parameters['uid']!;
+      }
+
+      // 'MainPage initState: $uid'.log();
+      if (await Get.find<Account>().tryLogin(uid) != true) {
+        Get.offNamed('/login');
+      }
+      // 'MainPage initState: ${Get.find<Account>().uid}'.log();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  // static List<Widget> pages = <Widget>[
+  //   const Tab1(),
+  //   const Tab2(),
+  //   const Tab3(),
+  //   const Tab4(),
+  //   const Tab5()
+  // ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -37,7 +67,8 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: pages[_selectedIndex],
+      // body: pages[_selectedIndex],
+      body: buildContentPage(),
       extendBodyBehindAppBar: true,
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -57,5 +88,20 @@ class _MainPageState extends State<MainPage> {
         onTap: _onItemTapped,
       ),
     );
+  }
+
+  Widget buildContentPage() {
+    switch (_selectedIndex) {
+      case 0:
+        return const Tab1();
+      case 1:
+        return const Tab2();
+      case 3:
+        return const Tab4();
+      case 4:
+        return const MyPage();
+      default:
+        return const Tab1();
+    }
   }
 }

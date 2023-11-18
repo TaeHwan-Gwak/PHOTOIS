@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:photois/service/firebase.auth.dart';
 
 Future<UserCredential> signInWithGoogle() async {
   // Trigger the authentication flow
@@ -83,30 +84,42 @@ class LoginPage extends StatelessWidget {
               height: 15,
             ),
             InkWell(
-                onTap: () {
+              onTap: () async {
+                final loggedUid = await FbAuth.signInWithGoogleSignIn(
+                  unlink: true,
+                );
+                debugPrint('loggedUid: $loggedUid');
+
+                if (loggedUid != null) {
+                  Get.snackbar('로그인 성공', '로그인에 성공했습니다.');
                   Get.offNamed('/main');
-                  //signInWithGoogle;
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.teal,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 0,
-                        blurRadius: 5.0,
-                        offset:
-                            const Offset(0, 10), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: Image.asset(
-                    "assets/images/google_login.png",
-                    width: 250,
-                    fit: BoxFit.fill,
-                  ),
-                )),
+                } else {
+                  Get.snackbar('로그인 실패', '로그인에 실패했습니다.');
+                }
+
+                // Get.offNamed('/main');
+                //signInWithGoogle;
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.teal,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 0,
+                      blurRadius: 5.0,
+                      offset: const Offset(0, 10), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: Image.asset(
+                  "assets/images/google_login.png",
+                  width: 250,
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
           ],
         ),
       ),
