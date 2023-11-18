@@ -88,6 +88,20 @@ class _MyAppState extends State<MyApp> {
     setState(() {});
   }
 
+  Widget _buildPhotoArea() {
+    return pickedFile != null
+        ? Container(
+      width: 300,
+      height: 300,
+      child: Image.file(File(pickedFile!.path)), //가져온 이미지를 화면에 띄워주는 코드
+    )
+        : Container(
+      width: 300,
+      height: 300,
+      color: Colors.grey,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,100 +112,16 @@ class _MyAppState extends State<MyApp> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            _buildPhotoArea(),
             if (pickedFile == null)
-              const Text("Please open an image.")
+              const Text(" ")
             else
               Column(
                 children: [
-                  Text("The selected image has ${attributes?.length ?? 0} attributes."),
                   Text("It was taken at ${shootingDate.toString()}"),
                   Text(attributes?["UserComment"]?.toString() ?? ''),
-                  Text("Attributes: $attributes"),
                   Text("Coordinates: $coordinates"),
-                  TextButton(
-                    onPressed: () async {
-                      try {
-                        final dateFormat = DateFormat('yyyy:MM:dd HH:mm:ss');
-                        await exif!.writeAttribute('DateTimeOriginal', dateFormat.format(DateTime.now()));
 
-                        shootingDate = await exif!.getOriginalDate();
-                        attributes = await exif!.getAttributes();
-
-                        setState(() {});
-                      } catch (e) {
-                        showError(e);
-                      }
-                    },
-                    child: const Text('Update date attribute'),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      try {
-                        // Get original attributes.
-                        final attrs = await exif!.getAttributes();
-
-                        debugPrint('Original attributes of ${pickedFile!.path}:');
-                        debugPrint(attrs.toString());
-
-                        final dateFormat = DateFormat('yyyy:MM:dd HH:mm:ss');
-                        debugPrint('Write DateTimeOriginal ${dateFormat.format(DateTime.now())}');
-                        await exif!.writeAttribute('DateTimeOriginal', dateFormat.format(DateTime.now()));
-
-                        await exif!.writeAttributes({
-                          'GPSLatitude': '1.0',
-                          'GPSLatitudeRef': 'N',
-                          'GPSLongitude': '2.0',
-                          'GPSLongitudeRef': 'W',
-                        });
-
-                        shootingDate = await exif!.getOriginalDate();
-                        attributes = await exif!.getAttributes();
-
-                        debugPrint('New attributes:');
-                        debugPrint(shootingDate.toString());
-                        debugPrint(attributes.toString());
-
-                        final dir = await getApplicationDocumentsDirectory();
-                        final newPath = p.join(dir.path, p.basename(pickedFile!.path));
-
-                        debugPrint('New path:');
-                        debugPrint(newPath);
-
-                        final newFile = File(newPath);
-                        await newFile.writeAsBytes(await pickedFile!.readAsBytes());
-
-                        pickedFile = XFile(newPath);
-                        exif = await Exif.fromPath(newPath);
-                        attributes = await exif!.getAttributes();
-                        shootingDate = await exif!.getOriginalDate();
-                        coordinates = await exif!.getLatLong();
-
-                        debugPrint('Attributes of $newPath:');
-                        debugPrint(shootingDate.toString());
-                        debugPrint(coordinates.toString());
-                        debugPrint(attributes.toString());
-
-                        setState(() {});
-                      } catch (e) {
-                        showError(e);
-                      }
-                    },
-                    child: const Text('Update, store and reload attributes'),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      try {
-                        await exif!.writeAttribute('Orientation', '1');
-
-                        attributes = await exif!.getAttributes();
-
-                        setState(() {});
-                      } catch (e) {
-                        showError(e);
-                      }
-                    },
-                    child: const Text('Set orientation to 1'),
-                  ),
                   TextButton(
                     onPressed: () async {
                       try {
@@ -223,35 +153,8 @@ class _MyAppState extends State<MyApp> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: getImage,
-              child: const Text('Open image'),
+              child: const Text('갤러리'),
             ),
-            if (pickedFile != null)
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    final file = File(p.join(Directory.systemTemp.path, 'tempimage.jpg'));
-                    final imageBytes = await pickedFile!.readAsBytes();
-                    await file.create();
-                    await file.writeAsBytes(imageBytes);
-                    final _attributes = await exif?.getAttributes() ?? {};
-                    final newExif = await Exif.fromPath(file.path);
-
-                    _attributes['DateTimeOriginal'] = '2021:05:15 13:00:00';
-                    _attributes['UserComment'] = "This file is user generated!";
-
-                    await newExif.writeAttributes(_attributes);
-
-                    shootingDate = await newExif.getOriginalDate();
-                    attributes = await newExif.getAttributes();
-                    coordinates = await newExif.getLatLong();
-
-                    setState(() {});
-                  } catch (e) {
-                    showError(e);
-                  }
-                },
-                child: const Text("Create file and write exif data"),
-              ),
           ],
         ),
       ),
