@@ -118,8 +118,9 @@ class _MyAppState extends State<MyApp> {
             else
               Column(
                 children: [
-                  Text("It was taken at ${shootingDate.toString()}"),
+                  Text("${shootingDate.toString()}"),
                   Text(attributes?["UserComment"]?.toString() ?? ''),
+                  Text("Attributes: $attributes"),
                   Text("Coordinates: $coordinates"),
 
                   TextButton(
@@ -132,8 +133,6 @@ class _MyAppState extends State<MyApp> {
                           'GPSLongitudeRef': 'W',
                         });
 
-                        shootingDate = await exif!.getOriginalDate();
-                        attributes = await exif!.getAttributes();
                         coordinates = await exif!.getLatLong();
 
                         setState(() {});
@@ -143,11 +142,6 @@ class _MyAppState extends State<MyApp> {
                     },
                     child: const Text('Update GPS attributes'),
                   ),
-                  ElevatedButton(
-                    onPressed: closeImage,
-                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red)),
-                    child: const Text('Close image'),
-                  )
                 ],
               ),
             const SizedBox(height: 20),
