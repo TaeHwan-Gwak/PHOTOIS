@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:photois/data.dart';
 
 class LoginExtra1 extends StatefulWidget {
   const LoginExtra1({super.key});
@@ -10,10 +12,11 @@ class LoginExtra1 extends StatefulWidget {
 
 class _LoginExtra1State extends State<LoginExtra1> {
   final _formKey = GlobalKey<FormState>();
-  String nickName = ''; //###
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put((UserInfo()));
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -68,7 +71,7 @@ class _LoginExtra1State extends State<LoginExtra1> {
                   return null;
                 },
                 onSaved: (value) {
-                  nickName = value!;
+                  controller.nickname.value = value!;
                 },
               ),
             )
@@ -80,7 +83,7 @@ class _LoginExtra1State extends State<LoginExtra1> {
           final formKeyState = _formKey.currentState!;
           if (formKeyState.validate()) {
             formKeyState.save();
-            Navigator.pushNamed(context, '/login+2');
+            Get.toNamed('/login2');
           }
         },
         child: const Icon(Icons.arrow_forward_ios),
