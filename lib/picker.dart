@@ -3,28 +3,29 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:permission_handler/permission_handler.dart';
+
 import 'package:native_exif/native_exif.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(const MaterialApp(home: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  XFile? _image;
-  final ImagePicker picker = ImagePicker();
+  final picker = ImagePicker();
+
+  XFile? pickedFile;
   Exif? exif;
   Map<String, Object>? attributes;
   DateTime? shootingDate;
@@ -63,24 +64,18 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Future getImage(ImageSource imageSource) async {
-    final XFile? pickedFile = await picker.pickImage(source: imageSource);
-    if (pickedFile != null) {
-      File _file = File(pickedFile.path);
-
-      // Firebase Storage에 이미지 업로드
-      await FirebaseStorage.instance.ref("test/test_image.jpeg").putFile(_file);
-
-      // Exif 데이터 가져오기
-      exif = await Exif.fromPath(pickedFile.path);
-      attributes = await exif!.getAttributes();
-      shootingDate = await exif!.getOriginalDate();
-      coordinates = await exif!.getLatLong();
-
-      setState(() {
-        _image = XFile(pickedFile.path);
-      });
+  Future getImage() async {
+    pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile == null) {
+      return;
     }
+
+    exif = await Exif.fromPath(pickedFile!.path);
+    attributes = await exif!.getAttributes();
+    shootingDate = await exif!.getOriginalDate();
+    coordinates = await exif!.getLatLong();
+
+    setState(() {});
   }
 
   Future closeImage() async {
@@ -93,52 +88,68 @@ class _MyAppState extends State<MyApp> {
     setState(() {});
   }
 
+  Widget _buildPhotoArea() {
+    return pickedFile != null
+        ? Container(
+      width: 300,
+      height: 300,
+      child: Image.file(File(pickedFile!.path)), //가져온 이미지를 화면에 띄워주는 코드
+    )
+        : Container(
+      width: 300,
+      height: 300,
+      color: Colors.grey,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('PHOTOIS'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _image != null
-                  ? Container(
-                width: 300,
-                height: 300,
-                child: Image.file(File(_image!.path)),
-              )
-                  : Container(
-                width: 300,
-                height: 300,
-                color: Colors.grey,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Plugin example app'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildPhotoArea(),
+            if (pickedFile == null)
+              const Text(" ")
+            else
+              Column(
+                children: [
+                  Text("${shootingDate.toString()}"),
+                  Text(attributes?["UserComment"]?.toString() ?? ''),
+                  Text("Attributes: $attributes"),
+                  Text("Coordinates: $coordinates"),
+
+                  TextButton(
+                    onPressed: () async {
+                      try {
+                        await exif!.writeAttributes({
+                          'GPSLatitude': '1.0',
+                          'GPSLatitudeRef': 'N',
+                          'GPSLongitude': '2.0',
+                          'GPSLongitudeRef': 'W',
+                        });
+
+                        coordinates = await exif!.getLatLong();
+
+                        setState(() {});
+                      } catch (e) {
+                        showError(e);
+                      }
+                    },
+                    child: const Text('Update GPS attributes'),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  getImage(ImageSource.gallery);
-                },
-                child: const Text('갤러리'),
-              ),
-              if (_image != null)
-                Column(
-                  children: [
-                    Text("The selected image has ${attributes?.length ?? 0} attributes."),
-                    Text("It was taken at ${shootingDate.toString()}"),
-                    Text(attributes?["UserComment"]?.toString() ?? ''),
-                    Text("Attributes: $attributes"),
-                    Text("Coordinates: $coordinates"),
-                    ElevatedButton(
-                      onPressed: closeImage,
-                      style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red)),
-                      child: const Text('이미지 닫기'),
-                    )
-                  ],
-                ),
-            ],
-          ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: getImage,
+              child: const Text('갤러리'),
+            ),
+          ],
         ),
       ),
     );
