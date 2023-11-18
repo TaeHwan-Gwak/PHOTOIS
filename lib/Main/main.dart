@@ -4,9 +4,12 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:photois/common/ext.string.dart';
 import 'package:photois/Main/routes.dart';
 import 'package:photois/service/firebase.boot.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await NaverMapSdk.instance.initialize(clientId: 'ud3er0cxg6');
 
   await initFirebase();
   await initializeDateFormatting();
