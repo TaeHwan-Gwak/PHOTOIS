@@ -58,7 +58,7 @@ class LoginPage extends StatelessWidget {
             ),
             InkWell(
                 onTap: () {
-                  Get.offNamed('/login1');
+                  Get.offNamed('/main');
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -92,11 +92,10 @@ class LoginPage extends StatelessWidget {
 
                 if (loggedUid != null) {
                   Get.snackbar('로그인 성공', '로그인에 성공했습니다.');
-                  Get.offNamed('/main');
+                  Get.offNamed('/login1');
                 } else {
                   Get.snackbar('로그인 실패', '로그인에 실패했습니다.');
                 }
-
                 // Get.offNamed('/main');
                 //signInWithGoogle;
               },

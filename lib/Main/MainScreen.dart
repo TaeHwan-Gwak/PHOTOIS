@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:photois/screen/mypage/my_page.dart';
+import 'package:photois/Tab5_MY/mypage/my_page.dart';
 import 'package:photois/service/account.dart';
 import 'package:photois/setting.dart';
 
-import 'Tab_1.dart';
-import 'Tab_2.dart';
-import 'Tab_3.dart';
-import 'Tab_4.dart';
+import '../Tab1_Home/Tab_1.dart';
+import '../Tab2_Around/Tab_2.dart';
+import '../Tab3_Add/add_post.dart';
+import '../Tab4_Page/Tab_4.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -45,14 +45,6 @@ class _MainPageState extends State<MainPage> {
   void dispose() {
     super.dispose();
   }
-
-  // static List<Widget> pages = <Widget>[
-  //   const Tab1(),
-  //   const Tab2(),
-  //   const Tab3(),
-  //   const Tab4(),
-  //   const Tab5()
-  // ];
 
   void _onItemTapped(int index) {
     setState(() {

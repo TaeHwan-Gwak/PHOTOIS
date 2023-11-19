@@ -3,11 +3,11 @@ import 'package:photois/Login/Login.dart';
 import 'package:photois/Login/Login_extra1.dart';
 import 'package:photois/Login/Login_extra2.dart';
 import 'package:photois/Login/Login_extra3.dart';
-import 'package:photois/MainScreen.dart';
-import 'package:photois/SplashScreen.dart';
-import 'package:photois/Tab_3_1.dart';
-import 'package:photois/Tab_3_2.dart';
-import 'package:photois/Tab_3_3.dart';
+import 'package:photois/Main/MainScreen.dart';
+import 'package:photois/Main/SplashScreen.dart';
+import 'package:photois/Tab3_Add/select_address.dart';
+import 'package:photois/Tab3_Add/select_time.dart';
+import 'package:photois/Tab3_Add/select_category.dart';
 
 final page = [
   GetPage(name: '/', page: () => const SplashScreen()),

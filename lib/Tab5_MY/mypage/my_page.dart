@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:photois/common/ext.key.dart';
-import 'package:photois/screen/mypage/user_info.dart';
+import 'package:photois/Tab5_MY/mypage/user_info.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class MyPage extends StatefulWidget {

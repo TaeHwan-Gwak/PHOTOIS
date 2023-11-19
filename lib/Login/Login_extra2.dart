@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:photois/data.dart';
+import 'package:photois/Main/data.dart';
 
 class LoginExtra2 extends StatefulWidget {
   const LoginExtra2({super.key});

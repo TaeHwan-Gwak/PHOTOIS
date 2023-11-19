@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:photois/common/ext.string.dart';
-import 'package:photois/routes.dart';
+import 'package:photois/Main/routes.dart';
 import 'package:photois/service/firebase.boot.dart';
 
 Future<void> main() async {
