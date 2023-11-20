@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 
+/*
 class Tab2 extends StatefulWidget {
   const Tab2({Key? key}) : super(key: key);
 
@@ -66,3 +67,5 @@ class _MyAppState extends State<Tab2> {
     );
   }
 }
+
+ */

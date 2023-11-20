@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:kakao_map_plugin/kakao_map_plugin.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:geolocator/geolocator.dart';
 
 enum SearchSeason { spring, summer, autumn, winter }
 
@@ -16,6 +16,31 @@ class Tab2 extends StatefulWidget {
 }
 
 class _Tab2State extends State<Tab2> {
+  double lat = 37;
+  double lng = 126;
+
+  Future<void> getCurrentLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+
+      lat = position.latitude;
+      lng = position.longitude;
+    } catch (e) {
+      print('error');
+    }
+  }
+
+  @override
+  void initState() {
+    getCurrentLocation();
+    super.initState();
+  }
+
   final TextEditingController _searchController = TextEditingController();
   SearchSeason selectedSeason = SearchSeason.spring;
   @override
@@ -26,6 +51,7 @@ class _Tab2State extends State<Tab2> {
 
   @override
   Widget build(BuildContext context) {
+    /*
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(children: [
@@ -75,11 +101,43 @@ class _Tab2State extends State<Tab2> {
         )
       ]),
     );
+     */
+    return MaterialApp(
+      home: Scaffold(
+        body: FutureBuilder(
+          future: getCurrentLocation(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return NaverMap(
+                options: NaverMapViewOptions(
+                  extent: const NLatLngBounds(
+                    southWest: NLatLng(31.43, 122.37),
+                    northEast: NLatLng(44.35, 132.0),
+                  ),
+                  initialCameraPosition: NCameraPosition(
+                    target: NLatLng(lat, lng),
+                    zoom: 15,
+                    bearing: 0,
+                    tilt: 0,
+                  ),
+                ),
+                onMapReady: (controller) {
+                  final marker = NMarker(
+                    id: 'test',
+                    position: NLatLng(37.506977, 126.953289),
+                  );
+                  controller.addOverlay(marker);
+                },
+              );
+            } else {
+              // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ),
+      ),
+    );
   }
 }
-
-/*
-Scaffold(
-      body: KakaoMap(),
-    );
-*/
