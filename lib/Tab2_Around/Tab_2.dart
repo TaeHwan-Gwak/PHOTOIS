@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+// naver client ID : 'ud3er0cxg6'
 
 enum SearchSeason { spring, summer, autumn, winter }
 
@@ -20,6 +25,11 @@ class _Tab2State extends State<Tab2> {
   double lng = 126;
 
   Future<void> getCurrentLocation() async {
+    Map<String, String> headerss = {
+      "X-NCP-APIGW-API-KEY-ID": "ud3er0cxg6",
+      "X-NCP-APIGW-API-KEY": "i5bTtbxYq6VpOvNCYN4A6Qlw8hDzAdFKw0AsEk6s"
+    };
+
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -33,6 +43,27 @@ class _Tab2State extends State<Tab2> {
     } catch (e) {
       print('error');
     }
+
+    http.Response response = await http.get(
+        Uri
+            .parse(
+            "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json"),
+        headers: headerss);
+
+    String jsonData = response.body;
+
+    // print(jsonData);
+    var myJson_dong =
+    jsonDecode(jsonData)["results"][1]['region']['area3']['name'];
+    var myJson_gu =
+    jsonDecode(jsonData)["results"][1]['region']['area2']['name'];
+    var myJson_si =
+    jsonDecode(jsonData)["results"][1]['region']['area1']['name'];
+
+
+    List<String> which = [myJson_si, myJson_gu, myJson_dong];
+
+    print(which);
   }
 
   @override
@@ -43,6 +74,7 @@ class _Tab2State extends State<Tab2> {
 
   final TextEditingController _searchController = TextEditingController();
   SearchSeason selectedSeason = SearchSeason.spring;
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -110,6 +142,9 @@ class _Tab2State extends State<Tab2> {
             if (snapshot.connectionState == ConnectionState.done) {
               return NaverMap(
                 options: NaverMapViewOptions(
+                  scaleBarEnable: true,
+                  locationButtonEnable: true,
+                  logoClickEnable: false,
                   extent: const NLatLngBounds(
                     southWest: NLatLng(31.43, 122.37),
                     northEast: NLatLng(44.35, 132.0),
@@ -126,6 +161,9 @@ class _Tab2State extends State<Tab2> {
                     id: 'test',
                     position: NLatLng(37.506977, 126.953289),
                   );
+                  marker.setOnTapListener((NMarker marker) {
+                    // 마커를 클릭했을 때 실행할 코드
+                  });
                   controller.addOverlay(marker);
                 },
               );
