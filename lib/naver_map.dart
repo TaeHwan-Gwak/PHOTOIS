@@ -44,25 +44,26 @@ class _Tab2State extends State<Tab2> {
       print('error');
     }
 
-    String query = "";
-
     http.Response response = await http.get(
         Uri
             .parse(
-            "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${query}"),
+            "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json"),
         headers: headerss);
 
     String jsonData = response.body;
 
     // print(jsonData);
+    var myJson_dong =
+    jsonDecode(jsonData)["results"][1]['region']['area3']['name'];
+    var myJson_gu =
+    jsonDecode(jsonData)["results"][1]['region']['area2']['name'];
+    var myJson_si =
+    jsonDecode(jsonData)["results"][1]['region']['area1']['name'];
 
-    var long =
-    jsonDecode(jsonData)['addresses'][0]['x'];
-    var lati =
-    jsonDecode(jsonData)['addresses'][0]['y'];
 
-    print(long);
-    print(lati);
+    List<String> which = [myJson_si, myJson_gu, myJson_dong];
+
+    print(which);
   }
 
   @override
