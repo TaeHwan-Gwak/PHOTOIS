@@ -87,7 +87,7 @@ class _MainPageState extends State<MainPage> {
       case 0:
         return const Tab1();
       case 1:
-        return const Tab2();
+        return const SearchSpot();
       case 3:
         return const Tab4();
       case 4:

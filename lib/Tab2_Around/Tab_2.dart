@@ -7,20 +7,20 @@ import 'dart:convert';
 
 // naver client ID : 'ud3er0cxg6'
 
-enum SearchSeason { spring, summer, autumn, winter }
+enum SearchSeason { season, spring, summer, autumn, winter }
 
-enum SearchTime { day, night }
+enum SearchTime { time, day, night }
 
-enum SearchWeather { sun, cloudSun, cloud, rainy, snow }
+enum SearchWeather { weather, sun, cloudSun, cloud, rainy, snow }
 
-class Tab2 extends StatefulWidget {
-  const Tab2({super.key});
+class SearchSpot extends StatefulWidget {
+  const SearchSpot({super.key});
 
   @override
-  State<Tab2> createState() => _Tab2State();
+  State<SearchSpot> createState() => _SearchSpotState();
 }
 
-class _Tab2State extends State<Tab2> {
+class _SearchSpotState extends State<SearchSpot> {
   double lat = 37;
   double lng = 126;
 
@@ -47,8 +47,7 @@ class _Tab2State extends State<Tab2> {
     String query = "";
 
     http.Response response = await http.get(
-        Uri
-            .parse(
+        Uri.parse(
             "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${query}"),
         headers: headerss);
 
@@ -56,10 +55,8 @@ class _Tab2State extends State<Tab2> {
 
     // print(jsonData);
 
-    var long =
-    jsonDecode(jsonData)['addresses'][0]['x'];
-    var lati =
-    jsonDecode(jsonData)['addresses'][0]['y'];
+    var long = jsonDecode(jsonData)['addresses'][0]['x'];
+    var lati = jsonDecode(jsonData)['addresses'][0]['y'];
 
     print(long);
     print(lati);
@@ -72,7 +69,10 @@ class _Tab2State extends State<Tab2> {
   }
 
   final TextEditingController _searchController = TextEditingController();
-  SearchSeason selectedSeason = SearchSeason.spring;
+  SearchSeason selectedSeason = SearchSeason.season;
+  SearchTime selectedTime = SearchTime.time;
+  SearchWeather selectedWeather = SearchWeather.weather;
+  String searchLocation = '';
 
   @override
   void dispose() {
@@ -82,97 +82,149 @@ class _Tab2State extends State<Tab2> {
 
   @override
   Widget build(BuildContext context) {
-    /*
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(children: [
-        const SizedBox(height: 30),
-        TextField(
-          controller: _searchController,
-          decoration: InputDecoration(
-            labelText: '검색',
-            hintText: '찾고싶은 사진 스팟 장소를 입력해주세요',
-            prefixIcon: const Icon(Icons.search),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-          ),
-          onChanged: (value) {
-            // 검색어 변경 시 동작
-            print('검색어: $value');
-          },
-        ),
-        Row(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<SearchSeason>(
-                  value: selectedSeason,
-                  onChanged: (SearchSeason? newValue) {
-                    setState(() {
-                      selectedSeason = newValue!;
-                    });
-                  },
-                  items: SearchSeason.values.map((SearchSeason status) {
-                    return DropdownMenuItem<SearchSeason>(
-                      value: status,
-                      child: Text(status.toString().split('.').last),
-                    );
-                  }).toList(),
-                  icon: null,
-                ),
-              ),
-            ),
-          ],
-        )
-      ]),
-    );
-     */
     return MaterialApp(
       home: Scaffold(
-        body: FutureBuilder(
-          future: getCurrentLocation(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return NaverMap(
-                options: NaverMapViewOptions(
-                  scaleBarEnable: true,
-                  locationButtonEnable: true,
-                  logoClickEnable: false,
-                  extent: const NLatLngBounds(
-                    southWest: NLatLng(31.43, 122.37),
-                    northEast: NLatLng(44.35, 132.0),
-                  ),
-                  initialCameraPosition: NCameraPosition(
-                    target: NLatLng(lat, lng),
-                    zoom: 15,
-                    bearing: 0,
-                    tilt: 0,
-                  ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              TextField(
+                controller: _searchController,
+                decoration: const InputDecoration(
+                  labelText: '검색',
+                  hintText: '찾고싶은 사진 스팟 장소를 입력해주세요',
+                  prefixIcon: Icon(Icons.search),
                 ),
-                onMapReady: (controller) {
-                  final marker = NMarker(
-                    id: 'test',
-                    position: NLatLng(37.506977, 126.953289),
-                  );
-                  marker.setOnTapListener((NMarker marker) {
-                    // 마커를 클릭했을 때 실행할 코드
-                  });
-                  controller.addOverlay(marker);
+                onChanged: (value) {
+                  searchLocation = value!;
+                  print('검색어: $value');
                 },
-              );
-            } else {
-              // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<SearchSeason>(
+                          value: selectedSeason,
+                          onChanged: (SearchSeason? newValue) {
+                            setState(() {
+                              selectedSeason = newValue!;
+                            });
+                          },
+                          items: SearchSeason.values.map((SearchSeason status) {
+                            return DropdownMenuItem<SearchSeason>(
+                              value: status,
+                              child: Text(status.toString().split('.').last),
+                            );
+                          }).toList(),
+                          icon: null,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<SearchTime>(
+                          value: selectedTime,
+                          onChanged: (SearchTime? newValue) {
+                            setState(() {
+                              selectedTime = newValue!;
+                            });
+                          },
+                          items: SearchTime.values.map((SearchTime status) {
+                            return DropdownMenuItem<SearchTime>(
+                              value: status,
+                              child: Text(status.toString().split('.').last),
+                            );
+                          }).toList(),
+                          icon: null,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<SearchWeather>(
+                          value: selectedWeather,
+                          onChanged: (SearchWeather? newValue) {
+                            setState(() {
+                              selectedWeather = newValue!;
+                            });
+                          },
+                          items:
+                              SearchWeather.values.map((SearchWeather status) {
+                            return DropdownMenuItem<SearchWeather>(
+                              value: status,
+                              child: Text(status.toString().split('.').last),
+                            );
+                          }).toList(),
+                          icon: null,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: FutureBuilder(
+                  future: getCurrentLocation(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return NaverMap(
+                        options: NaverMapViewOptions(
+                          scaleBarEnable: true,
+                          locationButtonEnable: true,
+                          logoClickEnable: false,
+                          extent: const NLatLngBounds(
+                            southWest: NLatLng(31.43, 122.37),
+                            northEast: NLatLng(44.35, 132.0),
+                          ),
+                          initialCameraPosition: NCameraPosition(
+                            target: NLatLng(lat, lng),
+                            zoom: 15,
+                            bearing: 0,
+                            tilt: 0,
+                          ),
+                        ),
+                        onMapReady: (controller) {
+                          final marker = NMarker(
+                            id: 'test',
+                            position: const NLatLng(37.506977, 126.953289),
+                          );
+                          marker.setOnTapListener((NMarker marker) {
+                            // 마커를 클릭했을 때 실행할 코드
+                          });
+                          controller.addOverlay(marker);
+                        },
+                      );
+                    } else {
+                      // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
