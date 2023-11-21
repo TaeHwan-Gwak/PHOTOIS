@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:photois/Main/data.dart';
+import 'package:sliver_tools/sliver_tools.dart';
+
+import 'dart:async';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:native_exif/native_exif.dart';
 
 class Tab3 extends StatefulWidget {
   const Tab3({super.key});
@@ -27,149 +34,313 @@ class _Tab3State extends State<Tab3> {
     "친구와 우정샷",
     "가족과 추억샷",
   ];
+  final controller = Get.put((PhotoSpotInfo()));
+
+  final picker = ImagePicker();
+
+  XFile? pickedFile;
+  Exif? exif;
+  Map<String, Object>? attributes;
+  DateTime? shootingDate;
+  ExifLatLong? coordinates;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> showError(Object e) async {
+    debugPrintStack(
+        label: e.toString(), stackTrace: e is Error ? e.stackTrace : null);
+
+    return showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Text(e.toString()),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future getImage() async {
+    pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile == null) {
+      return;
+    }
+
+    exif = await Exif.fromPath(pickedFile!.path);
+    attributes = await exif!.getAttributes();
+    shootingDate = await exif!.getOriginalDate();
+    coordinates = await exif!.getLatLong();
+
+    setState(() {});
+  }
+
+  Future closeImage() async {
+    await exif?.close();
+    shootingDate = null;
+    attributes = {};
+    exif = null;
+    coordinates = null;
+
+    setState(() {});
+  }
+
+  Widget _buildPhotoArea() {
+    return pickedFile != null
+        ? SizedBox(
+            width: 300,
+            height: 300,
+            child: Image.file(File(pickedFile!.path)), //가져온 이미지를 화면에 띄워주는 코드
+          )
+        : Container(
+            width: 300,
+            height: 300,
+            color: Colors.grey,
+          );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put((PhotoSpotInfo()));
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          TextButton(
-              onPressed: () {},
-              child: const Text(
-                "등록",
-                style: TextStyle(fontSize: 20, color: Colors.redAccent),
-              )),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            Card(
-              child: Column(
-                children: [
-                  const Text(
-                    "원본과 보정본을 업로드해주세요\n포스팅은 보정본으로 진행됩니다.",
-                    style: TextStyle(fontSize: 15),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      InkWell(
-                          onTap: () {},
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.teal,
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.2),
-                                  spreadRadius: 0,
-                                  blurRadius: 5.0,
-                                  offset: const Offset(
-                                      0, 10), // changes position of shadow
-                                ),
-                              ],
-                            ),
-                            child: Image.asset(
-                              selectPic[selectedIconNum],
-                              width: 150,
-                              height: 150,
-                              fit: BoxFit.fill,
-                            ),
-                          )),
-                      InkWell(
-                          onTap: () {},
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.teal,
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.2),
-                                  spreadRadius: 0,
-                                  blurRadius: 5.0,
-                                  offset: const Offset(
-                                      0, 10), // changes position of shadow
-                                ),
-                              ],
-                            ),
-                            child: Image.asset(
-                              selectPic[selectedIconNum],
-                              width: 150,
-                              height: 150,
-                              fit: BoxFit.fill,
-                            ),
-                          ))
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [Text("원본"), Text("보정본")],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                ],
-              ),
-            ),
-            Card(
-              child: ListTile(
-                title: const Text("위치"),
-                subtitle: const Text("사진 해당 주소"),
-                onTap: () {
-                  Get.toNamed('/spotAddress');
-                },
-                trailing: const Icon(Icons.navigate_next),
-              ),
-            ),
-            Card(
-              child: ListTile(
-                title: const Text("시간과 날씨"),
-                subtitle: Obx(() {
-                  if (controller.spotDate.value == DateTime(0, 0, 0)) {
-                    return const Text("사진 해당 시간과 날씨");
-                  } else {
-                    return Obx(() => Text(
-                        '${DateFormat('yy.MM.dd').format(controller.spotDate.value)}  ${controller.spotTime.value + controller.getStartHour()}~${controller.spotTime.value + controller.getStartHour() + 1}시  (${weather[controller.spotWeather.value - 1]})',
-                        style: const TextStyle(color: Colors.redAccent)));
-                  }
-                }),
-                onTap: () {
-                  Get.toNamed('/spotTime');
-                },
-                trailing: const Icon(Icons.navigate_next),
-              ),
-            ),
-            Card(
-              child: ListTile(
-                title: const Text("카테고리"),
-                subtitle: Obx(() {
-                  if (controller.spotCategory.value == 0) {
-                    return const Text("사진 해당 카테고리");
-                  } else {
-                    return Text(category[controller.spotCategory.value - 1],
-                        style: const TextStyle(color: Colors.redAccent));
-                  }
-                }),
-                onTap: () {
-                  Get.toNamed('/spotCategory');
-                },
-                trailing: const Icon(Icons.navigate_next),
-              ),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text('새 게시물'),
+          actions: [
+            TextButton(
+                onPressed: () {},
+                child: const Text(
+                  "등록",
+                  style: TextStyle(fontSize: 20, color: Colors.blueGrey),
+                )),
+          ],
+        ),
+        body: SafeArea(child: buildBody()));
+  }
+
+  Widget buildBody() {
+    return Stack(
+      clipBehavior: Clip.none,
+      fit: StackFit.passthrough,
+      children: [
+        CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            MultiSliver(
+              pushPinnedChildren: true,
+              children: [
+                SliverToBoxAdapter(child: spotImage()),
+                const SliverToBoxAdapter(child: Divider()),
+                SliverToBoxAdapter(child: spotInfo()),
+                const Gap(8),
+                const SliverToBoxAdapter(child: Divider()),
+                SliverToBoxAdapter(child: spotCategory()),
+                const Gap(180),
+              ],
             ),
           ],
         ),
+      ],
+    );
+  }
+
+  Widget spotImage() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: _buildGroupTitle('사진 업로드'),
+          ),
+          const Gap(12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [InkWell(onTap: getImage, child: _buildPhotoArea())],
+          ),
+          const Gap(12),
+          if (pickedFile == null)
+            const Text(" ")
+          else
+            Text("${shootingDate.toString()}"),
+          /*
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [Text("<원본>"), Text("<보정본>")],
+          ),
+          const Gap(20),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "*원본과 보정본을 업로드해주세요. \n 포스팅은 보정본으로 진행됩니다.",
+                style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.red),
+              ),
+            ),
+          ),*/
+        ],
+      ),
+    );
+  }
+
+  Widget spotInfo() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: _buildGroupTitle('위치 정보'),
+          ),
+          const Gap(4),
+          _buildLabeledItem(
+            const Text('위치를 입력해주세요',
+                style: TextStyle(fontWeight: FontWeight.w200, fontSize: 15)),
+            (context) {
+              return _buildRightArrow();
+            },
+            onTap: () {
+              Get.toNamed('/spotAddress');
+            },
+          ),
+          const Gap(20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: _buildGroupTitle('시간 정보'),
+          ),
+          const Gap(4),
+          _buildLabeledItem(
+            Obx(() => Text(
+                  (controller.spotDate.value == DateTime(0, 0, 0))
+                      ? '시간을 입력해주세요'
+                      : '${DateFormat('yy.MM.dd').format(controller.spotDate.value)}  ${controller.spotTime.value + controller.getStartHour()}~${controller.spotTime.value + controller.getStartHour() + 1}시  (${weather[controller.spotWeather.value - 1]})',
+                )),
+            (context) {
+              return _buildRightArrow();
+            },
+            onTap: () {
+              Get.toNamed('/spotTime');
+            },
+          ),
+          const Gap(20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: _buildGroupTitle('날씨 정보'),
+          ),
+          const Gap(4),
+          _buildLabeledItem(
+            Text('날씨를 확인해주세요'),
+            (context) {
+              return _buildRightArrow();
+            },
+            onTap: () {
+              Get.toNamed('/spotTime');
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget spotCategory() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: _buildGroupTitle('카테고리'),
+          ),
+          const Gap(4),
+          _buildLabeledItem(
+            Obx(() => Text((controller.spotCategory.value == 0)
+                ? '카테고리를 선택해주세요'
+                : category[controller.spotCategory.value - 1])),
+            (context) {
+              return _buildRightArrow();
+            },
+            onTap: () {
+              Get.toNamed('/spotCategory');
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGroupTitle(String title) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w500,
+          color: Color(0xFFADADAD),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLabeledItem(
+    Widget text,
+    Widget Function(BuildContext context) builder, {
+    void Function()? onTap,
+  }) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Material(
+      child: InkWell(
+        splashColor: Colors.blue.withOpacity(0.3),
+        // splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+        onTap: onTap,
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: Row(
+            children: [
+              SizedBox(width: screenWidth * 0.7, child: text),
+              Expanded(
+                child: builder(context),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRightArrow() {
+    return const Align(
+      alignment: Alignment.centerRight,
+      child: Icon(
+        Icons.arrow_forward_ios,
+        color: Colors.black,
       ),
     );
   }
