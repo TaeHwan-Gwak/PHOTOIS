@@ -8,6 +8,7 @@ import 'package:photois/Main/SplashScreen.dart';
 import 'package:photois/Tab3_Add/select_address.dart';
 import 'package:photois/Tab3_Add/select_time.dart';
 import 'package:photois/Tab3_Add/select_category.dart';
+import 'package:photois/Tab3_Add/select_weather.dart';
 
 final page = [
   GetPage(name: '/', page: () => const SplashScreen()),
@@ -19,4 +20,5 @@ final page = [
   GetPage(name: '/spotAddress', page: () => const SelectAddress()),
   GetPage(name: '/spotTime', page: () => const SelectTime()),
   GetPage(name: '/spotCategory', page: () => const SelectCategory()),
+  GetPage(name: '/spotWeather', page: () => const SelectWeather()),
 ];

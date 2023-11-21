@@ -89,7 +89,11 @@ class _Tab3State extends State<Tab3> {
     shootingDate = await exif!.getOriginalDate();
     coordinates = await exif!.getLatLong();
 
-    setState(() {});
+    setState(() {
+      if (pickedFile != null) {
+        controller.spotDate.value = shootingDate!;
+      }
+    });
   }
 
   Future closeImage() async {
@@ -237,7 +241,7 @@ class _Tab3State extends State<Tab3> {
             Obx(() => Text(
                   (controller.spotDate.value == DateTime(0, 0, 0))
                       ? '시간을 입력해주세요'
-                      : '${DateFormat('yy.MM.dd').format(controller.spotDate.value)}  ${controller.spotTime.value + controller.getStartHour()}~${controller.spotTime.value + controller.getStartHour() + 1}시  (${weather[controller.spotWeather.value - 1]})',
+                      : '${DateFormat('yy.MM.dd').format(controller.spotDate.value)}  ${controller.spotTime.value + controller.getStartHour()}~${controller.spotTime.value + controller.getStartHour() + 1}시',
                 )),
             (context) {
               return _buildRightArrow();
@@ -253,12 +257,14 @@ class _Tab3State extends State<Tab3> {
           ),
           const Gap(4),
           _buildLabeledItem(
-            Text('날씨를 확인해주세요'),
+            Obx(() => Text((controller.spotWeather.value == 0)
+                ? '날씨를 확인해주세요'
+                : weather[controller.spotWeather.value - 1])),
             (context) {
               return _buildRightArrow();
             },
             onTap: () {
-              Get.toNamed('/spotTime');
+              Get.toNamed('/spotWeather');
             },
           ),
         ],

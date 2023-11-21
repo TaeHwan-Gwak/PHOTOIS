@@ -37,8 +37,8 @@ class _SelectCategoryState extends State<SelectCategory> {
               height: 50,
             ),
             const Text(
-              " 사진의 카테고리를 선택해주세요",
-              style: TextStyle(fontSize: 15),
+              'CATEGORY',
+              style: TextStyle(fontSize: 20),
             ),
             const SizedBox(
               height: 20,
@@ -60,7 +60,6 @@ class _SelectCategoryState extends State<SelectCategory> {
                   onPressed: () {
                     setState(() {
                       controller.spotCategory.value = 1;
-                      Get.back();
                     });
                   },
                   child: const Text('나홀로 인생샷'),
@@ -79,7 +78,6 @@ class _SelectCategoryState extends State<SelectCategory> {
                   onPressed: () {
                     setState(() {
                       controller.spotCategory.value = 2;
-                      Get.back();
                     });
                   },
                   child: const Text('애인과 커플샷'),
@@ -106,7 +104,6 @@ class _SelectCategoryState extends State<SelectCategory> {
                   onPressed: () {
                     setState(() {
                       controller.spotCategory.value = 3;
-                      Get.back();
                     });
                   },
                   child: const Text('친구와 우정샷'),
@@ -125,7 +122,6 @@ class _SelectCategoryState extends State<SelectCategory> {
                   onPressed: () {
                     setState(() {
                       controller.spotCategory.value = 4;
-                      Get.back();
                     });
                   },
                   child: const Text('가족과 추억샷'),
