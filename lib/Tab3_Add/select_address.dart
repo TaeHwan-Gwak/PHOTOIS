@@ -96,15 +96,7 @@ class _SelectAddressState extends State<SelectAddress> {
                   ),
                 ),
                 onMapReady: (controller) {
-                  final marker = NMarker(
-                    id: 'test',
-                    position: NLatLng(37.506977, 126.953289),
-                  );
 
-                  marker.setOnTapListener((NMarker marker) {
-                    // 마커를 클릭했을 때 실행할 코드
-                  });
-                  controller.addOverlay(marker);
                 },
                 onMapTapped: (point, latLng) {
                 },

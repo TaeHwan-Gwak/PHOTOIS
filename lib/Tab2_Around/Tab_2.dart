@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:kpostal/kpostal.dart';
 
 // naver client ID : 'ud3er0cxg6'
 
@@ -23,6 +23,11 @@ class SearchSpot extends StatefulWidget {
 class _SearchSpotState extends State<SearchSpot> {
   double lat = 37;
   double lng = 126;
+  bool locationObtained = true;
+
+  String address = '-';
+  String latitude = '-';
+  String longitude = '-';
 
   Future<void> getCurrentLocation() async {
     Map<String, String> headerss = {
@@ -36,35 +41,47 @@ class _SearchSpotState extends State<SearchSpot> {
     }
     try {
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.high,
+      );
 
       lat = position.latitude;
       lng = position.longitude;
+
+      /* 네이버 지오코딩
+      String query = "";
+
+      http.Response response = await http.get(
+        Uri.parse(
+          "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${query}",
+        ),
+        headers: headerss,
+      );
+
+      String jsonData = response.body;
+
+      // print(jsonData);
+
+      var long = jsonDecode(jsonData)['addresses'][0]['x'];
+      var lati = jsonDecode(jsonData)['addresses'][0]['y'];
+
+      print(long);
+      print(lati);
+       */
     } catch (e) {
       print('error');
     }
+  }
 
-    String query = "";
+  Future<void> getSearchLocation() async {
+    lat = this.lat;
+    lng = this.lng;
 
-    http.Response response = await http.get(
-        Uri.parse(
-            "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${query}"),
-        headers: headerss);
-
-    String jsonData = response.body;
-
-    // print(jsonData);
-
-    var long = jsonDecode(jsonData)['addresses'][0]['x'];
-    var lati = jsonDecode(jsonData)['addresses'][0]['y'];
-
-    print(long);
-    print(lati);
+    print(lat);
+    print(lng);
   }
 
   @override
   void initState() {
-    getCurrentLocation();
     super.initState();
   }
 
@@ -87,17 +104,64 @@ class _SearchSpotState extends State<SearchSpot> {
         body: SafeArea(
           child: Column(
             children: [
-              TextField(
-                controller: _searchController,
-                decoration: const InputDecoration(
-                  labelText: '검색',
-                  hintText: '찾고싶은 사진 스팟 장소를 입력해주세요',
-                  prefixIcon: Icon(Icons.search),
-                ),
-                onChanged: (value) {
-                  searchLocation = value!;
-                  print('검색어: $value');
-                },
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
+                        labelText: '검색',
+                        hintText: '찾고싶은 사진 스팟 장소를 입력해주세요',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          searchLocation = value;
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  TextButton(
+                    onPressed: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => KpostalView(
+                            useLocalServer: true,
+                            localPort: 1024,
+                            callback: (Kpostal result) {
+                              setState(() {
+                                this.address = result.address;
+                                this.latitude = result.latitude.toString();
+                                this.longitude = result.longitude.toString();
+
+                                // Update the TextField with the received address
+                                _searchController.text = this.address;
+
+                                lat = double.parse(this.latitude);
+                                lng = double.parse(this.longitude);
+
+                                print(this.address);
+                                print(this.latitude);
+                                print(this.longitude);
+
+                                locationObtained = false;
+                              });
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                    ),
+                    child: const Text(
+                      'Search',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
               Row(
                 children: [
@@ -183,13 +247,13 @@ class _SearchSpotState extends State<SearchSpot> {
                 ],
               ),
               Expanded(
-                child: FutureBuilder(
+                child: locationObtained ? FutureBuilder(
                   future: getCurrentLocation(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       return NaverMap(
                         options: NaverMapViewOptions(
-                          scaleBarEnable: true,
+                          scaleBarEnable: false,
                           locationButtonEnable: true,
                           logoClickEnable: false,
                           extent: const NLatLngBounds(
@@ -221,7 +285,46 @@ class _SearchSpotState extends State<SearchSpot> {
                       );
                     }
                   },
-                ),
+                )
+                    : FutureBuilder(
+                    future: getSearchLocation(),
+                    builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return NaverMap(
+                        options: NaverMapViewOptions(
+                          scaleBarEnable: false,
+                          locationButtonEnable: true,
+                          logoClickEnable: false,
+                          extent: const NLatLngBounds(
+                            southWest: NLatLng(31.43, 122.37),
+                            northEast: NLatLng(44.35, 132.0),
+                          ),
+                          initialCameraPosition: NCameraPosition(
+                            target: NLatLng(lat, lng),
+                            zoom: 15,
+                            bearing: 0,
+                            tilt: 0,
+                          ),
+                        ),
+                        onMapReady: (controller) {
+                          final marker = NMarker(
+                            id: 'test',
+                            position: const NLatLng(37.506977, 126.953289),
+                          );
+                          marker.setOnTapListener((NMarker marker) {
+                            // 마커를 클릭했을 때 실행할 코드
+                          });
+                          controller.addOverlay(marker);
+                        },
+                      );
+                    } else {
+                      // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                )
               ),
             ],
           ),
