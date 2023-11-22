@@ -182,6 +182,13 @@ class _SearchSpotState extends State<SearchSpot> {
                   ),
                 ],
               ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<SearchSeason>(
+                  value: selectedSeason,
+                  onChanged: (SearchSeason? newValue) {
+                    setState(() {
+                      selectedSeason = newValue!;
+                    });
               Expanded(
                 child: FutureBuilder(
                   future: getCurrentLocation(),
@@ -221,8 +228,23 @@ class _SearchSpotState extends State<SearchSpot> {
                       );
                     }
                   },
+                  items: SearchSeason.values.map((SearchSeason status) {
+                    return DropdownMenuItem<SearchSeason>(
+                      value: status,
+                      child: Text(status.toString().split('.').last),
+                    );
+                  }).toList(),
+                  icon: null,
                 ),
               ),
+            ),
+          ],
+        )
+      ]),
+    );
+     */
+    return MaterialApp(
+      home: Scaffold(
             ],
           ),
         ),

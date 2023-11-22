@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -47,18 +49,18 @@ class _SelectAddressState extends State<SelectAddress> {
 
     String jsonData = response.body;
 
-    // print(jsonData);
+    print(jsonData);
 
-    var myJson_dong =
-    jsonDecode(jsonData)["results"][1]['region']['area3']['name'];
-    var myJson_gu =
-    jsonDecode(jsonData)["results"][1]['region']['area2']['name'];
-    var myJson_si =
+    var myJson_one =
     jsonDecode(jsonData)["results"][1]['region']['area1']['name'];
+    var myJson_two =
+    jsonDecode(jsonData)["results"][1]['region']['area2']['name'];
+    var myJson_three =
+    jsonDecode(jsonData)["results"][1]['region']['area3']['name'];
+    var myJson_four =
+    jsonDecode(jsonData)["results"][1]['region']['area4']['name'];
 
-
-    List<String> which = [myJson_si, myJson_gu, myJson_dong];
-
+    List<String> which = [myJson_one, myJson_two, myJson_three, myJson_four];
     print(which);
   }
 
