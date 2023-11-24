@@ -26,8 +26,9 @@ class UserInfo extends GetxController {
 
 class PhotoSpotInfo extends GetxController {
   RxInt spotCategory = 0.obs;
-  Rx<DateTime> spotDate = DateTime(0, 0, 0).obs;
-  RxInt spotTime = 0.obs;
+  Rx<DateTime> spotDate = DateTime(0, 0, 0, 0, 0).obs;
+  RxInt spotTimeHour = 0.obs;
+  RxInt spotTimeMinute = 0.obs;
   List<bool> spotTimePeriod = [true, false].obs; // [AM, PM]
   RxInt spotWeather = 0.obs;
 
@@ -37,9 +38,5 @@ class PhotoSpotInfo extends GetxController {
     } else {
       return 12;
     }
-  }
-
-  String spotTimeToString() {
-    return '${spotTime + getStartHour()}~${spotTime + getStartHour() + 1}시';
   }
 }

@@ -17,10 +17,9 @@ class _SelectCategoryState extends State<SelectWeather> {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          automaticallyImplyLeading: false),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -135,7 +134,30 @@ class _SelectCategoryState extends State<SelectWeather> {
                   ),
                 ),
               ],
-            )
+            ),
+            const Spacer(),
+            Center(
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.blueGrey,
+                    backgroundColor: Colors.blueGrey,
+                    shadowColor: Colors.black,
+                    minimumSize: const Size(50, 50),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: const Center(
+                      child: Text(
+                    '확인',
+                    style: TextStyle(color: Colors.white),
+                  ))),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
           ],
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:photois/common/ext.string.dart';
 import 'package:photois/Main/routes.dart';
 import 'package:photois/service/firebase.boot.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +14,7 @@ Future<void> main() async {
 
   await initFirebase();
   await initializeDateFormatting();
+  await Firebase.initializeApp();
 
   'initFirebase complete'.log();
 

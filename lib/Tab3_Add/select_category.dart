@@ -17,10 +17,9 @@ class _SelectCategoryState extends State<SelectCategory> {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          automaticallyImplyLeading: false),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -50,7 +49,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
                     backgroundColor: (controller.spotCategory.value == 1)
-                        ? Colors.redAccent
+                        ? Colors.tealAccent
                         : Colors.white,
                     shadowColor: Colors.black,
                     minimumSize: const Size(130, 40),
@@ -68,7 +67,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
                     backgroundColor: (controller.spotCategory.value == 2)
-                        ? Colors.redAccent
+                        ? Colors.tealAccent
                         : Colors.white,
                     shadowColor: Colors.black,
                     minimumSize: const Size(130, 40),
@@ -94,7 +93,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
                     backgroundColor: (controller.spotCategory.value == 3)
-                        ? Colors.redAccent
+                        ? Colors.tealAccent
                         : Colors.white,
                     shadowColor: Colors.black,
                     minimumSize: const Size(130, 40),
@@ -112,7 +111,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
                     backgroundColor: (controller.spotCategory.value == 4)
-                        ? Colors.redAccent
+                        ? Colors.tealAccent
                         : Colors.white,
                     shadowColor: Colors.black,
                     minimumSize: const Size(130, 40),
@@ -127,6 +126,29 @@ class _SelectCategoryState extends State<SelectCategory> {
                   child: const Text('가족과 추억샷'),
                 ),
               ],
+            ),
+            const Spacer(),
+            Center(
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.blueGrey,
+                    backgroundColor: Colors.blueGrey,
+                    shadowColor: Colors.black,
+                    minimumSize: const Size(50, 50),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: const Center(
+                      child: Text(
+                    '확인',
+                    style: TextStyle(color: Colors.white),
+                  ))),
+            ),
+            const SizedBox(
+              height: 20,
             ),
           ],
         ),
