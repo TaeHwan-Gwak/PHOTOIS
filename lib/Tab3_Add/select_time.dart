@@ -25,10 +25,9 @@ class _SelectTimeState extends State<SelectTime> {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          automaticallyImplyLeading: false),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -48,7 +47,7 @@ class _SelectTimeState extends State<SelectTime> {
               headerStyle: const HeaderStyle(
                   formatButtonVisible: false, titleCentered: true),
               focusedDay: focusedDay,
-              firstDay: DateTime(2021, 1, 1),
+              firstDay: DateTime(2010, 1, 1),
               lastDay: DateTime(2023, 12, 31),
               locale: 'ko-KR',
               selectedDayPredicate: (day) {
@@ -74,7 +73,7 @@ class _SelectTimeState extends State<SelectTime> {
                 setState(() {
                   selectedDay = newSelectedDay;
                   focusedDay = newFocusedDay;
-                  controller.spotDate.value = focusedDay;
+                  controller.spotDate.value = selectedDay;
                 });
               },
             ),
@@ -88,17 +87,34 @@ class _SelectTimeState extends State<SelectTime> {
                 ),
                 const Spacer(),
                 DropdownButton<int>(
-                  value: controller.spotTime.value,
+                  value: controller.spotTimeHour.value,
                   items: List.generate(12, (index) => index)
                       .map((hour) => DropdownMenuItem<int>(
                             value: hour,
-                            child: Text(
-                                '${hour + controller.getStartHour()} ~ ${hour + controller.getStartHour() + 1}시'),
+                            child: Text('${hour + controller.getStartHour()}'),
                           ))
                       .toList(),
                   onChanged: (value) {
                     setState(() {
-                      controller.spotTime.value = value!;
+                      controller.spotTimeHour.value = value!;
+                    });
+                  },
+                ),
+                const Text(
+                  '  :  ',
+                  style: TextStyle(fontSize: 20),
+                ),
+                DropdownButton<int>(
+                  value: controller.spotTimeMinute.value,
+                  items: List.generate(60, (index) => index)
+                      .map((minute) => DropdownMenuItem<int>(
+                            value: minute,
+                            child: Text('$minute'),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      controller.spotTimeMinute.value = value!;
                     });
                   },
                 ),
@@ -135,6 +151,44 @@ class _SelectTimeState extends State<SelectTime> {
                   ],
                 ),
               ],
+            ),
+            const Spacer(),
+            Center(
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.blueGrey,
+                    backgroundColor: Colors.blueGrey,
+                    shadowColor: Colors.black,
+                    minimumSize: const Size(50, 50),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () {
+                    DateTime exDate = controller.spotDate.value;
+                    controller.spotDate.value =
+                        controller.spotTimePeriod[0] == true
+                            ? DateTime(
+                                exDate.year,
+                                exDate.month,
+                                exDate.day,
+                                controller.spotTimeHour.value,
+                                controller.spotTimeMinute.value)
+                            : DateTime(
+                                exDate.year,
+                                exDate.month,
+                                exDate.day,
+                                controller.spotTimeHour.value + 12,
+                                controller.spotTimeMinute.value);
+                    Get.back();
+                  },
+                  child: const Center(
+                      child: Text(
+                    '확인',
+                    style: TextStyle(color: Colors.white),
+                  ))),
+            ),
+            const SizedBox(
+              height: 20,
             ),
           ],
         ),

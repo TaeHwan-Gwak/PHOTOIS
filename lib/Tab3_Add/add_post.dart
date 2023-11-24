@@ -10,6 +10,11 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:native_exif/native_exif.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:photois/model/post_model.dart';
+import '../Tab3_Add/firestore_post.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
 class Tab3 extends StatefulWidget {
   const Tab3({super.key});
 
@@ -19,12 +24,6 @@ class Tab3 extends StatefulWidget {
 
 class _Tab3State extends State<Tab3> {
   int selectedIconNum = 0;
-  List<String> selectPic = [
-    "assets/images/google_login.png",
-    "assets/images/google_login.png",
-    "assets/images/google_login.png",
-    "assets/images/google_login.png",
-  ];
 
   List<String> weather = ["맑음", "흐림", "구름", "비", "눈"];
 
@@ -35,7 +34,6 @@ class _Tab3State extends State<Tab3> {
     "가족과 추억샷",
   ];
   final controller = Get.put((PhotoSpotInfo()));
-
   final picker = ImagePicker();
 
   XFile? pickedFile;
@@ -92,6 +90,16 @@ class _Tab3State extends State<Tab3> {
     setState(() {
       if (pickedFile != null) {
         controller.spotDate.value = shootingDate!;
+        if (int.parse(DateFormat.H().format(shootingDate!)) > 12) {
+          controller.spotTimeHour.value =
+              int.parse(DateFormat.H().format(shootingDate!)) - 12;
+          controller.spotTimePeriod = [false, true];
+        } else {
+          controller.spotTimeHour.value =
+              int.parse(DateFormat.H().format(shootingDate!));
+        }
+        controller.spotTimeMinute.value =
+            int.parse(DateFormat.m().format(shootingDate!));
       }
     });
   }
@@ -104,6 +112,17 @@ class _Tab3State extends State<Tab3> {
     coordinates = null;
 
     setState(() {});
+  }
+
+  Future<void> _uploadImage() async {
+    if (pickedFile != null) {
+      Reference storageReference =
+          FirebaseStorage.instance.ref().child("images/${DateTime.now()}.jpg");
+      await storageReference.putFile(File(pickedFile!.path));
+      print('Image uploaded to Firebase Storage');
+    } else {
+      print('No image selected.');
+    }
   }
 
   Widget _buildPhotoArea() {
@@ -130,7 +149,13 @@ class _Tab3State extends State<Tab3> {
           title: const Text('새 게시물'),
           actions: [
             TextButton(
-                onPressed: () {},
+                onPressed: () async {
+                  _uploadImage();
+                  PostModel fireModel =
+                      PostModel(motto: 'hi', date: Timestamp.now());
+
+                  await FireService().createPostInfo(fireModel.toJson());
+                },
                 child: const Text(
                   "등록",
                   style: TextStyle(fontSize: 20, color: Colors.blueGrey),
@@ -176,7 +201,7 @@ class _Tab3State extends State<Tab3> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: _buildGroupTitle('사진 업로드'),
           ),
-          const Gap(12),
+          const Gap(20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [InkWell(onTap: getImage, child: _buildPhotoArea())],
@@ -185,26 +210,7 @@ class _Tab3State extends State<Tab3> {
           if (pickedFile == null)
             const Text(" ")
           else
-            Text("${shootingDate.toString()}"),
-          /*
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [Text("<원본>"), Text("<보정본>")],
-          ),
-          const Gap(20),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "*원본과 보정본을 업로드해주세요. \n 포스팅은 보정본으로 진행됩니다.",
-                style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.red),
-              ),
-            ),
-          ),*/
+            Text("${new DateFormat().format(shootingDate!)}"),
         ],
       ),
     );
@@ -241,7 +247,9 @@ class _Tab3State extends State<Tab3> {
             Obx(() => Text(
                   (controller.spotDate.value == DateTime(0, 0, 0))
                       ? '시간을 입력해주세요'
-                      : '${DateFormat('yy.MM.dd').format(controller.spotDate.value)}  ${controller.spotTime.value + controller.getStartHour()}~${controller.spotTime.value + controller.getStartHour() + 1}시',
+                      : DateFormat("yyyy년 MM월 dd일 ")
+                          .add_Hm()
+                          .format(controller.spotDate.value),
                 )),
             (context) {
               return _buildRightArrow();
