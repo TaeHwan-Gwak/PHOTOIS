@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:photois/Main/data.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SelectWeather extends StatefulWidget {
   const SelectWeather({super.key});
@@ -9,7 +12,59 @@ class SelectWeather extends StatefulWidget {
   State<SelectWeather> createState() => _SelectCategoryState();
 }
 
+class Weather {
+  double? temp;
+  double? tempMax;
+  double? tempMin;
+  String? condition;
+  int? conditionId;
+  int? humidity;
+
+  Weather({this.temp, this.tempMax, this.tempMin, this.condition, this.conditionId, this.humidity});
+}
+
 class _SelectCategoryState extends State<SelectWeather> {
+  double lat = 37;
+  double lng = 126;
+
+  Future getWeather() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      lat = position.latitude;
+      lng = position.longitude;
+
+      print(lat);
+      print(lng);
+
+      http.Response response = await http.get(
+        Uri.parse(
+            "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=2ed1135aa0f58dafe0d2ead1574e0242"
+        ),
+      );
+
+      String jsonData = response.body;
+
+      // -273.15
+
+      print(jsonData);
+    } catch (e) {
+      print('error');
+    }
+  }
+
+  @override
+  void initState() {
+    getWeather();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.put((PhotoSpotInfo()));

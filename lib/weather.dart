@@ -1,9 +1,96 @@
+/*
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:photois/firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+
+import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:kpostal/kpostal.dart';
+
+// naver client ID : 'ud3er0cxg6'
+
+class SearchSpot extends StatefulWidget {
+  const SearchSpot({super.key});
+
+  @override
+  State<SearchSpot> createState() => _SearchSpotState();
+}
+
+class _SearchSpotState extends State<SearchSpot> {
+  double lat = 37;
+  double lng = 126;
+  bool locationObtained = true;
+
+  String address = '-';
+  String latitude = '-';
+  String longitude = '-';
+
+  Future<void> getCurrentLocation() async {
+    Map<String, String> headerss = {
+      "X-NCP-APIGW-API-KEY-ID": "ud3er0cxg6",
+      "X-NCP-APIGW-API-KEY": "i5bTtbxYq6VpOvNCYN4A6Qlw8hDzAdFKw0AsEk6s"
+    };
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      lat = position.latitude;
+      lng = position.longitude;
+
+      /* 네이버 지오코딩
+      String query = "";
+
+      http.Response response = await http.get(
+        Uri.parse(
+          "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${query}",
+        ),
+        headers: headerss,
+      );
+
+      String jsonData = response.body;
+
+      // print(jsonData);
+
+      var long = jsonDecode(jsonData)['addresses'][0]['x'];
+      var lati = jsonDecode(jsonData)['addresses'][0]['y'];
+
+      print(long);
+      print(lati);
+       */
+    } catch (e) {
+      print('error');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: SafeArea(
+          child: Column(
+
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 class NetworkHelper {
   static final NetworkHelper _instance = NetworkHelper._internal();
@@ -12,10 +99,19 @@ class NetworkHelper {
 
   NetworkHelper._internal();
 
-  Future getData(String url) async {
-    http.Response response = await http.get(Uri.parse(url));
+  Future getData() async {
+    http.Response response = await http.get(
+      Uri.parse(
+          "https://api.openweathermap.org/data/3.0/onecall?lat=${lat}.44&lon=${lng}&appid={API key}
+      ),
+    );
+
+    String jsonData = response.body;
+
+    // print(jsonData);
 
     if (response.statusCode == 200) {
+      print(response.body);
       return (response.body);
     } else {
       print(response.statusCode);
@@ -34,86 +130,53 @@ class Weather {
   Weather({this.temp, this.tempMax, this.tempMin, this.condition, this.conditionId, this.humidity});
 }
 
-Future<bool> _determinePermission() async {
-  bool serviceEnable = await Geolocator.isLocationServiceEnabled();
-  if(!serviceEnable) {
-    return Future.value(false);
-  }
-  LocationPermission permission = await Geolocator.checkPermission();
-  if(permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if(permission == LocationPermission.denied) {
-      return Future.value(false);
-    }
-  }
-  if(permission == LocationPermission.deniedForever) {
-    return Future.value(false);
-  }
-  return Future.value(true);
-}
-
 class OpenWeatherService {
+  double lat = 37;
+  double lng = 126;
+
   final String _apiKey = dotenv.env['openWeatherApiKey']!;
   final String _baseUrl = dotenv.env['openWeatherApiBaseUrl']!;
 
-  Future<Position> _getPosition() async{
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
-
-    return position;
-  }
-
   Future getWeather() async {
-    Position myLocation = await _getPosition();
-    // developer.log("myLocation called in network");
-    /*
-    try {
-      await myLocation.getMyCurrentLocation();
-    } catch (e) {
-      // developer.log("error : getLocation ${e.toString()}");
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
     }
-     */
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      lat = position.latitude;
+      lng = position.longitude;
+
+      /* 네이버 지오코딩
+      String query = "";
+
+      http.Response response = await http.get(
+        Uri.parse(
+          "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${query}",
+        ),
+        headers: headerss,
+      );
+
+      String jsonData = response.body;
+
+      // print(jsonData);
+
+      var long = jsonDecode(jsonData)['addresses'][0]['x'];
+      var lati = jsonDecode(jsonData)['addresses'][0]['y'];
+
+      print(long);
+      print(lati);
+       */
+    } catch (e) {
+      print('error');
+    }
 
     final weatherData = NetworkHelper().getData(
-        '$_baseUrl?lat=${myLocation.latitude}&lon=${myLocation.longitude}&appid=$_apiKey&units=metric');
+        '$_baseUrl?lat=${lat}&lon=${lng}&appid=$_apiKey&units=metric');
     return weatherData;
   }
 }
-
-enum LoadingStatus { completed, searching, empty }
-
-class WeatherProvider with ChangeNotifier {
-  final Weather _weather =
-  Weather(temp: 20, condition: "Clouds", conditionId: 200, humidity: 50);
-
-  Weather get weather => _weather;
-
-  LoadingStatus _loadingStatus = LoadingStatus.empty;
-
-  LoadingStatus get loadingStatus => _loadingStatus;
-
-  String _message = "Loading...";
-
-  String get message => _message;
-
-  final OpenWeatherService _openWeatherService = OpenWeatherService();
-
-  Future<void> getWeather() async {
-    _loadingStatus = LoadingStatus.searching;
-
-    final weatherData = await _openWeatherService.getWeather();
-    if (weatherData == null) {
-      _loadingStatus = LoadingStatus.empty;
-      _message = 'Could not find weather. Please try again.';
-    } else {
-      _loadingStatus = LoadingStatus.completed;
-      weather.condition = weatherData['weather'][0]['main'];
-      weather.conditionId = weatherData['weather'][0]['id'];
-      weather.humidity = weatherData['main']['humidity'];
-      weather.temp = weatherData['main']['temp'];
-      weather.temp = (weather.temp! * 10).roundToDouble() / 10;
-    }
-
-    notifyListeners();
-  }
-}
-
+ */
