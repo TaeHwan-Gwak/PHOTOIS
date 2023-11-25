@@ -4,6 +4,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:kpostal/kpostal.dart';
+import 'package:get/get.dart';
+import 'package:photois/Main/data.dart';
 
 // naver client ID : 'ud3er0cxg6'
 
@@ -11,7 +13,7 @@ enum SearchSeason { season, spring, summer, autumn, winter }
 
 enum SearchTime { time, day, night }
 
-enum SearchWeather { weather, sun, cloudSun, cloud, rainy, snow }
+enum SearchWeather { weather, sun, clouds, rain, snow }
 
 class SearchSpot extends StatefulWidget {
   const SearchSpot({super.key});
@@ -99,233 +101,258 @@ class _SearchSpotState extends State<SearchSpot> {
 
   @override
   Widget build(BuildContext context) {
+    final sizeController = Get.put((SizeController()));
     return MaterialApp(
       home: Scaffold(
         body: SafeArea(
           child: Column(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: const InputDecoration(
-                        labelText: '검색',
-                        hintText: '찾고싶은 사진 스팟 장소를 입력해주세요',
-                        prefixIcon: Icon(Icons.search),
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          searchLocation = value;
-                        });
-                      },
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  TextButton(
-                    onPressed: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => KpostalView(
-                            useLocalServer: true,
-                            localPort: 1024,
-                            callback: (Kpostal result) {
-                              setState(() {
-                                this.address = result.address;
-                                this.latitude = result.latitude.toString();
-                                this.longitude = result.longitude.toString();
-
-                                // Update the TextField with the received address
-                                _searchController.text = this.address;
-
-                                lat = double.parse(this.latitude);
-                                lng = double.parse(this.longitude);
-
-                                print(this.address);
-                                print(this.latitude);
-                                print(this.longitude);
-
-                                locationObtained = false;
-                              });
-                            },
-                          ),
+              SizedBox(
+                height: sizeController.screenHeight * 0.08,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: const InputDecoration(
+                          hintText: '찾고싶은 사진 스팟 장소를 입력해주세요',
+                          prefixIcon: Icon(Icons.search),
                         ),
-                      );
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                        onChanged: (value) {
+                          setState(() {
+                            searchLocation = value;
+                          });
+                        },
+                      ),
                     ),
-                    child: const Text(
-                      'Search',
-                      style: TextStyle(color: Colors.white),
+                    TextButton(
+                      onPressed: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => KpostalView(
+                              useLocalServer: true,
+                              localPort: 1024,
+                              callback: (Kpostal result) {
+                                setState(() {
+                                  this.address = result.address;
+                                  this.latitude = result.latitude.toString();
+                                  this.longitude = result.longitude.toString();
+
+                                  // Update the TextField with the received address
+                                  _searchController.text = this.address;
+
+                                  lat = double.parse(this.latitude);
+                                  lng = double.parse(this.longitude);
+
+                                  print(this.address);
+                                  print(this.latitude);
+                                  print(this.longitude);
+
+                                  locationObtained = false;
+                                });
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.blue),
+                      ),
+                      child: const Text(
+                        'Search',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      width: sizeController.screenWidth * 0.02,
+                    ),
+                  ],
+                ),
               ),
               Row(
                 children: [
                   Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(0),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<SearchSeason>(
-                          value: selectedSeason,
-                          onChanged: (SearchSeason? newValue) {
-                            setState(() {
-                              selectedSeason = newValue!;
-                            });
-                          },
-                          items: SearchSeason.values.map((SearchSeason status) {
-                            return DropdownMenuItem<SearchSeason>(
-                              value: status,
-                              child: Text(status.toString().split('.').last),
-                            );
-                          }).toList(),
-                          icon: null,
+                    flex: 1,
+                    child: DropdownButton<SearchSeason>(
+                        underline: Container(
+                          height: 2,
+                          color: Colors.blueGrey,
                         ),
+                        hint: Text(
+                          '   계절 선택',
+                          style: TextStyle(
+                              fontSize: sizeController.mainFontSize.value,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
+                        value: selectedSeason != SearchSeason.season
+                            ? selectedSeason
+                            : null,
+                        isExpanded: true,
+                        onChanged: (SearchSeason? newValue) {
+                          setState(() {
+                            selectedSeason = newValue!;
+                          });
+                        },
+                        items: SearchSeason.values.map((SearchSeason status) {
+                          return DropdownMenuItem<SearchSeason>(
+                            value: status,
+                            child:
+                                Text("   ${status.toString().split('.').last}"),
+                          );
+                        }).toList()),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: DropdownButton<SearchTime>(
+                      underline: Container(
+                        height: 2,
+                        color: Colors.indigo,
                       ),
+                      hint: Text(
+                        '   시간 선택',
+                        style: TextStyle(
+                            fontSize: sizeController.mainFontSize.value,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
+                      ),
+                      value:
+                          selectedTime != SearchTime.time ? selectedTime : null,
+                      isExpanded: true,
+                      onChanged: (SearchTime? newValue) {
+                        setState(() {
+                          selectedTime = newValue!;
+                        });
+                      },
+                      items: SearchTime.values.map((SearchTime status) {
+                        return DropdownMenuItem<SearchTime>(
+                          value: status,
+                          child:
+                              Text("   ${status.toString().split('.').last}"),
+                        );
+                      }).toList(),
                     ),
                   ),
                   Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(0),
+                    flex: 1,
+                    child: DropdownButton<SearchWeather>(
+                      underline: Container(
+                        height: 2,
+                        color: Colors.indigoAccent,
                       ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<SearchTime>(
-                          value: selectedTime,
-                          onChanged: (SearchTime? newValue) {
-                            setState(() {
-                              selectedTime = newValue!;
-                            });
-                          },
-                          items: SearchTime.values.map((SearchTime status) {
-                            return DropdownMenuItem<SearchTime>(
-                              value: status,
-                              child: Text(status.toString().split('.').last),
-                            );
-                          }).toList(),
-                          icon: null,
-                        ),
+                      hint: Text(
+                        '   날씨 선택',
+                        style: TextStyle(
+                            fontSize: sizeController.mainFontSize.value,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(0),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<SearchWeather>(
-                          value: selectedWeather,
-                          onChanged: (SearchWeather? newValue) {
-                            setState(() {
-                              selectedWeather = newValue!;
-                            });
-                          },
-                          items:
-                          SearchWeather.values.map((SearchWeather status) {
-                            return DropdownMenuItem<SearchWeather>(
-                              value: status,
-                              child: Text(status.toString().split('.').last),
-                            );
-                          }).toList(),
-                          icon: null,
-                        ),
-                      ),
+                      value: selectedWeather != SearchWeather.weather
+                          ? selectedWeather
+                          : null,
+                      isExpanded: true,
+                      onChanged: (SearchWeather? newValue) {
+                        setState(() {
+                          selectedWeather = newValue!;
+                        });
+                      },
+                      items: SearchWeather.values.map((SearchWeather status) {
+                        return DropdownMenuItem<SearchWeather>(
+                          value: status,
+                          child:
+                              Text("   ${status.toString().split('.').last}"),
+                        );
+                      }).toList(),
                     ),
                   ),
                 ],
               ),
               Expanded(
-                child: locationObtained ? FutureBuilder(
-                  future: getCurrentLocation(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return NaverMap(
-                        options: NaverMapViewOptions(
-                          scaleBarEnable: false,
-                          locationButtonEnable: true,
-                          logoClickEnable: false,
-                          extent: const NLatLngBounds(
-                            southWest: NLatLng(31.43, 122.37),
-                            northEast: NLatLng(44.35, 132.0),
-                          ),
-                          initialCameraPosition: NCameraPosition(
-                            target: NLatLng(lat, lng),
-                            zoom: 15,
-                            bearing: 0,
-                            tilt: 0,
-                          ),
-                        ),
-                        onMapReady: (controller) {
-                          final marker = NMarker(
-                            id: 'test',
-                            position: const NLatLng(37.506977, 126.953289),
-                          );
-                          marker.setOnTapListener((NMarker marker) {
-                            // 마커를 클릭했을 때 실행할 코드
-                          });
-                          controller.addOverlay(marker);
-                        },
-                      );
-                    } else {
-                      // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
-                )
-                    : FutureBuilder(
-                    future: getSearchLocation(),
-                    builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return NaverMap(
-                        options: NaverMapViewOptions(
-                          scaleBarEnable: false,
-                          locationButtonEnable: true,
-                          logoClickEnable: false,
-                          extent: const NLatLngBounds(
-                            southWest: NLatLng(31.43, 122.37),
-                            northEast: NLatLng(44.35, 132.0),
-                          ),
-                          initialCameraPosition: NCameraPosition(
-                            target: NLatLng(lat, lng),
-                            zoom: 15,
-                            bearing: 0,
-                            tilt: 0,
-                          ),
-                        ),
-                        onMapReady: (controller) {
-                          final marker = NMarker(
-                            id: 'test',
-                            position: const NLatLng(37.506977, 126.953289),
-                          );
-                          marker.setOnTapListener((NMarker marker) {
-                            // 마커를 클릭했을 때 실행할 코드
-                          });
-                          controller.addOverlay(marker);
-                        },
-                      );
-                    } else {
-                      // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
-                )
-              ),
+                  child: locationObtained
+                      ? FutureBuilder(
+                          future: getCurrentLocation(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              return NaverMap(
+                                options: NaverMapViewOptions(
+                                  scaleBarEnable: false,
+                                  locationButtonEnable: true,
+                                  logoClickEnable: false,
+                                  extent: const NLatLngBounds(
+                                    southWest: NLatLng(31.43, 122.37),
+                                    northEast: NLatLng(44.35, 132.0),
+                                  ),
+                                  initialCameraPosition: NCameraPosition(
+                                    target: NLatLng(lat, lng),
+                                    zoom: 15,
+                                    bearing: 0,
+                                    tilt: 0,
+                                  ),
+                                ),
+                                onMapReady: (controller) {
+                                  final marker = NMarker(
+                                    id: 'test',
+                                    position:
+                                        const NLatLng(37.506977, 126.953289),
+                                  );
+                                  marker.setOnTapListener((NMarker marker) {
+                                    // 마커를 클릭했을 때 실행할 코드
+                                  });
+                                  controller.addOverlay(marker);
+                                },
+                              );
+                            } else {
+                              // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                          },
+                        )
+                      : FutureBuilder(
+                          future: getSearchLocation(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              return NaverMap(
+                                options: NaverMapViewOptions(
+                                  scaleBarEnable: false,
+                                  locationButtonEnable: true,
+                                  logoClickEnable: false,
+                                  extent: const NLatLngBounds(
+                                    southWest: NLatLng(31.43, 122.37),
+                                    northEast: NLatLng(44.35, 132.0),
+                                  ),
+                                  initialCameraPosition: NCameraPosition(
+                                    target: NLatLng(lat, lng),
+                                    zoom: 15,
+                                    bearing: 0,
+                                    tilt: 0,
+                                  ),
+                                ),
+                                onMapReady: (controller) {
+                                  final marker = NMarker(
+                                    id: 'test',
+                                    position:
+                                        const NLatLng(37.506977, 126.953289),
+                                  );
+                                  marker.setOnTapListener((NMarker marker) {
+                                    // 마커를 클릭했을 때 실행할 코드
+                                  });
+                                  controller.addOverlay(marker);
+                                },
+                              );
+                            } else {
+                              // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                          },
+                        )),
             ],
           ),
         ),
