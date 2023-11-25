@@ -114,59 +114,53 @@ class _SearchSpotState extends State<SearchSpot> {
                     Expanded(
                       child: TextField(
                         controller: _searchController,
-                        decoration: const InputDecoration(
-                          hintText: '찾고싶은 사진 스팟 장소를 입력해주세요',
-                          prefixIcon: Icon(Icons.search),
+                        decoration: InputDecoration(
+                          hintText: '검색 버튼을 눌러 사진 스팟 장소를 찾으세요',
+                          prefixIcon: IconButton(
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => KpostalView(
+                                      useLocalServer: true,
+                                      localPort: 1024,
+                                      callback: (Kpostal result) {
+                                        setState(() {
+                                          this.address = result.address;
+                                          this.latitude =
+                                              result.latitude.toString();
+                                          this.longitude =
+                                              result.longitude.toString();
+
+                                          // Update the TextField with the received address
+                                          _searchController.text = this.address;
+
+                                          lat = double.parse(this.latitude);
+                                          lng = double.parse(this.longitude);
+
+                                          print(this.address);
+                                          print(this.latitude);
+                                          print(this.longitude);
+
+                                          locationObtained = false;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.search)),
                         ),
+                        style: TextStyle(
+                            fontSize: sizeController.middleFontSize.value + 2.5,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
                         onChanged: (value) {
                           setState(() {
                             searchLocation = value;
                           });
                         },
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => KpostalView(
-                              useLocalServer: true,
-                              localPort: 1024,
-                              callback: (Kpostal result) {
-                                setState(() {
-                                  this.address = result.address;
-                                  this.latitude = result.latitude.toString();
-                                  this.longitude = result.longitude.toString();
-
-                                  // Update the TextField with the received address
-                                  _searchController.text = this.address;
-
-                                  lat = double.parse(this.latitude);
-                                  lng = double.parse(this.longitude);
-
-                                  print(this.address);
-                                  print(this.latitude);
-                                  print(this.longitude);
-
-                                  locationObtained = false;
-                                });
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.blue),
-                      ),
-                      child: const Text(
-                        'Search',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    SizedBox(
-                      width: sizeController.screenWidth * 0.02,
                     ),
                   ],
                 ),
