@@ -8,8 +8,7 @@ import 'package:photois/Main/data.dart';
 import '../Tab1_Home/Tab_1.dart';
 import '../Tab2_Around/Tab_2.dart';
 import '../Tab3_Add/add_post.dart';
-import '../Tab4_Page/Tab_4.dart';
-import 'package:photois/Tab5_MY/mypage/my_page.dart';
+import 'package:photois/Tab4_MY/mypage/my_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -76,7 +75,6 @@ class _MainPageState extends State<MainPage> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'HOME'),
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'AROUND'),
           BottomNavigationBarItem(icon: Icon(Icons.add_a_photo), label: 'ADD'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'PAGE'),
           BottomNavigationBarItem(icon: Icon(Icons.account_box), label: 'MY'),
         ],
         currentIndex: _selectedIndex,
@@ -92,8 +90,6 @@ class _MainPageState extends State<MainPage> {
       case 1:
         return const SearchSpot();
       case 3:
-        return const Tab4();
-      case 4:
         return const MyPage();
       default:
         return const Tab1();
