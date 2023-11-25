@@ -1,14 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:photois/Tab5_MY/mypage/my_page.dart';
 import 'package:photois/service/account.dart';
 import 'package:photois/setting.dart';
+import 'package:photois/Main/data.dart';
 
 import '../Tab1_Home/Tab_1.dart';
 import '../Tab2_Around/Tab_2.dart';
 import '../Tab3_Add/add_post.dart';
 import '../Tab4_Page/Tab_4.dart';
+import 'package:photois/Tab5_MY/mypage/my_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -58,17 +59,19 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    final sizeController = Get.put((SizeController()));
+
     return Scaffold(
       // body: pages[_selectedIndex],
       body: buildContentPage(),
       extendBodyBehindAppBar: true,
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        iconSize: 18.0,
+        iconSize: sizeController.bigFontSize.value,
         unselectedItemColor: Colors.black,
-        unselectedFontSize: 10.0,
+        unselectedFontSize: sizeController.middleFontSize.value,
         selectedItemColor: Colors.lightBlue,
-        selectedFontSize: 12.0,
+        selectedFontSize: sizeController.middleFontSize.value,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'HOME'),
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'AROUND'),

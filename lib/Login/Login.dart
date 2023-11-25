@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:photois/Main/data.dart';
 import 'package:photois/service/firebase.auth.dart';
 
 Future<UserCredential> signInWithGoogle() async {
@@ -28,9 +29,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const String imageLogoName = 'assets/images/PHOTOIS_LOGO.png';
-
-    var screenHeight = MediaQuery.of(context).size.height;
-    var screenWidth = MediaQuery.of(context).size.width;
+    final sizeController = Get.put((SizeController()));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -44,21 +43,23 @@ class LoginPage extends StatelessWidget {
             ),
             Image.asset(
               imageLogoName,
-              width: screenWidth * 0.9,
-              height: screenHeight * 0.1,
+              width: sizeController.screenWidth.value * 0.616666,
+              height: sizeController.screenHeight.value * 0.0859375,
             ),
-            const Divider(
-                thickness: 6, indent: 40, endIndent: 40, color: Colors.black),
-            const Text(
+            Divider(
+                thickness: 4,
+                indent: sizeController.screenWidth.value * 0.15,
+                endIndent: sizeController.screenWidth.value * 0.15,
+                color: Colors.black),
+            Text(
               "당신만의 사진 스팟",
-              style: TextStyle(fontSize: 30),
+              style: TextStyle(fontSize: sizeController.bigFontSize.value),
             ),
-            const SizedBox(
-              height: 200,
-            ),
+            const Expanded(child: SizedBox()),
             InkWell(
                 onTap: () {
                   Get.offNamed('/main');
+                  //Get.offNamed('/login1');
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -76,18 +77,17 @@ class LoginPage extends StatelessWidget {
                   ),
                   child: Image.asset(
                     "assets/images/kakao_login.png",
-                    width: 250,
+                    width: sizeController.screenWidth.value * 0.6,
                     fit: BoxFit.fill,
                   ),
                 )),
-            const SizedBox(
-              height: 15,
+            SizedBox(
+              height: sizeController.screenHeight.value * 0.03,
             ),
             InkWell(
               onTap: () async {
-                final loggedUid = await FbAuth.signInWithGoogleSignIn(
-                  unlink: true,
-                );
+                final loggedUid =
+                    await FbAuth.signInWithGoogleSignIn(unlink: true);
                 debugPrint('loggedUid: $loggedUid');
 
                 if (loggedUid != null) {
@@ -114,11 +114,14 @@ class LoginPage extends StatelessWidget {
                 ),
                 child: Image.asset(
                   "assets/images/google_login.png",
-                  width: 250,
+                  width: sizeController.screenWidth.value * 0.6,
                   fit: BoxFit.fill,
                 ),
               ),
             ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.1,
+            )
           ],
         ),
       ),

@@ -13,35 +13,37 @@ class _LoginExtra3State extends State<LoginExtra3> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put((UserInfo()));
+    final sizeController = Get.put((SizeController()));
+
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+      appBar: PreferredSize(
+        preferredSize:
+            Size.fromHeight(sizeController.screenHeight.value * 0.05),
+        child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            iconTheme: const IconThemeData(color: Colors.black)),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(sizeController.screenHeight.value * 0.03),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 10,
-            ),
-            const Text(
+            Text(
               "추가정보를 입력해주세요",
-              style: TextStyle(fontSize: 30),
+              style: TextStyle(fontSize: sizeController.bigFontSize.value),
             ),
-            const SizedBox(
-              height: 50,
+            SizedBox(
+              height: sizeController.screenHeight.value * 0.03,
             ),
-            const Text(
+            Text(
               " 선호하는 카테고리를 선택해주세요",
-              style: TextStyle(fontSize: 15),
+              style: TextStyle(fontSize: sizeController.middleFontSize.value),
             ),
-            const SizedBox(
-              height: 20,
+            SizedBox(
+              height: sizeController.screenHeight.value * 0.01,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -53,7 +55,8 @@ class _LoginExtra3State extends State<LoginExtra3> {
                         ? Colors.redAccent
                         : Colors.white,
                     shadowColor: Colors.black,
-                    minimumSize: const Size(130, 40),
+                    minimumSize: Size(sizeController.screenWidth.value * 0.4,
+                        sizeController.screenHeight.value * 0.07),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
@@ -62,7 +65,9 @@ class _LoginExtra3State extends State<LoginExtra3> {
                       controller.checkCategory.value = 1;
                     });
                   },
-                  child: const Text('나홀로 인생샷'),
+                  child: Text('나홀로 인생샷',
+                      style: TextStyle(
+                          fontSize: sizeController.middleFontSize.value)),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -71,7 +76,8 @@ class _LoginExtra3State extends State<LoginExtra3> {
                         ? Colors.redAccent
                         : Colors.white,
                     shadowColor: Colors.black,
-                    minimumSize: const Size(130, 40),
+                    minimumSize: Size(sizeController.screenWidth.value * 0.4,
+                        sizeController.screenHeight.value * 0.07),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
@@ -80,12 +86,14 @@ class _LoginExtra3State extends State<LoginExtra3> {
                       controller.checkCategory.value = 2;
                     });
                   },
-                  child: const Text('애인과 커플샷'),
+                  child: Text('애인과 커플샷',
+                      style: TextStyle(
+                          fontSize: sizeController.middleFontSize.value)),
                 ),
               ],
             ),
-            const SizedBox(
-              height: 20,
+            SizedBox(
+              height: sizeController.screenHeight * 0.03,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -97,7 +105,8 @@ class _LoginExtra3State extends State<LoginExtra3> {
                         ? Colors.redAccent
                         : Colors.white,
                     shadowColor: Colors.black,
-                    minimumSize: const Size(130, 40),
+                    minimumSize: Size(sizeController.screenWidth.value * 0.4,
+                        sizeController.screenHeight.value * 0.07),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
@@ -106,7 +115,9 @@ class _LoginExtra3State extends State<LoginExtra3> {
                       controller.checkCategory.value = 3;
                     });
                   },
-                  child: const Text('친구와 우정샷'),
+                  child: Text('친구와 우정샷',
+                      style: TextStyle(
+                          fontSize: sizeController.middleFontSize.value)),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -115,7 +126,8 @@ class _LoginExtra3State extends State<LoginExtra3> {
                         ? Colors.redAccent
                         : Colors.white,
                     shadowColor: Colors.black,
-                    minimumSize: const Size(130, 40),
+                    minimumSize: Size(sizeController.screenWidth.value * 0.4,
+                        sizeController.screenHeight.value * 0.07),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
@@ -124,18 +136,21 @@ class _LoginExtra3State extends State<LoginExtra3> {
                       controller.checkCategory.value = 4;
                     });
                   },
-                  child: const Text('가족과 추억샷'),
+                  child: Text('가족과 추억샷',
+                      style: TextStyle(
+                          fontSize: sizeController.middleFontSize.value)),
                 ),
               ],
             ),
-            const Spacer(),
+            const Expanded(child: SizedBox()),
             Center(
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
                     backgroundColor: Colors.black,
                     shadowColor: Colors.black,
-                    minimumSize: const Size(130, 50),
+                    minimumSize: Size(sizeController.screenWidth.value * 0.3,
+                        sizeController.screenHeight.value * 0.07),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(3)),
                   ),
@@ -148,15 +163,17 @@ class _LoginExtra3State extends State<LoginExtra3> {
                       ));
                     }
                   },
-                  child: const Center(
+                  child: Center(
                       child: Text(
                     '완료',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: sizeController.middleFontSize.value),
                   ))),
             ),
-            const SizedBox(
-              height: 20,
-            )
+            SizedBox(
+              height: sizeController.screenHeight * 0.05,
+            ),
           ],
         ),
       ),

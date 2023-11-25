@@ -16,31 +16,33 @@ class _LoginExtra1State extends State<LoginExtra1> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put((UserInfo()));
+    final sizeController = Get.put((SizeController()));
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          automaticallyImplyLeading: false),
+      appBar: PreferredSize(
+        preferredSize:
+            Size.fromHeight(sizeController.screenHeight.value * 0.05),
+        child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            automaticallyImplyLeading: false),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(sizeController.screenHeight.value * 0.03),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 10,
-            ),
-            const Text(
+            Text(
               "추가정보를 입력해주세요",
-              style: TextStyle(fontSize: 30),
+              style: TextStyle(fontSize: sizeController.bigFontSize.value),
             ),
-            const SizedBox(
-              height: 50,
+            SizedBox(
+              height: sizeController.screenHeight.value * 0.03,
             ),
-            const Text(
+            Text(
               " 닉네임",
-              style: TextStyle(fontSize: 15),
+              style: TextStyle(fontSize: sizeController.middleFontSize.value),
             ),
             Form(
               key: _formKey,
@@ -86,7 +88,9 @@ class _LoginExtra1State extends State<LoginExtra1> {
             Get.toNamed('/login2');
           }
         },
-        child: const Icon(Icons.arrow_forward_ios),
+        mini: true,
+        child: Icon(Icons.arrow_forward_ios,
+            size: sizeController.bigFontSize.value),
       ),
     );
   }

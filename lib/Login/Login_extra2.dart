@@ -15,34 +15,36 @@ class _LoginExtra2State extends State<LoginExtra2> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put((UserInfo()));
+    final sizeController = Get.put((SizeController()));
+
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+      appBar: PreferredSize(
+        preferredSize:
+            Size.fromHeight(sizeController.screenHeight.value * 0.05),
+        child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            iconTheme: const IconThemeData(color: Colors.black)),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(sizeController.screenHeight.value * 0.03),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 10,
-            ),
-            const Text(
+            Text(
               "추가정보를 입력해주세요",
-              style: TextStyle(fontSize: 30),
+              style: TextStyle(fontSize: sizeController.bigFontSize.value),
             ),
-            const SizedBox(
-              height: 50,
+            SizedBox(
+              height: sizeController.screenHeight.value * 0.03,
             ),
-            const Text(
+            Text(
               " 포토그래퍼 여부",
-              style: TextStyle(fontSize: 15),
+              style: TextStyle(fontSize: sizeController.middleFontSize.value),
             ),
-            const SizedBox(
-              height: 20,
+            SizedBox(
+              height: sizeController.screenHeight.value * 0.01,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -54,7 +56,8 @@ class _LoginExtra2State extends State<LoginExtra2> {
                         ? Colors.redAccent
                         : Colors.white,
                     shadowColor: Colors.black,
-                    minimumSize: const Size(130, 40),
+                    minimumSize: Size(sizeController.screenWidth.value * 0.4,
+                        sizeController.screenHeight.value * 0.07),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
@@ -63,7 +66,11 @@ class _LoginExtra2State extends State<LoginExtra2> {
                       controller.checkPhotographer.value = 1;
                     });
                   },
-                  child: const Text('포토그래퍼'),
+                  child: Text(
+                    "포토그래퍼",
+                    style: TextStyle(
+                        fontSize: sizeController.middleFontSize.value),
+                  ),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -72,7 +79,8 @@ class _LoginExtra2State extends State<LoginExtra2> {
                         ? Colors.redAccent
                         : Colors.white,
                     shadowColor: Colors.black,
-                    minimumSize: const Size(130, 40),
+                    minimumSize: Size(sizeController.screenWidth.value * 0.4,
+                        sizeController.screenHeight.value * 0.07),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
@@ -81,29 +89,34 @@ class _LoginExtra2State extends State<LoginExtra2> {
                       controller.checkPhotographer.value = 2;
                     });
                   },
-                  child: const Text('일반 사용자'),
+                  child: Text(
+                    "일반 사용자",
+                    style: TextStyle(
+                        fontSize: sizeController.middleFontSize.value),
+                  ),
                 ),
               ],
             ),
-            const SizedBox(
-              height: 50,
+            SizedBox(
+              height: sizeController.screenHeight.value * 0.05,
             ),
-            const Text(
+            Text(
               " 인스타그램 아이디(선택)",
-              style: TextStyle(fontSize: 15),
+              style: TextStyle(fontSize: sizeController.middleFontSize.value),
             ),
             Form(
               key: _formKey,
               child: TextFormField(
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                     counterText: '정확하게 기입해주세요',
-                    counterStyle: TextStyle(),
-                    errorBorder: UnderlineInputBorder(
+                    counterStyle: TextStyle(
+                        fontSize: sizeController.middleFontSize.value),
+                    errorBorder: const UnderlineInputBorder(
                         borderSide: BorderSide(
                             color: Colors.red,
                             width: 2,
                             strokeAlign: BorderSide.strokeAlignOutside)),
-                    focusedErrorBorder: UnderlineInputBorder(
+                    focusedErrorBorder: const UnderlineInputBorder(
                         borderSide: BorderSide(
                       color: Colors.red,
                       width: 2,
@@ -132,7 +145,9 @@ class _LoginExtra2State extends State<LoginExtra2> {
             ));
           }
         },
-        child: const Icon(Icons.arrow_forward_ios),
+        mini: true,
+        child: Icon(Icons.arrow_forward_ios,
+            size: sizeController.bigFontSize.value),
       ),
     );
   }

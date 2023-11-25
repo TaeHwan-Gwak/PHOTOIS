@@ -1,4 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+class SizeController extends GetxController {
+  RxDouble screenWidth = MediaQuery.of(Get.context!).size.width.obs;
+  RxDouble screenHeight = MediaQuery.of(Get.context!).size.height.obs;
+
+  RxDouble bigFontSize = (MediaQuery.of(Get.context!).size.width * 0.06).obs;
+  RxDouble middleFontSize = (MediaQuery.of(Get.context!).size.width * 0.03).obs;
+  RxDouble mainFontSize = (MediaQuery.of(Get.context!).size.width * 0.04).obs;
+}
 
 class UserInfo extends GetxController {
   final nickname = ''.obs;
