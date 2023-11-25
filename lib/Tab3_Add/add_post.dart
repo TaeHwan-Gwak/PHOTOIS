@@ -10,7 +10,6 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:native_exif/native_exif.dart';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:photois/model/post_model.dart';
 import '../Tab3_Add/firestore_post.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -25,7 +24,7 @@ class Tab3 extends StatefulWidget {
 class _Tab3State extends State<Tab3> {
   int selectedIconNum = 0;
 
-  List<String> weather = ["맑음", "흐림", "구름", "비", "눈"];
+  List<String> weather = ["맑음", "구름", "비", "눈"];
 
   List<String> category = [
     "나홀로 인생샷",
@@ -151,10 +150,20 @@ class _Tab3State extends State<Tab3> {
             TextButton(
                 onPressed: () async {
                   _uploadImage();
-                  PostModel fireModel =
-                      PostModel(motto: 'hi', date: Timestamp.now());
+                  PostModel fireModel = PostModel(
+                    postID: '',
+                    createdAt: DateTime.now(),
+                    userUid: '',
+                    address: '',
+                    date: DateTime.now(),
+                    weather: PostWeather.sun,
+                    category: PostCategory.couple,
+                  );
 
                   await FireService().createPostInfo(fireModel.toJson());
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('사진 등록 완료'),
+                  ));
                 },
                 child: const Text(
                   "등록",

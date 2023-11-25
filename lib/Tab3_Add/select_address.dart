@@ -42,8 +42,7 @@ class _SelectAddressState extends State<SelectAddress> {
     }
 
     http.Response response = await http.get(
-        Uri
-            .parse(
+        Uri.parse(
             "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json"),
         headers: headerss);
 
@@ -52,13 +51,13 @@ class _SelectAddressState extends State<SelectAddress> {
     print(jsonData);
 
     var myJson_one =
-    jsonDecode(jsonData)["results"][1]['region']['area1']['name'];
+        jsonDecode(jsonData)["results"][1]['region']['area1']['name'];
     var myJson_two =
-    jsonDecode(jsonData)["results"][1]['region']['area2']['name'];
+        jsonDecode(jsonData)["results"][1]['region']['area2']['name'];
     var myJson_three =
-    jsonDecode(jsonData)["results"][1]['region']['area3']['name'];
+        jsonDecode(jsonData)["results"][1]['region']['area3']['name'];
     var myJson_four =
-    jsonDecode(jsonData)["results"][1]['region']['area4']['name'];
+        jsonDecode(jsonData)["results"][1]['region']['area4']['name'];
 
     List<String> which = [myJson_one, myJson_two, myJson_three, myJson_four];
     print(which);
@@ -75,39 +74,39 @@ class _SelectAddressState extends State<SelectAddress> {
     // final controller = Get.put((PhotoSpotInfo()));
     return MaterialApp(
       home: Scaffold(
-        body: FutureBuilder(
-          future: getCurrentLocation(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return NaverMap(
-                options: NaverMapViewOptions(
-                  scaleBarEnable: false,
-                  locationButtonEnable: true,
-                  logoClickEnable: false,
-                  extent: const NLatLngBounds(
-                    southWest: NLatLng(31.43, 122.37),
-                    northEast: NLatLng(44.35, 132.0),
+        body: Container(
+          height: 300,
+          child: FutureBuilder(
+            future: getCurrentLocation(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return NaverMap(
+                  options: NaverMapViewOptions(
+                    scaleBarEnable: false,
+                    locationButtonEnable: true,
+                    logoClickEnable: false,
+                    extent: const NLatLngBounds(
+                      southWest: NLatLng(31.43, 122.37),
+                      northEast: NLatLng(44.35, 132.0),
+                    ),
+                    initialCameraPosition: NCameraPosition(
+                      target: NLatLng(lat, lng),
+                      zoom: 15,
+                      bearing: 0,
+                      tilt: 0,
+                    ),
                   ),
-                  initialCameraPosition: NCameraPosition(
-                    target: NLatLng(lat, lng),
-                    zoom: 15,
-                    bearing: 0,
-                    tilt: 0,
-                  ),
-                ),
-                onMapReady: (controller) {
-
-                },
-                onMapTapped: (point, latLng) {
-                },
-              );
-            } else {
-              // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
+                  onMapReady: (controller) {},
+                  onMapTapped: (point, latLng) {},
+                );
+              } else {
+                // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
+          ),
         ),
       ),
     );

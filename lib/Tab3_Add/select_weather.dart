@@ -20,7 +20,13 @@ class Weather {
   int? conditionId;
   int? humidity;
 
-  Weather({this.temp, this.tempMax, this.tempMin, this.condition, this.conditionId, this.humidity});
+  Weather(
+      {this.temp,
+      this.tempMax,
+      this.tempMin,
+      this.condition,
+      this.conditionId,
+      this.humidity});
 }
 
 class _SelectCategoryState extends State<SelectWeather> {
@@ -45,8 +51,7 @@ class _SelectCategoryState extends State<SelectWeather> {
 
       http.Response response = await http.get(
         Uri.parse(
-            "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=2ed1135aa0f58dafe0d2ead1574e0242"
-        ),
+            "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=2ed1135aa0f58dafe0d2ead1574e0242"),
       );
 
       String jsonData = response.body;
@@ -130,7 +135,7 @@ class _SelectCategoryState extends State<SelectWeather> {
                         controller.spotWeather.value = 2;
                       });
                     },
-                    icon: const Icon(MyFlutterApp.cloudSun),
+                    icon: const Icon(MyFlutterApp.cloud),
                     iconSize: 40,
                   ),
                 ),
@@ -148,7 +153,7 @@ class _SelectCategoryState extends State<SelectWeather> {
                         controller.spotWeather.value = 3;
                       });
                     },
-                    icon: const Icon(MyFlutterApp.cloud),
+                    icon: const Icon(MyFlutterApp.rainy),
                     iconSize: 40,
                   ),
                 ),
@@ -164,24 +169,6 @@ class _SelectCategoryState extends State<SelectWeather> {
                     onPressed: () {
                       setState(() {
                         controller.spotWeather.value = 4;
-                      });
-                    },
-                    icon: const Icon(MyFlutterApp.rainy),
-                    iconSize: 40,
-                  ),
-                ),
-                Ink(
-                  padding: const EdgeInsets.all(6.0),
-                  decoration: BoxDecoration(
-                    color: (controller.spotWeather.value == 5)
-                        ? Colors.tealAccent
-                        : Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        controller.spotWeather.value = 5;
                       });
                     },
                     icon: const Icon(MyFlutterApp.snow),
@@ -228,8 +215,6 @@ class MyFlutterApp {
 
   static const IconData snow =
       IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData cloudSun =
-      IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData rainy =
       IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData sun =
