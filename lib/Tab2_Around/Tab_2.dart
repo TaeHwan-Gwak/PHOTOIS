@@ -31,6 +31,8 @@ class _SearchSpotState extends State<SearchSpot> {
   String latitude = '-';
   String longitude = '-';
 
+  String condition = '-';
+
   Future<void> getCurrentLocation() async {
     Map<String, String> headerss = {
       "X-NCP-APIGW-API-KEY-ID": "ud3er0cxg6",
@@ -48,6 +50,17 @@ class _SearchSpotState extends State<SearchSpot> {
 
       lat = position.latitude;
       lng = position.longitude;
+
+      http.Response response = await http.get(
+        Uri.parse(
+            "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=2ed1135aa0f58dafe0d2ead1574e0242"),
+      );
+
+      String jsonData = response.body;
+
+      condition = jsonDecode(jsonData)['weather'][0]['main'];
+
+      print(condition);
 
       /* 네이버 지오코딩
       String query = "";
