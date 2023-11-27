@@ -32,8 +32,6 @@ class _SearchSpotState extends State<SearchSpot> {
   String longitude = '-';
 
   String condition = '-';
-  double temp = 10;
-
 
   Future<void> getCurrentLocation() async {
     Map<String, String> headerss = {
