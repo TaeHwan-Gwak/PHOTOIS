@@ -12,26 +12,12 @@ class SelectWeather extends StatefulWidget {
   State<SelectWeather> createState() => _SelectCategoryState();
 }
 
-class Weather {
-  double? temp;
-  double? tempMax;
-  double? tempMin;
-  String? condition;
-  int? conditionId;
-  int? humidity;
-
-  Weather(
-      {this.temp,
-      this.tempMax,
-      this.tempMin,
-      this.condition,
-      this.conditionId,
-      this.humidity});
-}
-
 class _SelectCategoryState extends State<SelectWeather> {
   double lat = 37;
   double lng = 126;
+
+  int start = 0;
+  int end = 0;
 
   Future getWeather() async {
     LocationPermission permission = await Geolocator.checkPermission();
@@ -49,16 +35,18 @@ class _SelectCategoryState extends State<SelectWeather> {
       print(lat);
       print(lng);
 
+      /*
+
       http.Response response = await http.get(
         Uri.parse(
-            "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=2ed1135aa0f58dafe0d2ead1574e0242"),
+            "https://history.openweathermap.org/data/2.5/history/city?lat=${lat}&lon=${lng}&type=hour&start=${start}&end=${end}&appid=2ed1135aa0f58dafe0d2ead1574e0242"),
       );
 
       String jsonData = response.body;
 
-      // -273.15
-
       print(jsonData);
+
+       */
     } catch (e) {
       print('error');
     }
