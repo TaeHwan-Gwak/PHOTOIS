@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../Main/data.dart';
+
 // naver client ID : 'ud3er0cxg6'
 
 class SelectAddress extends StatefulWidget {
@@ -73,87 +75,100 @@ class _SelectAddressState extends State<SelectAddress> {
 
   @override
   Widget build(BuildContext context) {
-    // final controller = Get.put((PhotoSpotInfo()));
-    return MaterialApp(
-      home: Scaffold(
-        body: Container(
-          //height: 300,
-          child: FutureBuilder(
-            future: getCurrentLocation(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                final cameraPosition = NCameraPosition(
-                  target: NLatLng(lat, lng),
-                  zoom: 15,
-                  bearing: 0,
-                  tilt: 0,
-                );
-                return NaverMap(
-                  options: NaverMapViewOptions(
-                    scaleBarEnable: false,
-                    locationButtonEnable: true,
-                    logoClickEnable: false,
-                    extent: const NLatLngBounds(
-                      southWest: NLatLng(31.43, 122.37),
-                      northEast: NLatLng(44.35, 132.0),
-                    ),
-                    initialCameraPosition: cameraPosition,
-                  ),
-                  onMapReady: (controller) async {
-                    _controller = controller;
+    final controller = Get.put((PhotoSpotInfo()));
+    final sizeController = Get.put((SizeController()));
 
-                    final iconImage = await NOverlayImage.fromWidget(
-                        widget: const FlutterLogo(),
-                        size: const Size(24, 24),
-                        context: context);
-
-                    marker = NMarker(
-                      id: 'which',
-                      position:
-                      NLatLng(lat, lng),
-                      icon: iconImage,
-                    );
-                    _controller?.addOverlay(marker);
-                    marker.setOnTapListener((NMarker marker) {
-
-                    });
-                  },
-                  onMapTapped: (point, latLng) async {
-                    lat = latLng.latitude;
-                    lng = latLng.longitude;
-
-                    print(lat);
-                    print(lng);
-
-                    final iconImage = await NOverlayImage.fromWidget(
-                        widget: const FlutterLogo(),
-                        size: const Size(24, 24),
-                        context: context);
-
-                    final updatedMarker = NMarker(
-                      id: 'which',
-                      position: NLatLng(lat, lng),
-                      icon: iconImage,
-                    );
-
-                    final cameraUpdate = NCameraUpdate.withParams(
-                      target: NLatLng(lat, lng),
-                    );
-
-                    _controller?.updateCamera(cameraUpdate);
-
-                    _controller?.addOverlay(updatedMarker);
-                  },
-                );
-              } else {
-                // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            },
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize:
+            Size.fromHeight(sizeController.screenHeight.value * 0.05),
+        child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            automaticallyImplyLeading: false),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "   위치 정보를 확인해주세요.",
+            style: TextStyle(fontSize: sizeController.bigFontSize.value),
           ),
-        ),
+          Expanded(
+            child: FutureBuilder(
+              future: getCurrentLocation(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  final cameraPosition = NCameraPosition(
+                    target: NLatLng(lat, lng),
+                    zoom: 15,
+                    bearing: 0,
+                    tilt: 0,
+                  );
+                  return NaverMap(
+                    options: NaverMapViewOptions(
+                      scaleBarEnable: false,
+                      locationButtonEnable: true,
+                      logoClickEnable: false,
+                      extent: const NLatLngBounds(
+                        southWest: NLatLng(31.43, 122.37),
+                        northEast: NLatLng(44.35, 132.0),
+                      ),
+                      initialCameraPosition: cameraPosition,
+                    ),
+                    onMapReady: (controller) async {
+                      _controller = controller;
+
+                      final iconImage = await NOverlayImage.fromWidget(
+                          widget: const FlutterLogo(),
+                          size: const Size(24, 24),
+                          context: context);
+
+                      marker = NMarker(
+                        id: 'which',
+                        position: NLatLng(lat, lng),
+                        icon: iconImage,
+                      );
+                      _controller?.addOverlay(marker);
+                      marker.setOnTapListener((NMarker marker) {});
+                    },
+                    onMapTapped: (point, latLng) async {
+                      lat = latLng.latitude;
+                      lng = latLng.longitude;
+
+                      print(lat);
+                      print(lng);
+
+                      final iconImage = await NOverlayImage.fromWidget(
+                          widget: const FlutterLogo(),
+                          size: const Size(24, 24),
+                          context: context);
+
+                      final updatedMarker = NMarker(
+                        id: 'which',
+                        position: NLatLng(lat, lng),
+                        icon: iconImage,
+                      );
+
+                      final cameraUpdate = NCameraUpdate.withParams(
+                        target: NLatLng(lat, lng),
+                      );
+
+                      _controller?.updateCamera(cameraUpdate);
+
+                      _controller?.addOverlay(updatedMarker);
+                    },
+                  );
+                } else {
+                  // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
     /*

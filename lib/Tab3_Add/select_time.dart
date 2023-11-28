@@ -14,6 +14,7 @@ class _SelectTimeState extends State<SelectTime> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put((PhotoSpotInfo()));
+    final sizeController = Get.put((SizeController()));
 
     DateTime focusedDay = DateTime.now();
     if (controller.spotDate.value != DateTime(0, 0, 0)) {
@@ -24,28 +25,40 @@ class _SelectTimeState extends State<SelectTime> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          automaticallyImplyLeading: false),
+      appBar: PreferredSize(
+        preferredSize:
+            Size.fromHeight(sizeController.screenHeight.value * 0.05),
+        child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            automaticallyImplyLeading: false),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(sizeController.screenHeight.value * 0.03),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 10,
-            ),
-            const Text(
-              "날짜와 시각, 날씨 정보를 확인해주세요.",
-              style: TextStyle(fontSize: 22),
-            ),
-            const SizedBox(
-              height: 10,
+            Text(
+              "날짜와 시각 정보를 확인해주세요.",
+              style: TextStyle(fontSize: sizeController.bigFontSize.value),
             ),
             TableCalendar(
-              headerStyle: const HeaderStyle(
-                  formatButtonVisible: false, titleCentered: true),
+              rowHeight: sizeController.screenHeight.value * 0.07,
+              daysOfWeekHeight: sizeController.screenHeight.value * 0.04,
+              daysOfWeekStyle: DaysOfWeekStyle(
+                  weekdayStyle:
+                      TextStyle(fontSize: sizeController.mainFontSize.value),
+                  weekendStyle:
+                      TextStyle(fontSize: sizeController.mainFontSize.value)),
+              headerStyle: HeaderStyle(
+                  headerPadding: EdgeInsets.all(
+                      sizeController.screenHeight.value * 0.0005),
+                  titleTextStyle:
+                      TextStyle(fontSize: sizeController.mainFontSize.value),
+                  formatButtonTextStyle:
+                      TextStyle(fontSize: sizeController.mainFontSize.value),
+                  formatButtonVisible: false,
+                  titleCentered: true),
               focusedDay: focusedDay,
               firstDay: DateTime(2010, 1, 1),
               lastDay: DateTime(2023, 12, 31),
@@ -53,22 +66,27 @@ class _SelectTimeState extends State<SelectTime> {
               selectedDayPredicate: (day) {
                 return isSameDay(selectedDay, day);
               },
-              daysOfWeekHeight: 20,
-              calendarStyle: const CalendarStyle(
+              calendarStyle: CalendarStyle(
                   defaultTextStyle: TextStyle(
-                    color: Colors.blueGrey,
-                  ),
-                  weekendTextStyle: TextStyle(color: Colors.grey),
+                      color: Colors.blueGrey,
+                      fontSize: sizeController.middleFontSize.value),
+                  weekendTextStyle: TextStyle(
+                      color: Colors.grey,
+                      fontSize: sizeController.middleFontSize.value),
                   outsideDaysVisible: false,
-                  todayDecoration: BoxDecoration(
+                  todayDecoration: const BoxDecoration(
                       color: Colors.transparent,
                       shape: BoxShape.circle // 현재 날짜의 배경을 투명으로 설정
                       ),
-                  todayTextStyle: TextStyle(color: Colors.blueGrey),
-                  selectedDecoration: BoxDecoration(
+                  todayTextStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: sizeController.middleFontSize.value),
+                  selectedDecoration: const BoxDecoration(
                       color: Colors.tealAccent, shape: BoxShape.circle),
                   selectedTextStyle: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.teal)),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.teal,
+                      fontSize: sizeController.middleFontSize.value)),
               onDaySelected: (newSelectedDay, newFocusedDay) {
                 setState(() {
                   selectedDay = newSelectedDay;
@@ -77,21 +95,29 @@ class _SelectTimeState extends State<SelectTime> {
                 });
               },
             ),
-            const SizedBox(height: 30),
+            SizedBox(
+              height: sizeController.screenHeight.value * 0.02,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'TIME',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: sizeController.mainFontSize.value),
                 ),
-                const Spacer(),
+                const Expanded(child: SizedBox()),
                 DropdownButton<int>(
+                  icon: Text("시",
+                      style: TextStyle(
+                          fontSize: sizeController.mainFontSize.value)),
                   value: controller.spotTimeHour.value,
                   items: List.generate(12, (index) => index)
                       .map((hour) => DropdownMenuItem<int>(
                             value: hour,
-                            child: Text('${hour + controller.getStartHour()}'),
+                            child: Text('${hour + controller.getStartHour()}',
+                                style: TextStyle(
+                                    fontSize:
+                                        sizeController.mainFontSize.value)),
                           ))
                       .toList(),
                   onChanged: (value) {
@@ -100,16 +126,22 @@ class _SelectTimeState extends State<SelectTime> {
                     });
                   },
                 ),
-                const Text(
+                Text(
                   '  :  ',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: sizeController.mainFontSize.value),
                 ),
                 DropdownButton<int>(
+                  icon: Text("분",
+                      style: TextStyle(
+                          fontSize: sizeController.mainFontSize.value)),
                   value: controller.spotTimeMinute.value,
                   items: List.generate(60, (index) => index)
                       .map((minute) => DropdownMenuItem<int>(
                             value: minute,
-                            child: Text('$minute'),
+                            child: Text('$minute',
+                                style: TextStyle(
+                                    fontSize:
+                                        sizeController.mainFontSize.value)),
                           ))
                       .toList(),
                   onChanged: (value) {
@@ -117,6 +149,9 @@ class _SelectTimeState extends State<SelectTime> {
                       controller.spotTimeMinute.value = value!;
                     });
                   },
+                ),
+                SizedBox(
+                  width: sizeController.screenWidth.value * 0.03,
                 ),
                 ToggleButtons(
                   isSelected: controller.spotTimePeriod,
@@ -133,33 +168,41 @@ class _SelectTimeState extends State<SelectTime> {
                       }
                     });
                   },
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(5.0),
                   selectedColor: Colors.black,
                   fillColor: Colors.tealAccent,
                   highlightColor: Colors.tealAccent,
-                  constraints:
-                      const BoxConstraints(minHeight: 35, minWidth: 35),
-                  children: const [
+                  constraints: BoxConstraints(
+                      minHeight: sizeController.screenHeight.value * 0.05,
+                      minWidth: sizeController.screenWidth.value * 0.1),
+                  children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text('AM'),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: sizeController.screenHeight.value * 0.02),
+                      child: Text('AM',
+                          style: TextStyle(
+                              fontSize: sizeController.mainFontSize.value)),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text('PM'),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: sizeController.screenHeight.value * 0.02),
+                      child: Text('PM',
+                          style: TextStyle(
+                              fontSize: sizeController.mainFontSize.value)),
                     ),
                   ],
                 ),
               ],
             ),
-            const Spacer(),
+            const Expanded(child: SizedBox()),
             Center(
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.blueGrey,
                     backgroundColor: Colors.blueGrey,
                     shadowColor: Colors.black,
-                    minimumSize: const Size(50, 50),
+                    minimumSize: Size(sizeController.screenWidth.value * 0.3,
+                        sizeController.screenHeight.value * 0.07),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                   ),
@@ -181,14 +224,16 @@ class _SelectTimeState extends State<SelectTime> {
                                 controller.spotTimeMinute.value);
                     Get.back();
                   },
-                  child: const Center(
+                  child: Center(
                       child: Text(
                     '확인',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: sizeController.middleFontSize.value),
                   ))),
             ),
-            const SizedBox(
-              height: 20,
+            SizedBox(
+              height: sizeController.screenHeight * 0.05,
             ),
           ],
         ),
