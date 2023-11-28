@@ -41,6 +41,8 @@ class PhotoSpotInfo extends GetxController {
   RxInt spotTimeMinute = 0.obs;
   List<bool> spotTimePeriod = [true, false].obs; // [AM, PM]
   RxInt spotWeather = 0.obs;
+  RxString spotMainAddress = ''.obs;
+  RxString spotExtraAddress = ''.obs;
 
   int getStartHour() {
     if (spotTimePeriod[0] == true) {

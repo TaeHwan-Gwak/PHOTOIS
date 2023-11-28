@@ -73,26 +73,39 @@ class _SelectAddressState extends State<SelectAddress> {
     super.initState();
   }
 
+  final _formKey = GlobalKey<FormState>();
+  String currentAddress = '';
+  TextEditingController addressController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.put((PhotoSpotInfo()));
     final sizeController = Get.put((SizeController()));
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize:
             Size.fromHeight(sizeController.screenHeight.value * 0.05),
         child: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            automaticallyImplyLeading: false),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+              onPressed: () {
+                Get.back();
+              },
+              icon: Icon(Icons.arrow_back,
+                  size: sizeController.bigFontSize.value)),
+        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "   위치 정보를 확인해주세요.",
-            style: TextStyle(fontSize: sizeController.bigFontSize.value),
+          Center(
+            child: Text(
+              "위치 정보를 확인해주세요.",
+              style: TextStyle(fontSize: sizeController.bigFontSize.value),
+            ),
           ),
           Expanded(
             child: FutureBuilder(
@@ -168,34 +181,84 @@ class _SelectAddressState extends State<SelectAddress> {
               },
             ),
           ),
+          Padding(
+            padding: EdgeInsets.all(sizeController.screenHeight.value * 0.03),
+            child: SizedBox(
+              height: sizeController.screenHeight.value * 0.25,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.location_pin),
+                        Text(
+                          controller.spotMainAddress.value,
+                          style: TextStyle(
+                              fontSize: sizeController.mainFontSize.value),
+                        ),
+                      ],
+                    ),
+                    Form(
+                      key: _formKey,
+                      child: TextFormField(
+                        controller: addressController,
+                        decoration: InputDecoration(
+                            hintText: '상세 주소를 정확하게 기입해주세요',
+                            hintStyle: TextStyle(
+                                fontSize: sizeController.middleFontSize.value),
+                            errorBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.red,
+                                    width: 2,
+                                    strokeAlign:
+                                        BorderSide.strokeAlignOutside)),
+                            focusedErrorBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.red,
+                              width: 2,
+                            ))),
+                        onSaved: (value) {
+                          controller.spotExtraAddress.value = value!;
+                        },
+                      ),
+                    ),
+                    const Expanded(child: SizedBox()),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.blueGrey,
+                          backgroundColor: Colors.blueGrey,
+                          shadowColor: Colors.black,
+                          minimumSize: Size(
+                              sizeController.screenWidth.value * 0.6,
+                              sizeController.screenHeight.value * 0.05),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
+                        onPressed: () {
+                          final formKeyState = _formKey.currentState!;
+                          if (formKeyState.validate()) {
+                            formKeyState.save();
+                            Get.back();
+                          }
+                        },
+                        child: Center(
+                            child: Text(
+                          '이 위치로 주소 설정',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: sizeController.middleFontSize.value),
+                        ))),
+                    SizedBox(
+                      height: sizeController.screenHeight * 0.03,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );
-    /*
-    return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 10,
-            ),
-            Text(
-              "위치 정보를 확인해주세요.",
-              style: TextStyle(fontSize: 30),
-            ),
-          ],
-        ),
-      ),
-    );
-     */
   }
 }

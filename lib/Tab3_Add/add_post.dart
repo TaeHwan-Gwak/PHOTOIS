@@ -238,11 +238,11 @@ class _Tab3State extends State<Tab3> {
           ),
           Gap(sizeController.screenHeight.value * 0.005),
           _buildLabeledItem(
-            //coordinates.longitude, coordinates.latitude
-            Text('위치를 입력해주세요',
-                style: TextStyle(
-                    fontWeight: FontWeight.w200,
-                    fontSize: sizeController.mainFontSize.value)),
+            Obx(() => Text(
+                (controller.spotDate.value == DateTime(0, 0, 0))
+                    ? '위치를 입력해주세요'
+                    : '${controller.spotMainAddress.value}\n${controller.spotExtraAddress.value}',
+                style: TextStyle(fontSize: sizeController.mainFontSize.value))),
             (context) {
               return _buildRightArrow();
             },
