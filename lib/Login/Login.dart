@@ -33,71 +33,31 @@ class LoginPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(
-              height: 100,
-            ),
-            Image.asset(
-              imageLogoName,
-              width: sizeController.screenWidth.value * 0.616666,
-              height: sizeController.screenHeight.value * 0.0859375,
-            ),
-            Divider(
-                thickness: 4,
-                indent: sizeController.screenWidth.value * 0.15,
-                endIndent: sizeController.screenWidth.value * 0.15,
-                color: Colors.black),
-            Text(
-              "당신만의 사진 스팟",
-              style: TextStyle(fontSize: sizeController.bigFontSize.value),
-            ),
-            const Expanded(child: SizedBox()),
-            InkWell(
-                onTap: () {
-                  Get.offNamed('/main');
-                  //Get.offNamed('/login1');
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.teal,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 0,
-                        blurRadius: 5.0,
-                        offset:
-                            const Offset(0, 10), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: Image.asset(
-                    "assets/images/kakao_login.png",
-                    width: sizeController.screenWidth.value * 0.6,
-                    fit: BoxFit.fill,
-                  ),
-                )),
-            SizedBox(
-              height: sizeController.screenHeight.value * 0.03,
-            ),
-            InkWell(
-              onTap: () async {
-                final loggedUid =
-                    await FbAuth.signInWithGoogleSignIn(unlink: true);
-                debugPrint('loggedUid: $loggedUid');
-
-                if (loggedUid != null) {
-                  Get.snackbar('로그인 성공', '로그인에 성공했습니다.');
-                  Get.offNamed('/login1');
-                } else {
-                  Get.snackbar('로그인 실패', '로그인에 실패했습니다.');
-                }
-                // Get.offNamed('/main');
-                //signInWithGoogle;
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: sizeController.screenHeight * 0.2,
+          ),
+          Image.asset(
+            imageLogoName,
+            width: sizeController.screenWidth.value * 0.616666,
+            height: sizeController.screenHeight.value * 0.0859375,
+          ),
+          Divider(
+              thickness: 4,
+              indent: sizeController.screenWidth.value * 0.15,
+              endIndent: sizeController.screenWidth.value * 0.15,
+              color: Colors.black),
+          Text(
+            "당신만의 사진 스팟",
+            style: TextStyle(fontSize: sizeController.bigFontSize.value),
+          ),
+          const Expanded(child: SizedBox()),
+          InkWell(
+              onTap: () {
+                Get.offNamed('/main');
+                //Get.offNamed('/login1');
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -113,17 +73,53 @@ class LoginPage extends StatelessWidget {
                   ],
                 ),
                 child: Image.asset(
-                  "assets/images/google_login.png",
+                  "assets/images/kakao_login.png",
                   width: sizeController.screenWidth.value * 0.6,
                   fit: BoxFit.fill,
                 ),
+              )),
+          SizedBox(
+            height: sizeController.screenHeight.value * 0.03,
+          ),
+          InkWell(
+            onTap: () async {
+              final loggedUid =
+                  await FbAuth.signInWithGoogleSignIn(unlink: true);
+              debugPrint('loggedUid: $loggedUid');
+
+              if (loggedUid != null) {
+                Get.snackbar('로그인 성공', '로그인에 성공했습니다.');
+                Get.offNamed('/login1');
+              } else {
+                Get.snackbar('로그인 실패', '로그인에 실패했습니다.');
+              }
+              // Get.offNamed('/main');
+              //signInWithGoogle;
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.teal,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 0,
+                    blurRadius: 5.0,
+                    offset: const Offset(0, 10), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: Image.asset(
+                "assets/images/google_login.png",
+                width: sizeController.screenWidth.value * 0.6,
+                fit: BoxFit.fill,
               ),
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.1,
-            )
-          ],
-        ),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.15,
+          )
+        ],
       ),
     );
   }

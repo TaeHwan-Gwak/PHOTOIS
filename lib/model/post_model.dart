@@ -8,7 +8,7 @@ enum PostWeather {
   ;
 
   String get title => const <PostWeather, String>{
-        PostWeather.sun: '해창',
+        PostWeather.sun: '맑음',
         PostWeather.clouds: '구름',
         PostWeather.rain: '비',
         PostWeather.snow: '눈',
@@ -59,7 +59,10 @@ class PostModel {
   late String postID;
   late DateTime createdAt;
   late String userUid;
+  late String imageURL;
   late String address;
+  late double longitude;
+  late double latitude;
   late DateTime date;
   late PostWeather weather;
   late PostCategory category;
@@ -70,7 +73,10 @@ class PostModel {
       {required this.postID,
       required this.createdAt,
       required this.userUid,
+      required this.imageURL,
       required this.address,
+      required this.longitude,
+      required this.latitude,
       required this.date,
       required this.weather,
       required this.category,
@@ -81,7 +87,10 @@ class PostModel {
     postID = json['postID'] as String;
     createdAt = DateTime.parse(json['cretedAt'] as String).toUtc();
     userUid = json['userUid'] as String;
+    imageURL = json['imageURL'] as String;
     address = json['address'] as String;
+    longitude = json['longitude'];
+    latitude = json['latitude'];
     date = DateTime.parse(json['date'] as String).toUtc();
     weather = PostWeather.fromString(json['weather'] as String);
     category = PostCategory.fromString(json['category'] as String);
@@ -107,7 +116,10 @@ class PostModel {
     map['postID'] = postID;
     map['createdAt'] = createdAt.toIso8601String();
     map['userUID'] = userUid;
+    map['imageURL'] = imageURL;
     map['address'] = address;
+    map['longitude'] = longitude;
+    map['latitude'] = latitude;
     map['date'] = date;
     map['weather'] = weather.name;
     map['category'] = category.name;

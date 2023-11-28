@@ -5,24 +5,52 @@ import 'package:photois/model/user_model.dart';
 import 'package:photois/setting.dart';
 
 class Account extends GetxService {
+  Future<UserModel?> tryLogin(String uid) async {
+    try {
+      return await UserModel.fetch(uid);
+    } catch (e) {
+      'FAILED Account.tryLogin: $e'.log();
+    }
+    return null;
+  }
+}
+
+class AccountController extends GetxController {
+  final Account accountService;
+
+  AccountController({required this.accountService});
+
   UserModel? _user;
-  UserModel get user => _user!;
+
+  UserModel? get user => _user;
+
   String get uid => _user?.uid ?? 'null';
 
-  Future<bool> tryLogin(String uid) async {
+  tryLogin() async {
     try {
       if (kDebugMode && kDevUseTempUser) {
         _user = UserModel.temp();
         return true;
+      } else {
+        _user = await accountService.tryLogin(uid);
       }
-
-      _user = await UserModel.fetch(uid);
-
-      'SUCCESS Account.tryLogin: ${_user!.toJson()}'.log();
-      return true;
-    } catch (e) {
-      'FAILED Account.tryLogin: $e'.log();
+    } catch (e, track) {
+      debugPrint('error in accountContoller tryLogin $e, $track');
+    } finally {
+      'SUCCESS Account.tryLogin: ${_user?.toJson()}'.log();
     }
-    return false;
+  }
+
+  // 계정 변경 가정했을 때
+  changeUser() async {
+    _user = UserModel(
+      uid: 'uid',
+      nickname: 'nickname',
+      email: 'email',
+      type: UserType.normal,
+      category: PrefferedCategory.family,
+      createdAt: DateTime.now(),
+    );
+    update();
   }
 }
