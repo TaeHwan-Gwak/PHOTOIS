@@ -46,7 +46,6 @@ class _SelectCategoryState extends State<SelectWeather> {
       String condition = jsonDecode(jsonData)['list'][0]['weather'][0]['main'];
 
       print(condition);
-
     } catch (e) {
       print('error');
     }
@@ -61,6 +60,7 @@ class _SelectCategoryState extends State<SelectWeather> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put((PhotoSpotInfo()));
+    final sizeController = Get.put((SizeController()));
 
     DateTime originalDateTime = controller.spotDate.value;
 
@@ -77,39 +77,42 @@ class _SelectCategoryState extends State<SelectWeather> {
     print(startTime);
      */
 
-
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          automaticallyImplyLeading: false),
+      appBar: PreferredSize(
+        preferredSize:
+            Size.fromHeight(sizeController.screenHeight.value * 0.05),
+        child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            automaticallyImplyLeading: false),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(sizeController.screenHeight.value * 0.03),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 10,
+            Text(
+              "날씨 정보를 확인해주세요",
+              style: TextStyle(fontSize: sizeController.bigFontSize.value),
             ),
-            const Text(
-              "사진 정보를 입력해주세요",
-              style: TextStyle(fontSize: 30),
+            SizedBox(
+              height: sizeController.screenHeight.value * 0.03,
             ),
-            const SizedBox(
-              height: 50,
+            Text(
+              " WEATHER",
+              style: TextStyle(fontSize: sizeController.mainFontSize.value),
             ),
-            const Text(
-              'WEATHER',
-              style: TextStyle(fontSize: 20),
+            SizedBox(
+              height: sizeController.screenHeight.value * 0.01,
             ),
-            const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Ink(
-                  padding: const EdgeInsets.all(6.0),
+                  padding:
+                      EdgeInsets.all(sizeController.screenHeight.value * 0.001),
                   decoration: BoxDecoration(
                     color: (controller.spotWeather.value == 1)
                         ? Colors.tealAccent
@@ -123,11 +126,12 @@ class _SelectCategoryState extends State<SelectWeather> {
                       });
                     },
                     icon: const Icon(MyFlutterApp.sun),
-                    iconSize: 40,
+                    iconSize: sizeController.bigFontSize.value * 2,
                   ),
                 ),
                 Ink(
-                  padding: const EdgeInsets.all(6.0),
+                  padding:
+                      EdgeInsets.all(sizeController.screenHeight.value * 0.001),
                   decoration: BoxDecoration(
                     color: (controller.spotWeather.value == 2)
                         ? Colors.tealAccent
@@ -141,11 +145,12 @@ class _SelectCategoryState extends State<SelectWeather> {
                       });
                     },
                     icon: const Icon(MyFlutterApp.cloud),
-                    iconSize: 40,
+                    iconSize: sizeController.bigFontSize.value * 2,
                   ),
                 ),
                 Ink(
-                  padding: const EdgeInsets.all(6.0),
+                  padding:
+                      EdgeInsets.all(sizeController.screenHeight.value * 0.001),
                   decoration: BoxDecoration(
                     color: (controller.spotWeather.value == 3)
                         ? Colors.tealAccent
@@ -159,11 +164,12 @@ class _SelectCategoryState extends State<SelectWeather> {
                       });
                     },
                     icon: const Icon(MyFlutterApp.rainy),
-                    iconSize: 40,
+                    iconSize: sizeController.bigFontSize.value * 2,
                   ),
                 ),
                 Ink(
-                  padding: const EdgeInsets.all(6.0),
+                  padding:
+                      EdgeInsets.all(sizeController.screenHeight.value * 0.001),
                   decoration: BoxDecoration(
                     color: (controller.spotWeather.value == 4)
                         ? Colors.tealAccent
@@ -177,33 +183,36 @@ class _SelectCategoryState extends State<SelectWeather> {
                       });
                     },
                     icon: const Icon(MyFlutterApp.snow),
-                    iconSize: 40,
+                    iconSize: sizeController.bigFontSize.value * 2,
                   ),
                 ),
               ],
             ),
-            const Spacer(),
+            const Expanded(child: SizedBox()),
             Center(
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.blueGrey,
                     backgroundColor: Colors.blueGrey,
                     shadowColor: Colors.black,
-                    minimumSize: const Size(50, 50),
+                    minimumSize: Size(sizeController.screenWidth.value * 0.3,
+                        sizeController.screenHeight.value * 0.07),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                   ),
                   onPressed: () {
                     Get.back();
                   },
-                  child: const Center(
+                  child: Center(
                       child: Text(
                     '확인',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: sizeController.middleFontSize.value),
                   ))),
             ),
-            const SizedBox(
-              height: 20,
+            SizedBox(
+              height: sizeController.screenHeight * 0.05,
             ),
           ],
         ),
