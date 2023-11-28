@@ -29,12 +29,11 @@ class _MainPageState extends State<MainPage> {
       if (kDebugMode && kDevUseTempUser) {
         uid = 'test';
       } else {
-        //TODO: pass uid from login
         uid = Get.parameters['uid']!;
       }
 
       // 'MainPage initState: $uid'.log();
-      if (await Get.find<Account>().tryLogin(uid) != true) {
+      if (Get.find<AccountController>().user?.uid == '') {
         Get.offNamed('/login');
       }
       // 'MainPage initState: ${Get.find<Account>().uid}'.log();
