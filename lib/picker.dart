@@ -3,9 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 
 import 'package:native_exif/native_exif.dart';
 
@@ -15,8 +12,8 @@ void main() {
 
 class MyApp extends StatefulWidget {
   const MyApp({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -37,7 +34,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> showError(Object e) async {
-    debugPrintStack(label: e.toString(), stackTrace: e is Error ? e.stackTrace : null);
+    debugPrintStack(
+        label: e.toString(), stackTrace: e is Error ? e.stackTrace : null);
 
     return showDialog<void>(
       context: context,
@@ -90,16 +88,16 @@ class _MyAppState extends State<MyApp> {
 
   Widget _buildPhotoArea() {
     return pickedFile != null
-        ? Container(
-      width: 300,
-      height: 300,
-      child: Image.file(File(pickedFile!.path)), //가져온 이미지를 화면에 띄워주는 코드
-    )
+        ? SizedBox(
+            width: 300,
+            height: 300,
+            child: Image.file(File(pickedFile!.path)), //가져온 이미지를 화면에 띄워주는 코드
+          )
         : Container(
-      width: 300,
-      height: 300,
-      color: Colors.grey,
-    );
+            width: 300,
+            height: 300,
+            color: Colors.grey,
+          );
   }
 
   @override
@@ -118,11 +116,10 @@ class _MyAppState extends State<MyApp> {
             else
               Column(
                 children: [
-                  Text("${shootingDate.toString()}"),
+                  Text(shootingDate.toString()),
                   Text(attributes?["UserComment"]?.toString() ?? ''),
                   Text("Attributes: $attributes"),
                   Text("Coordinates: $coordinates"),
-
                   TextButton(
                     onPressed: () async {
                       try {

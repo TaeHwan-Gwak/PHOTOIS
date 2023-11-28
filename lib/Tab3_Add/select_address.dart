@@ -40,7 +40,6 @@ class _SelectAddressState extends State<SelectAddress> {
   var land = '-';
 
   Future<void> getCurrentLocation() async {
-
     LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
@@ -63,20 +62,17 @@ class _SelectAddressState extends State<SelectAddress> {
 
     String jsonData = response.body;
 
-    which_one =
-    jsonDecode(jsonData)["results"][0]['region']['area1']['name'];
-    which_two =
-    jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
-    which_three =
-    jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
-    which_four =
-    jsonDecode(jsonData)["results"][0]['region']['area4']['name'];
+    which_one = jsonDecode(jsonData)["results"][0]['region']['area1']['name'];
+    which_two = jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
+    which_three = jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
+    which_four = jsonDecode(jsonData)["results"][0]['region']['area4']['name'];
     which_add = jsonDecode(jsonData)["results"][0]['land']['number1'];
 
     land = jsonDecode(jsonData)["results"][0]['land']['addition0']['value'];
 
     which = [which_one, which_two, which_three, which_four, which_add];
   }
+
   @override
   void initState() {
     getCurrentLocation();
@@ -96,7 +92,7 @@ class _SelectAddressState extends State<SelectAddress> {
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize:
-        Size.fromHeight(sizeController.screenHeight.value * 0.05),
+            Size.fromHeight(sizeController.screenHeight.value * 0.05),
         child: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
@@ -167,18 +163,19 @@ class _SelectAddressState extends State<SelectAddress> {
 
                       String jsonData = response.body;
 
-                      which_one =
-                      jsonDecode(jsonData)["results"][0]['region']['area1']['name'];
-                      which_two =
-                      jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
-                      which_three =
-                      jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
-                      which_four =
-                      jsonDecode(jsonData)["results"][0]['region']['area4']['name'];
+                      which_one = jsonDecode(jsonData)["results"][0]['region']
+                          ['area1']['name'];
+                      which_two = jsonDecode(jsonData)["results"][0]['region']
+                          ['area2']['name'];
+                      which_three = jsonDecode(jsonData)["results"][0]['region']
+                          ['area3']['name'];
+                      which_four = jsonDecode(jsonData)["results"][0]['region']
+                          ['area4']['name'];
                       which_add =
-                      jsonDecode(jsonData)["results"][0]['land']['number1'];
+                          jsonDecode(jsonData)["results"][0]['land']['number1'];
 
-                      land = jsonDecode(jsonData)["results"][0]['land']['addition0']['value'];
+                      land = jsonDecode(jsonData)["results"][0]['land']
+                          ['addition0']['value'];
 
                       which = [
                         which_one,
@@ -248,12 +245,12 @@ class _SelectAddressState extends State<SelectAddress> {
                                     color: Colors.red,
                                     width: 2,
                                     strokeAlign:
-                                    BorderSide.strokeAlignOutside)),
+                                        BorderSide.strokeAlignOutside)),
                             focusedErrorBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: Colors.red,
-                                  width: 2,
-                                ))),
+                              color: Colors.red,
+                              width: 2,
+                            ))),
                         onSaved: (value) {
                           controller.spotExtraAddress.value = value!;
                         },
@@ -280,11 +277,11 @@ class _SelectAddressState extends State<SelectAddress> {
                         },
                         child: Center(
                             child: Text(
-                              '이 위치로 주소 설정',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: sizeController.middleFontSize.value),
-                            ))),
+                          '이 위치로 주소 설정',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: sizeController.middleFontSize.value),
+                        ))),
                     SizedBox(
                       height: sizeController.screenHeight * 0.03,
                     ),

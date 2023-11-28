@@ -219,7 +219,10 @@ class _Tab3State extends State<Tab3> {
           children: [InkWell(onTap: getImage, child: _buildPhotoArea())],
         ),
         Gap(sizeController.screenHeight.value * 0.01),
-        //if (pickedFile == null) const Text(" ") else Text("${attributes}"),
+        if (pickedFile == null)
+          const Text(" ")
+        else
+          Text("${coordinates?.longitude}"),
       ],
     );
   }
@@ -239,9 +242,11 @@ class _Tab3State extends State<Tab3> {
           Gap(sizeController.screenHeight.value * 0.005),
           _buildLabeledItem(
             Obx(() => Text(
-                (controller.spotDate.value == DateTime(0, 0, 0))
+                (controller.spotMainAddress.value == '')
                     ? '위치를 입력해주세요'
-                    : '${controller.spotMainAddress.value}\n${controller.spotExtraAddress.value}',
+                    : (controller.spotExtraAddress.value == '')
+                        ? '$controller.spotMainAddress.value'
+                        : '${controller.spotMainAddress.value}\n(${controller.spotExtraAddress.value})',
                 style: TextStyle(fontSize: sizeController.mainFontSize.value))),
             (context) {
               return _buildRightArrow();
@@ -250,7 +255,6 @@ class _Tab3State extends State<Tab3> {
               if (pickedFile != null) {
                 Get.toNamed('/spotAddress');
               } else {
-                // 이미지가 선택되지 않은 경우에는 경고 메시지 표시
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('먼저 사진을 업로드해주세요.'),
@@ -280,7 +284,6 @@ class _Tab3State extends State<Tab3> {
               if (pickedFile != null) {
                 Get.toNamed('/spotTime');
               } else {
-                // 이미지가 선택되지 않은 경우에는 경고 메시지 표시
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('먼저 사진을 업로드해주세요.'),
@@ -310,7 +313,6 @@ class _Tab3State extends State<Tab3> {
               if (pickedFile != null) {
                 Get.toNamed('/spotWeather');
               } else {
-                // 이미지가 선택되지 않은 경우에는 경고 메시지 표시
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('먼저 사진을 업로드해주세요.'),
@@ -350,7 +352,6 @@ class _Tab3State extends State<Tab3> {
               if (pickedFile != null) {
                 Get.toNamed('/spotCategory');
               } else {
-                // 이미지가 선택되지 않은 경우에는 경고 메시지 표시
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('먼저 사진을 업로드해주세요.'),
@@ -372,7 +373,7 @@ class _Tab3State extends State<Tab3> {
         style: TextStyle(
           fontSize: sizeController.mainFontSize.value,
           fontWeight: FontWeight.w500,
-          color: Color(0xFFADADAD),
+          color: const Color(0xFFADADAD),
         ),
       ),
     );
@@ -461,9 +462,15 @@ class _Tab3State extends State<Tab3> {
           actions: [
             TextButton(
               onPressed: () async {
-                //TODO: 조건 더 붙이기
                 if (pickedFile != null) {
-                  _uploadImage();
+                  //TODO: 조건 더 붙이기
+                  await _uploadImage();
+                  DateTime spotDate = controller.spotDate.value;
+                  String spotWeather =
+                      weather[controller.spotWeather.value - 1];
+                  String spotCategory =
+                      category[controller.spotCategory.value - 1];
+
                   PostModel fireModel = PostModel(
                       postID: '',
                       createdAt: DateTime.now(),
@@ -472,16 +479,9 @@ class _Tab3State extends State<Tab3> {
                       address: '',
                       longitude: 0.0,
                       latitude: 0.0,
-                      date: DateTime.now(),
-                      /*
-                    weather: PostWeather.fromString(
-                        weather[controller.spotWeather.value - 1]),
-                    category: PostCategory.fromString(
-                        category[controller.spotCategory.value - 1])
-*/
-
-                      weather: PostWeather.sun,
-                      category: PostCategory.couple);
+                      date: spotDate,
+                      weather: PostWeather.fromString(spotWeather),
+                      category: PostCategory.fromString(spotCategory));
 
                   await FireService().createPostInfo(fireModel.toJson());
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -490,7 +490,6 @@ class _Tab3State extends State<Tab3> {
                   Get.back();
                   Get.back();
                 } else {
-                  // 이미지가 선택되지 않은 경우에는 경고 메시지 표시
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('먼저 사진을 업로드해주세요.'),
