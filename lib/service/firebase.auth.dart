@@ -87,6 +87,6 @@ class FbAuth {
     try {
       await FirebaseAuth.instance.signOut();
       fbUser = null;
-    } catch (e, s) {}
+    } catch (e) {}
   }
 }

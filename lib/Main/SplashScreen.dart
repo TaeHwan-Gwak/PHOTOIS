@@ -29,10 +29,10 @@ class _SplashScreenState extends State<SplashScreen> {
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
 
-    return WillPopScope(
-      onWillPop: () async => false,
+    return PopScope(
       child: MediaQuery(
-        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: const TextScaler.linear(1.0)),
         child: Scaffold(
           backgroundColor: Colors.white,
           body: Column(

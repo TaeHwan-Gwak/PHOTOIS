@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -45,21 +44,19 @@ class _Tab2State extends State<Tab2> {
     }
 
     http.Response response = await http.get(
-        Uri
-            .parse(
-            "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json"),
+        Uri.parse(
+            "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=$lng,$lat&sourcecrs=epsg:4326&output=json"),
         headers: headerss);
 
     String jsonData = response.body;
 
     // print(jsonData);
     var myJson_dong =
-    jsonDecode(jsonData)["results"][1]['region']['area3']['name'];
+        jsonDecode(jsonData)["results"][1]['region']['area3']['name'];
     var myJson_gu =
-    jsonDecode(jsonData)["results"][1]['region']['area2']['name'];
+        jsonDecode(jsonData)["results"][1]['region']['area2']['name'];
     var myJson_si =
-    jsonDecode(jsonData)["results"][1]['region']['area1']['name'];
-
+        jsonDecode(jsonData)["results"][1]['region']['area1']['name'];
 
     List<String> which = [myJson_si, myJson_gu, myJson_dong];
 
@@ -159,7 +156,7 @@ class _Tab2State extends State<Tab2> {
                 onMapReady: (controller) {
                   final marker = NMarker(
                     id: 'test',
-                    position: NLatLng(37.506977, 126.953289),
+                    position: const NLatLng(37.506977, 126.953289),
                   );
                   marker.setOnTapListener((NMarker marker) {
                     // 마커를 클릭했을 때 실행할 코드
@@ -169,7 +166,7 @@ class _Tab2State extends State<Tab2> {
               );
             } else {
               // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             }

@@ -9,7 +9,7 @@ import 'package:photois/service/account.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class MyPage extends StatefulWidget {
-  const MyPage({Key? key});
+  const MyPage({super.key});
 
   @override
   State<MyPage> createState() => _MyPageState();
@@ -72,7 +72,7 @@ class _MyPageState extends State<MyPage> {
           const Gap(4),
           _buildLabeledItem(
             '알림설정',
-                (context) {
+            (context) {
               return Align(
                 alignment: Alignment.centerRight,
                 child: Switch.adaptive(
@@ -102,10 +102,10 @@ class _MyPageState extends State<MyPage> {
   }
 
   Widget _buildLabeledItem(
-      String label,
-      Widget Function(BuildContext context) builder, {
-        void Function()? onTap,
-      }) {
+    String label,
+    Widget Function(BuildContext context) builder, {
+    void Function()? onTap,
+  }) {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Material(
@@ -151,21 +151,21 @@ class _MyPageState extends State<MyPage> {
           const Gap(4),
           _buildLabeledItem(
             '개인 정보 수정',
-                (context) {
+            (context) {
               return _buildRightArrow();
             },
             onTap: () {},
           ),
           _buildLabeledItem(
             '내 갤러리',
-                (context) {
+            (context) {
               return _buildRightArrow();
             },
             onTap: () {},
           ),
           _buildLabeledItem(
             '내 반응 다시보기',
-                (context) {
+            (context) {
               return _buildRightArrow();
             },
             onTap: () {},
@@ -297,20 +297,20 @@ class RoundedButton extends StatelessWidget {
 
 Widget buildFrost(BuildContext context,
     {Key? key,
-      double sigma = 10.0,
-      Color? color,
-      double? width,
-      double? height,
-      double? radius,
-      double opacity = 0.4}) {
+    double sigma = 10.0,
+    Color? color,
+    double? width,
+    double? height,
+    double? radius,
+    double opacity = 0.4}) {
   return Container(
     key: key,
     width: width,
     height: height,
     decoration: radius != null
         ? BoxDecoration(
-      borderRadius: BorderRadius.circular(radius),
-    )
+            borderRadius: BorderRadius.circular(radius),
+          )
         : null,
     clipBehavior: radius != null ? Clip.hardEdge : Clip.none,
     child: ClipRect(

@@ -104,13 +104,13 @@ class _SearchSpotState extends State<SearchSpot> {
 
   Future<void> getPostInfoCount() async {
     try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('PostInfo')
-          .get();
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('PostInfo').get();
 
       for (QueryDocumentSnapshot document in querySnapshot.docs) {
         // Convert each document to a Map
-        Map<String, dynamic> documentData = document.data() as Map<String, dynamic>;
+        Map<String, dynamic> documentData =
+            document.data() as Map<String, dynamic>;
         documentsData.add(documentData);
       }
 
@@ -330,24 +330,31 @@ class _SearchSpotState extends State<SearchSpot> {
 
                                     final marker = NMarker(
                                       id: data['createdAt'],
-                                      position: NLatLng(data['latitude'], data['longitude']),
+                                      position: NLatLng(
+                                          data['latitude'], data['longitude']),
                                     );
 
                                     marker.setOnTapListener((NMarker marker) {
                                       // 클릭 시 BottomSheet를 표시
                                       showModalBottomSheet(
                                         context: context,
-                                        isScrollControlled: true, // 화면 전체에 BottomSheet를 표시
+                                        isScrollControlled:
+                                            true, // 화면 전체에 BottomSheet를 표시
                                         builder: (BuildContext context) {
                                           return Container(
-                                            height: MediaQuery.of(context).size.height * 0.6, // 높이를 60%로 설정
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.6, // 높이를 60%로 설정
                                             padding: EdgeInsets.all(16.0),
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Text('마커 정보'),
                                                 SizedBox(height: 8.0),
-                                                Text('데이터: ${data['createdAt']}'),
+                                                Text(
+                                                    '데이터: ${data['createdAt']}'),
                                                 // 추가 필드들을 원하는 만큼 추가
                                                 Spacer(), // 뒤로 가기 버튼을 하단으로 밀어냄
                                                 Positioned(
@@ -371,7 +378,6 @@ class _SearchSpotState extends State<SearchSpot> {
                                     controller.addOverlay(marker);
                                   }
                                 },
-
                               );
                             } else {
                               // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
@@ -421,8 +427,7 @@ class _SearchSpotState extends State<SearchSpot> {
                               );
                             }
                           },
-                        )
-              ),
+                        )),
             ],
           ),
         ),
