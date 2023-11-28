@@ -12,26 +12,14 @@ class SelectWeather extends StatefulWidget {
   State<SelectWeather> createState() => _SelectCategoryState();
 }
 
-class Weather {
-  double? temp;
-  double? tempMax;
-  double? tempMin;
-  String? condition;
-  int? conditionId;
-  int? humidity;
-
-  Weather(
-      {this.temp,
-      this.tempMax,
-      this.tempMin,
-      this.condition,
-      this.conditionId,
-      this.humidity});
-}
-
 class _SelectCategoryState extends State<SelectWeather> {
   double lat = 37;
   double lng = 126;
+
+  int start = 0;
+  int end = 0;
+
+  String condition = '-';
 
   Future getWeather() async {
     LocationPermission permission = await Geolocator.checkPermission();
@@ -46,19 +34,19 @@ class _SelectCategoryState extends State<SelectWeather> {
       lat = position.latitude;
       lng = position.longitude;
 
-      print(lat);
-      print(lng);
-
       http.Response response = await http.get(
         Uri.parse(
-            "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=2ed1135aa0f58dafe0d2ead1574e0242"),
+            "https://history.openweathermap.org/data/2.5/history/city?lat=${lat}&lon=${lng}&type=hour&start=${start}&end=${end}&appid=2ed1135aa0f58dafe0d2ead1574e0242"),
       );
 
       String jsonData = response.body;
 
-      // -273.15
-
       print(jsonData);
+
+      String condition = jsonDecode(jsonData)['list'][0]['weather'][0]['main'];
+
+      print(condition);
+
     } catch (e) {
       print('error');
     }
@@ -73,6 +61,23 @@ class _SelectCategoryState extends State<SelectWeather> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put((PhotoSpotInfo()));
+
+    DateTime originalDateTime = controller.spotDate.value;
+
+    // UTC+9
+    DateTime subtractedDateTime = originalDateTime.subtract(Duration(hours: 9));
+
+    int startTime = subtractedDateTime.millisecondsSinceEpoch ~/ 1000;
+    start = startTime;
+    int endTime = startTime + 600;
+    end = endTime;
+
+    /* test
+    print(subtractedDateTime);
+    print(startTime);
+     */
+
+
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
