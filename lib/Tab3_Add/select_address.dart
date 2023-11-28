@@ -21,14 +21,25 @@ class SelectAddress extends StatefulWidget {
 class _SelectAddressState extends State<SelectAddress> {
   NaverMapController? _controller;
   late final marker;
+
+  Map<String, String> headerss = {
+    "X-NCP-APIGW-API-KEY-ID": "ud3er0cxg6",
+    "X-NCP-APIGW-API-KEY": "i5bTtbxYq6VpOvNCYN4A6Qlw8hDzAdFKw0AsEk6s"
+  };
+
   double lat = 37;
   double lng = 126;
 
+  List<String> which = [];
+  var which_one = '-';
+  var which_two = '-';
+  var which_three = '-';
+  var which_four = '-';
+  var which_add = '-';
+
+  var land = '-';
+
   Future<void> getCurrentLocation() async {
-    Map<String, String> headerss = {
-      "X-NCP-APIGW-API-KEY-ID": "ud3er0cxg6",
-      "X-NCP-APIGW-API-KEY": "i5bTtbxYq6VpOvNCYN4A6Qlw8hDzAdFKw0AsEk6s"
-    };
 
     LocationPermission permission = await Geolocator.checkPermission();
 
@@ -47,26 +58,25 @@ class _SelectAddressState extends State<SelectAddress> {
 
     http.Response response = await http.get(
         Uri.parse(
-            "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json"),
+            "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json&orders=roadaddr"),
         headers: headerss);
 
     String jsonData = response.body;
 
-    print(jsonData);
+    which_one =
+    jsonDecode(jsonData)["results"][0]['region']['area1']['name'];
+    which_two =
+    jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
+    which_three =
+    jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
+    which_four =
+    jsonDecode(jsonData)["results"][0]['region']['area4']['name'];
+    which_add = jsonDecode(jsonData)["results"][0]['land']['number1'];
 
-    var myJson_one =
-        jsonDecode(jsonData)["results"][1]['region']['area1']['name'];
-    var myJson_two =
-        jsonDecode(jsonData)["results"][1]['region']['area2']['name'];
-    var myJson_three =
-        jsonDecode(jsonData)["results"][1]['region']['area3']['name'];
-    var myJson_four =
-        jsonDecode(jsonData)["results"][1]['region']['area4']['name'];
+    land = jsonDecode(jsonData)["results"][0]['land']['addition0']['value'];
 
-    List<String> which = [myJson_one, myJson_two, myJson_three, myJson_four];
-    print(which);
+    which = [which_one, which_two, which_three, which_four, which_add];
   }
-
   @override
   void initState() {
     getCurrentLocation();
@@ -86,7 +96,7 @@ class _SelectAddressState extends State<SelectAddress> {
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize:
-            Size.fromHeight(sizeController.screenHeight.value * 0.05),
+        Size.fromHeight(sizeController.screenHeight.value * 0.05),
         child: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
@@ -143,14 +153,40 @@ class _SelectAddressState extends State<SelectAddress> {
                         icon: iconImage,
                       );
                       _controller?.addOverlay(marker);
+
                       marker.setOnTapListener((NMarker marker) {});
                     },
                     onMapTapped: (point, latLng) async {
                       lat = latLng.latitude;
                       lng = latLng.longitude;
 
-                      print(lat);
-                      print(lng);
+                      http.Response response = await http.get(
+                          Uri.parse(
+                              "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json&orders=roadaddr"),
+                          headers: headerss);
+
+                      String jsonData = response.body;
+
+                      which_one =
+                      jsonDecode(jsonData)["results"][0]['region']['area1']['name'];
+                      which_two =
+                      jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
+                      which_three =
+                      jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
+                      which_four =
+                      jsonDecode(jsonData)["results"][0]['region']['area4']['name'];
+                      which_add =
+                      jsonDecode(jsonData)["results"][0]['land']['number1'];
+
+                      land = jsonDecode(jsonData)["results"][0]['land']['addition0']['value'];
+
+                      which = [
+                        which_one,
+                        which_two,
+                        which_three,
+                        which_four,
+                        which_add,
+                      ];
 
                       final iconImage = await NOverlayImage.fromWidget(
                           widget: const FlutterLogo(),
@@ -212,12 +248,12 @@ class _SelectAddressState extends State<SelectAddress> {
                                     color: Colors.red,
                                     width: 2,
                                     strokeAlign:
-                                        BorderSide.strokeAlignOutside)),
+                                    BorderSide.strokeAlignOutside)),
                             focusedErrorBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 2,
-                            ))),
+                                  color: Colors.red,
+                                  width: 2,
+                                ))),
                         onSaved: (value) {
                           controller.spotExtraAddress.value = value!;
                         },
@@ -244,11 +280,11 @@ class _SelectAddressState extends State<SelectAddress> {
                         },
                         child: Center(
                             child: Text(
-                          '이 위치로 주소 설정',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: sizeController.middleFontSize.value),
-                        ))),
+                              '이 위치로 주소 설정',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: sizeController.middleFontSize.value),
+                            ))),
                     SizedBox(
                       height: sizeController.screenHeight * 0.03,
                     ),
