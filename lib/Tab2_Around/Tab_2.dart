@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:kpostal/kpostal.dart';
 import 'package:get/get.dart';
 import 'package:photois/Main/data.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // naver client ID : 'ud3er0cxg6'
 
@@ -90,14 +91,38 @@ class _SearchSpotState extends State<SearchSpot> {
   Future<void> getSearchLocation() async {
     lat = this.lat;
     lng = this.lng;
-
-    print(lat);
-    print(lng);
   }
 
   @override
   void initState() {
     super.initState();
+    getPostInfoCount();
+  }
+
+  int postInfoCount = 0;
+  List<Map<String, dynamic>> documentsData = [];
+
+  Future<void> getPostInfoCount() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('PostInfo')
+          .get();
+
+      for (QueryDocumentSnapshot document in querySnapshot.docs) {
+        // Convert each document to a Map
+        Map<String, dynamic> documentData = document.data() as Map<String, dynamic>;
+        documentsData.add(documentData);
+      }
+
+      // 문서 개수
+      int count = querySnapshot.size;
+
+      setState(() {
+        postInfoCount = count;
+      });
+    } catch (e) {
+      print('Error getting post info count: $e');
+    }
   }
 
   final TextEditingController _searchController = TextEditingController();
@@ -300,16 +325,51 @@ class _SearchSpotState extends State<SearchSpot> {
                                   ),
                                 ),
                                 onMapReady: (controller) {
-                                  final marker = NMarker(
-                                    id: 'test',
-                                    position:
-                                        const NLatLng(37.506977, 126.953289),
-                                  );
-                                  marker.setOnTapListener((NMarker marker) {
-                                    // 마커를 클릭했을 때 실행할 코드
-                                  });
-                                  controller.addOverlay(marker);
+                                  for (var data in documentsData) {
+                                    final marker = NMarker(
+                                      id: data['createdAt'],
+                                      position: NLatLng(data['latitude'], data['longitude']),
+                                    );
+
+                                    marker.setOnTapListener((NMarker marker) {
+                                      // 클릭 시 BottomSheet를 표시
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true, // 화면 전체에 BottomSheet를 표시
+                                        builder: (BuildContext context) {
+                                          return Container(
+                                            height: MediaQuery.of(context).size.height * 0.6, // 높이를 60%로 설정
+                                            padding: EdgeInsets.all(16.0),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text('마커 정보'),
+                                                SizedBox(height: 8.0),
+                                                Text('데이터: ${data['createdAt']}'),
+                                                // 추가 필드들을 원하는 만큼 추가
+                                                Spacer(), // 뒤로 가기 버튼을 하단으로 밀어냄
+                                                Positioned(
+                                                  bottom: 16.0, // 오른쪽 하단으로 배치
+                                                  right: 16.0,
+                                                  child: ElevatedButton(
+                                                    onPressed: () {
+                                                      // 뒤로 가기 버튼 클릭 시 BottomSheet를 닫음
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text('뒤로 가기'),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    });
+
+                                    controller.addOverlay(marker);
+                                  }
                                 },
+
                               );
                             } else {
                               // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
@@ -359,7 +419,8 @@ class _SearchSpotState extends State<SearchSpot> {
                               );
                             }
                           },
-                        )),
+                        )
+              ),
             ],
           ),
         ),

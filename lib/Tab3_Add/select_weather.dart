@@ -41,12 +41,9 @@ class _SelectCategoryState extends State<SelectWeather> {
 
       String jsonData = response.body;
 
-      print(jsonData);
-
       String condition = jsonDecode(jsonData)['list'][0]['weather'][0]['main'];
 
       print(condition);
-
     } catch (e) {
       print('error');
     }
@@ -54,7 +51,6 @@ class _SelectCategoryState extends State<SelectWeather> {
 
   @override
   void initState() {
-    getWeather();
     super.initState();
   }
 
@@ -69,14 +65,15 @@ class _SelectCategoryState extends State<SelectWeather> {
 
     int startTime = subtractedDateTime.millisecondsSinceEpoch ~/ 1000;
     start = startTime;
-    int endTime = startTime + 600;
+    int endTime = startTime + 3600;
     end = endTime;
+
+    getWeather();
 
     /* test
     print(subtractedDateTime);
     print(startTime);
      */
-
 
     return Scaffold(
       backgroundColor: Colors.white,
