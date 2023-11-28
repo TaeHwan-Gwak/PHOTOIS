@@ -71,11 +71,6 @@ class _SelectCategoryState extends State<SelectWeather> {
 
     getWeather();
 
-    /* test
-    print(subtractedDateTime);
-    print(startTime);
-     */
-
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,

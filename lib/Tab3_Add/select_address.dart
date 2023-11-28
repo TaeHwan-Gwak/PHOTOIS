@@ -64,20 +64,19 @@ class _SelectAddressState extends State<SelectAddress> {
     String jsonData = response.body;
 
     which_one =
-        jsonDecode(jsonData)["results"][0]['region']['area1']['name'];
+    jsonDecode(jsonData)["results"][0]['region']['area1']['name'];
     which_two =
-        jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
+    jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
     which_three =
-        jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
+    jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
     which_four =
-        jsonDecode(jsonData)["results"][0]['region']['area4']['name'];
+    jsonDecode(jsonData)["results"][0]['region']['area4']['name'];
     which_add = jsonDecode(jsonData)["results"][0]['land']['number1'];
 
     land = jsonDecode(jsonData)["results"][0]['land']['addition0']['value'];
 
-    which = [which_one, which_two, which_three, which_four, which_add, land];
+    which = [which_one, which_two, which_three, which_four, which_add];
   }
-
   @override
   void initState() {
     getCurrentLocation();
@@ -93,87 +92,11 @@ class _SelectAddressState extends State<SelectAddress> {
     final controller = Get.put((PhotoSpotInfo()));
     final sizeController = Get.put((SizeController()));
 
-                    final iconImage = await NOverlayImage.fromWidget(
-                        widget: const FlutterLogo(),
-                        size: const Size(24, 24),
-                        context: context);
-
-                    marker = NMarker(
-                      id: 'which',
-                      position:
-                      NLatLng(lat, lng),
-                      icon: iconImage,
-                    );
-                    _controller?.addOverlay(marker);
-
-                    marker.setOnTapListener((NMarker marker) {
-                      //
-                    });
-                  },
-                  onMapTapped: (point, latLng) async {
-                    lat = latLng.latitude;
-                    lng = latLng.longitude;
-
-                    http.Response response = await http.get(
-                        Uri.parse(
-                            "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json&orders=roadaddr"),
-                        headers: headerss);
-
-                    String jsonData = response.body;
-
-                    which_one =
-                    jsonDecode(jsonData)["results"][0]['region']['area1']['name'];
-                    which_two =
-                    jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
-                    which_three =
-                    jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
-                    which_four =
-                    jsonDecode(jsonData)["results"][0]['region']['area4']['name'];
-                    which_add = jsonDecode(jsonData)["results"][0]['land']['number1'];
-
-                    land = jsonDecode(jsonData)["results"][0]['land']['addition0']['value'];
-
-                    which = [which_one, which_two, which_three, which_four, which_add, land];
-
-                    print(which);
-
-                    final iconImage = await NOverlayImage.fromWidget(
-                        widget: const FlutterLogo(),
-                        size: const Size(24, 24),
-                        context: context);
-
-                    final updatedMarker = NMarker(
-                      id: 'which',
-                      position: NLatLng(lat, lng),
-                      icon: iconImage,
-                    );
-
-                    final cameraUpdate = NCameraUpdate.withParams(
-                      target: NLatLng(lat, lng),
-                    );
-
-                    _controller?.updateCamera(cameraUpdate);
-
-                    _controller?.addOverlay(updatedMarker);
-                  },
-                );
-              } else {
-                // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            },
-          ),
-        ),
-      ),
-    );
-    /*
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize:
-            Size.fromHeight(sizeController.screenHeight.value * 0.05),
+        Size.fromHeight(sizeController.screenHeight.value * 0.05),
         child: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
@@ -230,14 +153,40 @@ class _SelectAddressState extends State<SelectAddress> {
                         icon: iconImage,
                       );
                       _controller?.addOverlay(marker);
+
                       marker.setOnTapListener((NMarker marker) {});
                     },
                     onMapTapped: (point, latLng) async {
                       lat = latLng.latitude;
                       lng = latLng.longitude;
 
-                      print(lat);
-                      print(lng);
+                      http.Response response = await http.get(
+                          Uri.parse(
+                              "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json&orders=roadaddr"),
+                          headers: headerss);
+
+                      String jsonData = response.body;
+
+                      which_one =
+                      jsonDecode(jsonData)["results"][0]['region']['area1']['name'];
+                      which_two =
+                      jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
+                      which_three =
+                      jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
+                      which_four =
+                      jsonDecode(jsonData)["results"][0]['region']['area4']['name'];
+                      which_add =
+                      jsonDecode(jsonData)["results"][0]['land']['number1'];
+
+                      land = jsonDecode(jsonData)["results"][0]['land']['addition0']['value'];
+
+                      which = [
+                        which_one,
+                        which_two,
+                        which_three,
+                        which_four,
+                        which_add,
+                      ];
 
                       final iconImage = await NOverlayImage.fromWidget(
                           widget: const FlutterLogo(),
@@ -299,12 +248,12 @@ class _SelectAddressState extends State<SelectAddress> {
                                     color: Colors.red,
                                     width: 2,
                                     strokeAlign:
-                                        BorderSide.strokeAlignOutside)),
+                                    BorderSide.strokeAlignOutside)),
                             focusedErrorBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 2,
-                            ))),
+                                  color: Colors.red,
+                                  width: 2,
+                                ))),
                         onSaved: (value) {
                           controller.spotExtraAddress.value = value!;
                         },
@@ -331,11 +280,11 @@ class _SelectAddressState extends State<SelectAddress> {
                         },
                         child: Center(
                             child: Text(
-                          '이 위치로 주소 설정',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: sizeController.middleFontSize.value),
-                        ))),
+                              '이 위치로 주소 설정',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: sizeController.middleFontSize.value),
+                            ))),
                     SizedBox(
                       height: sizeController.screenHeight * 0.03,
                     ),
