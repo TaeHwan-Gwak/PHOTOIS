@@ -12,15 +12,18 @@ import '../Main/data.dart';
 // naver client ID : 'ud3er0cxg6'
 
 class SelectAddress extends StatefulWidget {
-  const SelectAddress({super.key});
+  const SelectAddress({Key? key}) : super(key: key);
 
   @override
   State<SelectAddress> createState() => _SelectAddressState();
 }
 
+final photoController = Get.put((PhotoSpotInfo()));
+
 class _SelectAddressState extends State<SelectAddress> {
   NaverMapController? _controller;
-  late final marker;
+  late NMarker marker;
+  final GlobalKey<AddressFormState> _addressFormKey = GlobalKey();
 
   Map<String, String> headerss = {
     "X-NCP-APIGW-API-KEY-ID": "ud3er0cxg6",
@@ -31,16 +34,13 @@ class _SelectAddressState extends State<SelectAddress> {
   double lng = 126;
 
   List<String> which = [];
-  var which_one = '-';
-  var which_two = '-';
-  var which_three = '-';
-  var which_four = '-';
-  var which_add = '-';
-
-  var land = '-';
+  var which_one = "";
+  var which_two = "";
+  var which_three = "";
+  var which_four = "";
+  var which_String = "";
 
   Future<void> getCurrentLocation() async {
-
     LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
@@ -48,7 +48,8 @@ class _SelectAddressState extends State<SelectAddress> {
     }
     try {
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.high,
+      );
 
       lat = position.latitude;
       lng = position.longitude;
@@ -57,29 +58,28 @@ class _SelectAddressState extends State<SelectAddress> {
     }
 
     http.Response response = await http.get(
-        Uri.parse(
-            "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json&orders=roadaddr"),
-        headers: headerss);
+      Uri.parse(
+        "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json",
+      ),
+      headers: headerss,
+    );
 
     String jsonData = response.body;
 
-    which_one =
-    jsonDecode(jsonData)["results"][0]['region']['area1']['name'];
-    which_two =
-    jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
-    which_three =
-    jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
-    which_four =
-    jsonDecode(jsonData)["results"][0]['region']['area4']['name'];
-    which_add = jsonDecode(jsonData)["results"][0]['land']['number1'];
+    which_one = jsonDecode(jsonData)["results"][1]['region']['area1']['name']?? "";
+    which_two = jsonDecode(jsonData)["results"][1]['region']['area2']['name']?? "";
+    which_three = jsonDecode(jsonData)["results"][1]['region']['area3']['name']?? "";
+    which_four = jsonDecode(jsonData)["results"][1]['region']['area4']['name']?? "";
 
-    land = jsonDecode(jsonData)["results"][0]['land']['addition0']['value'];
+    which = [which_one, which_two, which_three, which_four];
 
-    which = [which_one, which_two, which_three, which_four, which_add];
+    which_String = "$which_one $which_two $which_three $which_four";
+
+    photoController.spotMainAddress.value = which_String;
   }
+
   @override
   void initState() {
-    getCurrentLocation();
     super.initState();
   }
 
@@ -89,23 +89,24 @@ class _SelectAddressState extends State<SelectAddress> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put((PhotoSpotInfo()));
     final sizeController = Get.put((SizeController()));
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize:
-        Size.fromHeight(sizeController.screenHeight.value * 0.05),
+        preferredSize: Size.fromHeight(sizeController.screenHeight.value * 0.05),
         child: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(
-              onPressed: () {
-                Get.back();
-              },
-              icon: Icon(Icons.arrow_back,
-                  size: sizeController.bigFontSize.value)),
+            onPressed: () {
+              Get.back();
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              size: sizeController.bigFontSize.value,
+            ),
+          ),
         ),
       ),
       body: Column(
@@ -143,55 +144,51 @@ class _SelectAddressState extends State<SelectAddress> {
                       _controller = controller;
 
                       final iconImage = await NOverlayImage.fromWidget(
-                          widget: const FlutterLogo(),
-                          size: const Size(24, 24),
-                          context: context);
+                        widget: const FlutterLogo(),
+                        size: const Size(24, 24),
+                        context: context,
+                      );
 
                       marker = NMarker(
                         id: 'which',
                         position: NLatLng(lat, lng),
                         icon: iconImage,
                       );
+
                       _controller?.addOverlay(marker);
 
-                      marker.setOnTapListener((NMarker marker) {});
+                      photoController.spotMainAddress.value = photoController.spotMainAddress.value;
+
+                      // Rebuild only the AddressForm widget
+                      _addressFormKey.currentState?.updateAddress();
                     },
                     onMapTapped: (point, latLng) async {
                       lat = latLng.latitude;
                       lng = latLng.longitude;
 
                       http.Response response = await http.get(
-                          Uri.parse(
-                              "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json&orders=roadaddr"),
-                          headers: headerss);
+                        Uri.parse(
+                          "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json",
+                        ),
+                        headers: headerss,
+                      );
 
                       String jsonData = response.body;
 
-                      which_one =
-                      jsonDecode(jsonData)["results"][0]['region']['area1']['name'];
-                      which_two =
-                      jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
-                      which_three =
-                      jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
-                      which_four =
-                      jsonDecode(jsonData)["results"][0]['region']['area4']['name'];
-                      which_add =
-                      jsonDecode(jsonData)["results"][0]['land']['number1'];
+                      which_one = jsonDecode(jsonData)["results"][1]['region']['area1']['name']?? "";
+                      which_two = jsonDecode(jsonData)["results"][1]['region']['area2']['name']?? "";
+                      which_three = jsonDecode(jsonData)["results"][1]['region']['area3']['name']?? "";
+                      which_four = jsonDecode(jsonData)["results"][1]['region']['area4']['name']?? "";
 
-                      land = jsonDecode(jsonData)["results"][0]['land']['addition0']['value'];
+                      which = [which_one, which_two, which_three, which_four];
 
-                      which = [
-                        which_one,
-                        which_two,
-                        which_three,
-                        which_four,
-                        which_add,
-                      ];
+                      which_String = "$which_one $which_two $which_three $which_four";
 
                       final iconImage = await NOverlayImage.fromWidget(
-                          widget: const FlutterLogo(),
-                          size: const Size(24, 24),
-                          context: context);
+                        widget: const FlutterLogo(),
+                        size: const Size(24, 24),
+                        context: context,
+                      );
 
                       final updatedMarker = NMarker(
                         id: 'which',
@@ -206,6 +203,12 @@ class _SelectAddressState extends State<SelectAddress> {
                       _controller?.updateCamera(cameraUpdate);
 
                       _controller?.addOverlay(updatedMarker);
+
+                      photoController.spotMainAddress.value = "$which_one $which_two $which_three $which_four";
+
+                      // Rebuild only the AddressForm widget
+                      _addressFormKey.currentState?.updateAddress();
+
                     },
                   );
                 } else {
@@ -217,83 +220,122 @@ class _SelectAddressState extends State<SelectAddress> {
               },
             ),
           ),
-          Padding(
-            padding: EdgeInsets.all(sizeController.screenHeight.value * 0.03),
-            child: SizedBox(
-              height: sizeController.screenHeight.value * 0.25,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.location_pin),
-                        Text(
-                          controller.spotMainAddress.value,
-                          style: TextStyle(
-                              fontSize: sizeController.mainFontSize.value),
-                        ),
-                      ],
+          AddressForm(
+            key: _addressFormKey,
+          ), // Use the new widget here
+        ],
+      ),
+    );
+  }
+}
+
+
+class AddressForm extends StatefulWidget {
+  const AddressForm({Key? key}) : super(key: key);
+
+  @override
+  AddressFormState createState() => AddressFormState();
+}
+
+class AddressFormState extends State<AddressForm> {
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController addressController = TextEditingController();
+
+  void updateAddress() {
+    setState(() {
+      // Update logic here
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final sizeController = Get.find<SizeController>();
+    final photoController = Get.find<PhotoSpotInfo>();
+
+    return Padding(
+      padding: EdgeInsets.all(sizeController.screenHeight.value * 0.03),
+      child: SizedBox(
+        height: sizeController.screenHeight.value * 0.25,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.location_pin),
+                  Text(
+                    photoController.spotMainAddress.value,
+                    style: TextStyle(
+                      fontSize: sizeController.mainFontSize.value,
                     ),
-                    Form(
-                      key: _formKey,
-                      child: TextFormField(
-                        controller: addressController,
-                        decoration: InputDecoration(
-                            hintText: '상세 주소를 정확하게 기입해주세요',
-                            hintStyle: TextStyle(
-                                fontSize: sizeController.middleFontSize.value),
-                            errorBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.red,
-                                    width: 2,
-                                    strokeAlign:
-                                    BorderSide.strokeAlignOutside)),
-                            focusedErrorBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.red,
-                                  width: 2,
-                                ))),
-                        onSaved: (value) {
-                          controller.spotExtraAddress.value = value!;
-                        },
+                  ),
+                ],
+              ),
+              Form(
+                key: _formKey,
+                child: TextFormField(
+                  controller: addressController,
+                  decoration: InputDecoration(
+                    hintText: '상세 주소를 정확하게 기입해주세요',
+                    hintStyle: TextStyle(
+                      fontSize: sizeController.middleFontSize.value,
+                    ),
+                    errorBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.red,
+                        width: 2,
+                        strokeAlign: BorderSide.strokeAlignOutside,
                       ),
                     ),
-                    const Expanded(child: SizedBox()),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.blueGrey,
-                          backgroundColor: Colors.blueGrey,
-                          shadowColor: Colors.black,
-                          minimumSize: Size(
-                              sizeController.screenWidth.value * 0.6,
-                              sizeController.screenHeight.value * 0.05),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                        ),
-                        onPressed: () {
-                          final formKeyState = _formKey.currentState!;
-                          if (formKeyState.validate()) {
-                            formKeyState.save();
-                            Get.back();
-                          }
-                        },
-                        child: Center(
-                            child: Text(
-                              '이 위치로 주소 설정',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: sizeController.middleFontSize.value),
-                            ))),
-                    SizedBox(
-                      height: sizeController.screenHeight * 0.03,
+                    focusedErrorBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.red,
+                        width: 2,
+                      ),
                     ),
-                  ],
+                  ),
+                  onSaved: (value) {
+                    photoController.spotExtraAddress.value = value!;
+                  },
                 ),
               ),
-            ),
-          )
-        ],
+              const Expanded(child: SizedBox()),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.blueGrey,
+                  backgroundColor: Colors.blueGrey,
+                  shadowColor: Colors.black,
+                  minimumSize: Size(
+                    sizeController.screenWidth.value * 0.6,
+                    sizeController.screenHeight.value * 0.05,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: () {
+                  final formKeyState = _formKey.currentState!;
+                  if (formKeyState.validate()) {
+                    formKeyState.save();
+                    Get.back();
+                  }
+                },
+                child: Center(
+                  child: Text(
+                    '이 위치로 주소 설정',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: sizeController.middleFontSize.value,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: sizeController.screenHeight * 0.03,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

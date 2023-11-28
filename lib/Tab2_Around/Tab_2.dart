@@ -326,6 +326,8 @@ class _SearchSpotState extends State<SearchSpot> {
                                 ),
                                 onMapReady: (controller) {
                                   for (var data in documentsData) {
+                                    print(documentsData.length);
+
                                     final marker = NMarker(
                                       id: data['createdAt'],
                                       position: NLatLng(data['latitude'], data['longitude']),
