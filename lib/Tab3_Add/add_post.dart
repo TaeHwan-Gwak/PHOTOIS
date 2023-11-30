@@ -645,7 +645,7 @@ class _Tab3State extends State<Tab3> {
                   await _uploadImage();
                   String spotAddress =
                       "${controller.spotMainAddress.value} ${controller.spotExtraAddress.value}";
-                  double spotlongitude = controller.spotLongitude.value;
+                  double spotLongitude = controller.spotLongitude.value;
                   double spotLatitude = controller.spotLatitude.value;
                   DateTime spotDate = controller.spotDate.value;
                   String spotWeather =
@@ -659,7 +659,7 @@ class _Tab3State extends State<Tab3> {
                       userUid: '',
                       imageURL: imageDownLoadURL,
                       address: spotAddress,
-                      longitude: spotlongitude,
+                      longitude: spotLongitude,
                       latitude: spotLatitude,
                       date: Timestamp.fromDate(spotDate),
                       weather: PostWeather.fromString(spotWeather),
