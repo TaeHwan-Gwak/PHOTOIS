@@ -663,7 +663,8 @@ class _Tab3State extends State<Tab3> {
                       latitude: spotLatitude,
                       date: Timestamp.fromDate(spotDate),
                       weather: PostWeather.fromString(spotWeather),
-                      category: PostCategory.fromString(spotCategory));
+                      category: PostCategory.fromString(spotCategory),
+                      like: 0);
 
                   await FireService().createPostInfo(fireModel.toJson());
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

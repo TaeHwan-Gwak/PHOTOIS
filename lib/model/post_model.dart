@@ -66,6 +66,7 @@ class PostModel {
   late Timestamp? date;
   late PostWeather? weather;
   late PostCategory? category;
+  late int? like;
   late DocumentReference? reference;
 
   //생성자
@@ -80,6 +81,7 @@ class PostModel {
       required this.date,
       required this.weather,
       required this.category,
+      required this.like,
       this.reference});
 
   //json => Object로, firestore에서 불러올때
@@ -92,6 +94,7 @@ class PostModel {
     longitude = json['longitude'];
     latitude = json['latitude'];
     date = json['date'];
+    like = json['like'];
     weather = PostWeather.fromString(json['weather'] as String);
     category = PostCategory.fromString(json['category'] as String);
   }
@@ -123,6 +126,7 @@ class PostModel {
     map['date'] = date;
     map['weather'] = weather?.title;
     map['category'] = category?.title;
+    map['like'] = like;
     return map;
   }
 }
