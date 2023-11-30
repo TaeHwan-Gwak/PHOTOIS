@@ -56,16 +56,16 @@ enum PostCategory {
 
 class PostModel {
   // 사용되는 자료형
-  late String postID;
-  late DateTime createdAt;
-  late String userUid;
-  late String imageURL;
-  late String address;
-  late double longitude;
-  late double latitude;
-  late DateTime date;
-  late PostWeather weather;
-  late PostCategory category;
+  late String? postID;
+  late Timestamp? createdAt;
+  late String? userUid;
+  late String? imageURL;
+  late String? address;
+  late double? longitude;
+  late double? latitude;
+  late Timestamp? date;
+  late PostWeather? weather;
+  late PostCategory? category;
   late DocumentReference? reference;
 
   //생성자
@@ -84,14 +84,14 @@ class PostModel {
 
   //json => Object로, firestore에서 불러올때
   PostModel.fromJson(dynamic json, this.reference) {
-    postID = json['postID'] as String;
-    createdAt = DateTime.parse(json['cretedAt'] as String).toUtc();
-    userUid = json['userUid'] as String;
-    imageURL = json['imageURL'] as String;
-    address = json['address'] as String;
+    postID = json['postID'];
+    createdAt = json['cretedAt'];
+    userUid = json['userUid'];
+    imageURL = json['imageURL'];
+    address = json['address'];
     longitude = json['longitude'];
     latitude = json['latitude'];
-    date = DateTime.parse(json['date'] as String).toUtc();
+    date = json['date'];
     weather = PostWeather.fromString(json['weather'] as String);
     category = PostCategory.fromString(json['category'] as String);
   }
@@ -114,15 +114,15 @@ class PostModel {
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['postID'] = postID;
-    map['createdAt'] = createdAt.toIso8601String();
-    map['userUID'] = userUid;
+    map['createdAt'] = createdAt;
+    map['userUid'] = userUid;
     map['imageURL'] = imageURL;
     map['address'] = address;
     map['longitude'] = longitude;
     map['latitude'] = latitude;
     map['date'] = date;
-    map['weather'] = weather.name;
-    map['category'] = category.name;
+    map['weather'] = weather?.title;
+    map['category'] = category?.title;
     return map;
   }
 }

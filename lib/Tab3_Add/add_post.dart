@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -654,13 +655,13 @@ class _Tab3State extends State<Tab3> {
 
                   PostModel fireModel = PostModel(
                       postID: '',
-                      createdAt: DateTime.now(),
+                      createdAt: Timestamp.now(),
                       userUid: '',
-                      imageURL: imageDownLoadURL!,
+                      imageURL: imageDownLoadURL,
                       address: spotAddress,
                       longitude: spotlongitude,
                       latitude: spotLatitude,
-                      date: spotDate,
+                      date: Timestamp.fromDate(spotDate),
                       weather: PostWeather.fromString(spotWeather),
                       category: PostCategory.fromString(spotCategory));
 

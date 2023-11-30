@@ -1,6 +1,7 @@
-import 'dart:io';
+//import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -270,6 +271,12 @@ class _SelectAddressState extends State<SelectAddress> {
                             ),
                           ),
                         ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter(
+                            RegExp('[a-z A-Z ㄱ-ㅎ|가-힣|0-9]'),
+                            allow: true,
+                          )
+                        ],
                         onSaved: (value) {
                           photoController.spotExtraAddress.value = value!;
                         },

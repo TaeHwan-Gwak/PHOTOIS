@@ -28,7 +28,7 @@ class FireService {
   // READ 각각의 데이터를 콕 집어서 가져올때
   Future<PostModel> getFireModel(String userkey) async {
     DocumentReference<Map<String, dynamic>> documentReference =
-        FirebaseFirestore.instance.collection("post_db").doc(userkey);
+        FirebaseFirestore.instance.collection("PostInfo").doc(userkey);
     final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
         await documentReference.get();
     PostModel fireModel = PostModel.fromSnapShot(documentSnapshot);
@@ -38,14 +38,14 @@ class FireService {
   //READ 컬렉션 내 모든 데이터를 가져올때
   Future<List<PostModel>> getFireModels() async {
     CollectionReference<Map<String, dynamic>> collectionReference =
-        FirebaseFirestore.instance.collection("post_db");
+        FirebaseFirestore.instance.collection("PostInfo");
     QuerySnapshot<Map<String, dynamic>> querySnapshot =
         await collectionReference.orderBy("date").get();
 
     List<PostModel> posts = [];
     for (var doc in querySnapshot.docs) {
-      PostModel fireModel = PostModel.fromQuerySnapshot(doc);
-      posts.add(fireModel);
+      PostModel postModel = PostModel.fromQuerySnapshot(doc);
+      posts.add(postModel);
     }
     return posts;
   }
