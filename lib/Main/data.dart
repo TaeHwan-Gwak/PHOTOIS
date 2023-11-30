@@ -5,9 +5,9 @@ class SizeController extends GetxController {
   RxDouble screenWidth = MediaQuery.of(Get.context!).size.width.obs;
   RxDouble screenHeight = MediaQuery.of(Get.context!).size.height.obs;
 
-  RxDouble bigFontSize = (MediaQuery.of(Get.context!).size.width * 0.06).obs;
-  RxDouble middleFontSize = (MediaQuery.of(Get.context!).size.width * 0.03).obs;
-  RxDouble mainFontSize = (MediaQuery.of(Get.context!).size.width * 0.04).obs;
+  RxDouble bigFontSize = (MediaQuery.of(Get.context!).size.width * 0.07).obs;
+  RxDouble middleFontSize = (MediaQuery.of(Get.context!).size.width * 0.04).obs;
+  RxDouble mainFontSize = (MediaQuery.of(Get.context!).size.width * 0.05).obs;
 }
 
 class UserInfo extends GetxController {
@@ -35,6 +35,7 @@ class UserInfo extends GetxController {
 }
 
 class PhotoSpotInfo extends GetxController {
+  RxBool checkPickedFile = false.obs;
   RxInt spotCategory = 0.obs;
   Rx<DateTime> spotDate = DateTime(0, 0, 0, 0, 0).obs;
   RxInt spotTimeHour = 0.obs;
@@ -43,6 +44,8 @@ class PhotoSpotInfo extends GetxController {
   RxInt spotWeather = 0.obs;
   RxString spotMainAddress = ''.obs;
   RxString spotExtraAddress = ''.obs;
+  RxDouble spotLatitude = 0.0.obs;
+  RxDouble spotLongitude = 0.0.obs;
 
   int getStartHour() {
     if (spotTimePeriod[0] == true) {
@@ -50,5 +53,19 @@ class PhotoSpotInfo extends GetxController {
     } else {
       return 12;
     }
+  }
+
+  void printInfo() {
+    print('checkPickedFile: ${checkPickedFile.value}');
+    print('spotCategory: ${spotCategory.value}');
+    print('spotDate: ${spotDate.value}');
+    print('spotTimeHour: ${spotTimeHour.value}');
+    print('spotTimeMinute: ${spotTimeMinute.value}');
+    print('spotTimePeriod: ${spotTimePeriod}');
+    print('spotWeather: ${spotWeather.value}');
+    print('spotMainAddress: ${spotMainAddress.value}');
+    print('spotExtraAddress: ${spotExtraAddress.value}');
+    print('spotLatitude: ${spotLatitude.value}');
+    print('spotLongitude: ${spotLongitude.value}');
   }
 }

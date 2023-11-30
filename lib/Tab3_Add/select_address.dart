@@ -19,11 +19,11 @@ class SelectAddress extends StatefulWidget {
 }
 
 final photoController = Get.put((PhotoSpotInfo()));
+final _formKey = GlobalKey<FormState>();
 
 class _SelectAddressState extends State<SelectAddress> {
   NaverMapController? _controller;
   late NMarker marker;
-  final GlobalKey<AddressFormState> _addressFormKey = GlobalKey();
 
   Map<String, String> headerss = {
     "X-NCP-APIGW-API-KEY-ID": "ud3er0cxg6",
@@ -51,8 +51,12 @@ class _SelectAddressState extends State<SelectAddress> {
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      lat = position.latitude;
-      lng = position.longitude;
+      lat = (photoController.spotLatitude.value == 0.0)
+          ? position.latitude
+          : photoController.spotLatitude.value;
+      lng = (photoController.spotLongitude.value == 0.0)
+          ? position.longitude
+          : photoController.spotLongitude.value;
     } catch (e) {
       print('error');
     }
@@ -66,10 +70,14 @@ class _SelectAddressState extends State<SelectAddress> {
 
     String jsonData = response.body;
 
-    which_one = jsonDecode(jsonData)["results"][1]['region']['area1']['name']?? "";
-    which_two = jsonDecode(jsonData)["results"][1]['region']['area2']['name']?? "";
-    which_three = jsonDecode(jsonData)["results"][1]['region']['area3']['name']?? "";
-    which_four = jsonDecode(jsonData)["results"][1]['region']['area4']['name']?? "";
+    which_one =
+        jsonDecode(jsonData)["results"][1]['region']['area1']['name'] ?? "";
+    which_two =
+        jsonDecode(jsonData)["results"][1]['region']['area2']['name'] ?? "";
+    which_three =
+        jsonDecode(jsonData)["results"][1]['region']['area3']['name'] ?? "";
+    which_four =
+        jsonDecode(jsonData)["results"][1]['region']['area4']['name'] ?? "";
 
     which = [which_one, which_two, which_three, which_four];
 
@@ -83,8 +91,6 @@ class _SelectAddressState extends State<SelectAddress> {
     super.initState();
   }
 
-  final _formKey = GlobalKey<FormState>();
-  String currentAddress = '';
   TextEditingController addressController = TextEditingController();
 
   @override
@@ -93,31 +99,26 @@ class _SelectAddressState extends State<SelectAddress> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(sizeController.screenHeight.value * 0.05),
-        child: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              size: sizeController.bigFontSize.value,
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Text(
+          "위치 추가",
+          style: TextStyle(fontSize: sizeController.bigFontSize.value),
+        ),
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            size: sizeController.bigFontSize.value,
           ),
         ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Text(
-              "위치 정보를 확인해주세요.",
-              style: TextStyle(fontSize: sizeController.bigFontSize.value),
-            ),
-          ),
           Expanded(
             child: FutureBuilder(
               future: getCurrentLocation(),
@@ -157,14 +158,13 @@ class _SelectAddressState extends State<SelectAddress> {
 
                       _controller?.addOverlay(marker);
 
-                      photoController.spotMainAddress.value = photoController.spotMainAddress.value;
-
-                      // Rebuild only the AddressForm widget
-                      _addressFormKey.currentState?.updateAddress();
+                      photoController.spotMainAddress.value =
+                          photoController.spotMainAddress.value;
                     },
                     onMapTapped: (point, latLng) async {
                       lat = latLng.latitude;
                       lng = latLng.longitude;
+                      photoController.printInfo();
 
                       http.Response response = await http.get(
                         Uri.parse(
@@ -175,14 +175,23 @@ class _SelectAddressState extends State<SelectAddress> {
 
                       String jsonData = response.body;
 
-                      which_one = jsonDecode(jsonData)["results"][1]['region']['area1']['name']?? "";
-                      which_two = jsonDecode(jsonData)["results"][1]['region']['area2']['name']?? "";
-                      which_three = jsonDecode(jsonData)["results"][1]['region']['area3']['name']?? "";
-                      which_four = jsonDecode(jsonData)["results"][1]['region']['area4']['name']?? "";
+                      which_one = jsonDecode(jsonData)["results"][1]['region']
+                              ['area1']['name'] ??
+                          "";
+                      which_two = jsonDecode(jsonData)["results"][1]['region']
+                              ['area2']['name'] ??
+                          "";
+                      which_three = jsonDecode(jsonData)["results"][1]['region']
+                              ['area3']['name'] ??
+                          "";
+                      which_four = jsonDecode(jsonData)["results"][1]['region']
+                              ['area4']['name'] ??
+                          "";
 
                       which = [which_one, which_two, which_three, which_four];
 
-                      which_String = "$which_one $which_two $which_three $which_four";
+                      which_String =
+                          "$which_one $which_two $which_three $which_four";
 
                       final iconImage = await NOverlayImage.fromWidget(
                         widget: const FlutterLogo(),
@@ -204,11 +213,8 @@ class _SelectAddressState extends State<SelectAddress> {
 
                       _controller?.addOverlay(updatedMarker);
 
-                      photoController.spotMainAddress.value = "$which_one $which_two $which_three $which_four";
-
-                      // Rebuild only the AddressForm widget
-                      _addressFormKey.currentState?.updateAddress();
-
+                      photoController.spotMainAddress.value =
+                          "$which_one $which_two $which_three $which_four";
                     },
                   );
                 } else {
@@ -220,122 +226,98 @@ class _SelectAddressState extends State<SelectAddress> {
               },
             ),
           ),
-          AddressForm(
-            key: _addressFormKey,
-          ), // Use the new widget here
+          Padding(
+            padding: EdgeInsets.all(sizeController.screenHeight.value * 0.03),
+            child: SizedBox(
+              height: sizeController.screenHeight.value * 0.25,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.location_pin),
+                        Obx(
+                          () => Text(
+                            photoController.spotMainAddress.value,
+                            style: TextStyle(
+                              fontSize: sizeController.mainFontSize.value,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Form(
+                      key: _formKey,
+                      child: TextFormField(
+                        controller: addressController,
+                        decoration: InputDecoration(
+                          hintText: '상세 주소를 정확하게 기입해주세요',
+                          hintStyle: TextStyle(
+                            fontSize: sizeController.middleFontSize.value,
+                          ),
+                          errorBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.red,
+                              width: 2,
+                              strokeAlign: BorderSide.strokeAlignOutside,
+                            ),
+                          ),
+                          focusedErrorBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.red,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                        onSaved: (value) {
+                          photoController.spotExtraAddress.value = value!;
+                        },
+                      ),
+                    ),
+                    const Expanded(child: SizedBox()),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.blueGrey,
+                        backgroundColor: Colors.blueGrey,
+                        shadowColor: Colors.black,
+                        minimumSize: Size(
+                          sizeController.screenWidth.value * 0.6,
+                          sizeController.screenHeight.value * 0.05,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () {
+                        photoController.printInfo();
+                        final formKeyState = _formKey.currentState!;
+                        if (formKeyState.validate()) {
+                          formKeyState.save();
+                          photoController.spotLatitude.value = lat;
+                          photoController.spotLongitude.value = lng;
+                          Get.back();
+                        }
+                      },
+                      child: Center(
+                        child: Text(
+                          '이 위치로 주소 설정',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: sizeController.middleFontSize.value,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: sizeController.screenHeight * 0.03,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
         ],
-      ),
-    );
-  }
-}
-
-
-class AddressForm extends StatefulWidget {
-  const AddressForm({Key? key}) : super(key: key);
-
-  @override
-  AddressFormState createState() => AddressFormState();
-}
-
-class AddressFormState extends State<AddressForm> {
-  final _formKey = GlobalKey<FormState>();
-  TextEditingController addressController = TextEditingController();
-
-  void updateAddress() {
-    setState(() {
-      // Update logic here
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final sizeController = Get.find<SizeController>();
-    final photoController = Get.find<PhotoSpotInfo>();
-
-    return Padding(
-      padding: EdgeInsets.all(sizeController.screenHeight.value * 0.03),
-      child: SizedBox(
-        height: sizeController.screenHeight.value * 0.25,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.location_pin),
-                  Text(
-                    photoController.spotMainAddress.value,
-                    style: TextStyle(
-                      fontSize: sizeController.mainFontSize.value,
-                    ),
-                  ),
-                ],
-              ),
-              Form(
-                key: _formKey,
-                child: TextFormField(
-                  controller: addressController,
-                  decoration: InputDecoration(
-                    hintText: '상세 주소를 정확하게 기입해주세요',
-                    hintStyle: TextStyle(
-                      fontSize: sizeController.middleFontSize.value,
-                    ),
-                    errorBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.red,
-                        width: 2,
-                        strokeAlign: BorderSide.strokeAlignOutside,
-                      ),
-                    ),
-                    focusedErrorBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.red,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                  onSaved: (value) {
-                    photoController.spotExtraAddress.value = value!;
-                  },
-                ),
-              ),
-              const Expanded(child: SizedBox()),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.blueGrey,
-                  backgroundColor: Colors.blueGrey,
-                  shadowColor: Colors.black,
-                  minimumSize: Size(
-                    sizeController.screenWidth.value * 0.6,
-                    sizeController.screenHeight.value * 0.05,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                onPressed: () {
-                  final formKeyState = _formKey.currentState!;
-                  if (formKeyState.validate()) {
-                    formKeyState.save();
-                    Get.back();
-                  }
-                },
-                child: Center(
-                  child: Text(
-                    '이 위치로 주소 설정',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: sizeController.middleFontSize.value,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: sizeController.screenHeight * 0.03,
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

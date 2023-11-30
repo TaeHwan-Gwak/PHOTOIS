@@ -18,28 +18,24 @@ class _Tab1State extends State<Tab1> {
     const String imageLogoName = 'assets/images/PHOTOIS_LOGO.png';
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize:
-            Size.fromHeight(sizeController.screenHeight.value * 0.05),
-        child: AppBar(
-          title: Image.asset(
-            imageLogoName,
-            width: sizeController.screenWidth.value * 0.3,
-          ),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  Get.to(const Tab3());
-                },
-                icon: const Icon(Icons.add_photo_alternate_outlined))
-          ],
-          bottom: const PreferredSize(
-            preferredSize: Size.fromHeight(-10),
-            child: Divider(
-              height: 2,
-              color: Colors.black,
-              thickness: 2, // 줄의 색상 설정
-            ),
+      appBar: AppBar(
+        title: Image.asset(
+          imageLogoName,
+          width: sizeController.screenWidth.value * 0.3,
+        ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Get.to(const Tab3());
+              },
+              icon: const Icon(Icons.add_a_photo))
+        ],
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(0),
+          child: Divider(
+            height: 2,
+            color: Colors.black,
+            thickness: 2, // 줄의 색상 설정
           ),
         ),
       ),
@@ -54,12 +50,12 @@ class _Tab1State extends State<Tab1> {
                 style: TextStyle(fontSize: sizeController.mainFontSize.value),
               ),
               SizedBox(
-                height: sizeController.screenWidth.value * 0.3,
+                height: sizeController.screenWidth.value * 0.5,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
                     Container(
-                      width: sizeController.screenWidth.value * 0.3,
+                      width: sizeController.screenWidth.value * 0.5,
                       color: Colors.deepOrangeAccent,
                     ),
                     SizedBox(

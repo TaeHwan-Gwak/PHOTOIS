@@ -36,9 +36,9 @@ enum PostCategory {
 
   String get title => const <PostCategory, String>{
         PostCategory.solo: '나홀로 인생샷',
-        PostCategory.couple: '커플 사랑샷',
-        PostCategory.friend: '친구 우정샷',
-        PostCategory.family: '가족 추억샷',
+        PostCategory.couple: '애인과 커플샷',
+        PostCategory.friend: '친구와 우정샷',
+        PostCategory.family: '가족과 추억샷',
       }[this]!;
 
   static PostCategory fromString(String value) {

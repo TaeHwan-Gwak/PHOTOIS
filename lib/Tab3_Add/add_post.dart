@@ -3,7 +3,6 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:photois/Main/data.dart';
-import 'package:sliver_tools/sliver_tools.dart';
 
 import 'dart:async';
 import 'dart:io';
@@ -28,10 +27,8 @@ class _Tab3State extends State<Tab3> {
 
   List<String> category = ['solo', 'couple', 'friend', 'family'];
 
-  final controller = Get.put((PhotoSpotInfo()));
-  final sizeController = Get.put((SizeController()));
   final picker = ImagePicker();
-  String imageDownLoadURL = '';
+  String? imageDownLoadURL;
 
   XFile? pickedFile;
   Exif? exif;
@@ -42,35 +39,6 @@ class _Tab3State extends State<Tab3> {
   @override
   void initState() {
     super.initState();
-  }
-
-  Future<void> showError(Object e) async {
-    debugPrintStack(
-        label: e.toString(), stackTrace: e is Error ? e.stackTrace : null);
-
-    return showDialog<void>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: [
-                Text(e.toString()),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Future getImage() async {
@@ -86,7 +54,6 @@ class _Tab3State extends State<Tab3> {
 
     setState(() {
       if (pickedFile != null) {
-        controller.spotDate.value = shootingDate!;
         if (int.parse(DateFormat.H().format(shootingDate!)) > 12) {
           controller.spotTimeHour.value =
               int.parse(DateFormat.H().format(shootingDate!)) - 12;
@@ -97,6 +64,10 @@ class _Tab3State extends State<Tab3> {
         }
         controller.spotTimeMinute.value =
             int.parse(DateFormat.m().format(shootingDate!));
+        controller.checkPickedFile.value = true;
+        controller.spotDate.value = shootingDate!;
+        controller.spotLongitude.value = coordinates!.longitude;
+        controller.spotLatitude.value = coordinates!.latitude;
       }
     });
   }
@@ -130,124 +101,147 @@ class _Tab3State extends State<Tab3> {
   Widget _buildPhotoArea() {
     return pickedFile != null
         ? SizedBox(
-            width: sizeController.screenWidth.value * 0.8,
-            height: sizeController.screenWidth.value * 0.8,
-            child: Image.file(File(pickedFile!.path)), //가져온 이미지를 화면에 띄워주는 코드
+            width: sizeController.screenWidth.value * 0.9,
+            height: sizeController.screenWidth.value * 0.9,
+            child: Image.file(
+              File(pickedFile!.path),
+              fit: BoxFit.cover,
+            ), //가져온 이미지를 화면에 띄워주는 코드
           )
-        : Container(
-            width: sizeController.screenWidth.value * 0.8,
-            height: sizeController.screenWidth.value * 0.8,
+        : Icon(
+            Icons.add_box_rounded,
+            size: sizeController.screenWidth.value * 0.8,
             color: Colors.grey,
           );
   }
+
+  final controller = Get.put((PhotoSpotInfo()));
+  final sizeController = Get.put((SizeController()));
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          preferredSize:
-              Size.fromHeight(sizeController.screenHeight.value * 0.09),
-          child: AppBar(
-            backgroundColor: Colors.white,
-            title: Text(
-              '새 게시물',
-              style: TextStyle(fontSize: sizeController.mainFontSize.value),
-            ),
-            elevation: 0,
-            leading: IconButton(
-                onPressed: () {
-                  _goBackConfirmDialog(context);
-                },
-                icon: Icon(Icons.arrow_back,
-                    size: sizeController.bigFontSize.value)),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    _postConfirmDialog(context);
-                  },
-                  child: Text(
-                    "등록",
-                    style: TextStyle(
-                        fontSize: sizeController.mainFontSize.value,
-                        color: Colors.blueGrey),
-                  )),
-            ],
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: Text(
+            '새 게시물',
+            style: TextStyle(fontSize: sizeController.bigFontSize.value),
           ),
-        ),
-        body: SafeArea(child: buildBody()));
-  }
-
-  Widget buildBody() {
-    return Stack(
-      clipBehavior: Clip.none,
-      fit: StackFit.passthrough,
-      children: [
-        CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            MultiSliver(
-              pushPinnedChildren: true,
-              children: [
-                SliverToBoxAdapter(child: spotImage()),
-                const SliverToBoxAdapter(child: Divider()),
-                SliverToBoxAdapter(child: spotInfo()),
-                Gap(sizeController.screenHeight.value * 0.01),
-                const SliverToBoxAdapter(child: Divider()),
-                SliverToBoxAdapter(child: spotCategory()),
-                Gap(sizeController.screenHeight.value * 0.1),
-              ],
-            ),
+          elevation: 0,
+          leading: IconButton(
+              onPressed: () {
+                _goBackConfirmDialog(context);
+              },
+              icon: Icon(Icons.arrow_back,
+                  size: sizeController.bigFontSize.value)),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  _postConfirmDialog(context);
+                },
+                child: Text(
+                  "등록",
+                  style: TextStyle(
+                      fontSize: sizeController.mainFontSize.value,
+                      color: Colors.blueGrey),
+                )),
           ],
         ),
-      ],
-    );
+        body: Obx(() {
+          controller.printInfo();
+          return SafeArea(
+              child: SingleChildScrollView(
+                  child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              spotImage(),
+              Visibility(
+                key: UniqueKey(),
+                visible: controller.checkPickedFile.value,
+                child: Column(
+                  children: [
+                    const Divider(),
+                    spotInfo(),
+                    Visibility(
+                        key: UniqueKey(),
+                        replacement: Column(
+                          children: [
+                            const Text(
+                              "* 위치 및 시간 정보를 입력해주세요.\n* 입력 후 날씨 정보를 받을 수 있습니다.",
+                              style: TextStyle(color: Colors.deepOrangeAccent),
+                            ),
+                            Gap(sizeController.screenHeight.value * 0.7),
+                          ],
+                        ),
+                        visible: (controller.spotMainAddress.value != '' &&
+                            controller.spotDate.value !=
+                                DateTime(0, 0, 0, 0, 0)),
+                        child: Column(
+                          children: [
+                            const Divider(),
+                            spotWeather(),
+                            Visibility(
+                                key: UniqueKey(),
+                                replacement: Column(
+                                  children: [
+                                    const Text(
+                                      "* 날씨 정보를 자동으로 불러오지 못했습니다.\n* 직접 입력해주세요.",
+                                      style: TextStyle(
+                                          color: Colors.deepOrangeAccent),
+                                    ),
+                                    Gap(sizeController.screenHeight.value *
+                                        0.7),
+                                  ],
+                                ),
+                                visible: (controller.spotWeather.value != 0),
+                                child: Column(
+                                  children: [
+                                    const Divider(),
+                                    spotCategory(),
+                                    Gap(sizeController.screenHeight.value *
+                                        0.6),
+                                  ],
+                                )),
+                          ],
+                        ))
+                  ],
+                ),
+              ),
+            ],
+          )));
+        }));
   }
 
   Widget spotImage() {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: sizeController.screenHeight.value * 0.04),
-          child: _buildGroupTitle('사진 업로드'),
-        ),
-        Gap(sizeController.screenHeight.value * 0.01),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [InkWell(onTap: getImage, child: _buildPhotoArea())],
-        ),
-        Gap(sizeController.screenHeight.value * 0.01),
+        Gap(sizeController.screenHeight.value * 0.02),
+        _buildGroupTitle('사진 업로드'),
+        Gap(sizeController.screenHeight.value * 0.03),
+        InkWell(onTap: getImage, child: _buildPhotoArea()),
+        Gap(sizeController.screenHeight.value * 0.05),
         if (pickedFile == null)
-          const Text(" ")
-        else
-          Text("${coordinates?.longitude}"),
+          const Text(
+            "* 사진은 한장만 업로드합니다.\n* 사진 업로드 후 추가 정보를 설정할 수 있습니다.",
+            style: TextStyle(color: Colors.deepOrangeAccent),
+          )
       ],
     );
   }
 
   Widget spotInfo() {
-    return Container(
-      padding: EdgeInsets.symmetric(
-          vertical: sizeController.screenHeight.value * 0.02),
-      child: Column(
+    return Obx(() {
+      return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: sizeController.screenHeight.value * 0.04),
-            child: _buildGroupTitle('위치 정보'),
-          ),
-          Gap(sizeController.screenHeight.value * 0.005),
+          Gap(sizeController.screenHeight.value * 0.05),
+          _buildGroupTitle('위치 및 시간 정보'),
+          Gap(sizeController.screenHeight.value * 0.05),
           _buildLabeledItem(
-            Obx(() => Text(
-                (controller.spotMainAddress.value == '')
-                    ? '위치를 입력해주세요'
-                    : (controller.spotExtraAddress.value == '')
-                        ? '$controller.spotMainAddress.value'
-                        : '${controller.spotMainAddress.value}\n(${controller.spotExtraAddress.value})',
-                style: TextStyle(fontSize: sizeController.mainFontSize.value))),
+            '위치 추가',
             (context) {
               return _buildRightArrow();
             },
@@ -264,19 +258,17 @@ class _Tab3State extends State<Tab3> {
             },
           ),
           Gap(sizeController.screenHeight.value * 0.02),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: _buildGroupTitle('시간 정보'),
-          ),
-          const Gap(4),
+          _buildSpotInfo(Obx(() => Text(
+              (controller.spotMainAddress.value == '')
+                  ? ''
+                  : (controller.spotExtraAddress.value == '')
+                      ? controller.spotMainAddress.value
+                      : '${controller.spotMainAddress.value}\n${controller.spotExtraAddress.value}',
+              style:
+                  TextStyle(fontSize: sizeController.middleFontSize.value)))),
+          Gap(sizeController.screenHeight.value * 0.05),
           _buildLabeledItem(
-            Obx(() => Text(
-                (controller.spotDate.value == DateTime(0, 0, 0))
-                    ? '시간을 입력해주세요'
-                    : DateFormat("yyyy년 MM월 dd일 ")
-                        .add_Hm()
-                        .format(controller.spotDate.value),
-                style: TextStyle(fontSize: sizeController.mainFontSize.value))),
+            '시간 추가',
             (context) {
               return _buildRightArrow();
             },
@@ -292,113 +284,291 @@ class _Tab3State extends State<Tab3> {
               }
             },
           ),
-          Gap(sizeController.screenHeight.value * 0.02),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: _buildGroupTitle('날씨 정보'),
-          ),
-          const Gap(4),
-          _buildLabeledItem(
-            Obx(() => Text(
-                (controller.spotWeather.value == 0)
-                    ? '날씨를 확인해주세요'
-                    : PostWeather.fromString(
-                            weather[controller.spotWeather.value - 1])
-                        .title,
-                style: TextStyle(fontSize: sizeController.mainFontSize.value))),
-            (context) {
-              return _buildRightArrow();
-            },
-            onTap: () {
-              if (pickedFile != null) {
-                Get.toNamed('/spotWeather');
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('먼저 사진을 업로드해주세요.'),
-                  ),
-                );
-              }
-            },
-          ),
+          _buildSpotInfo(Obx(() => Text(
+              (controller.spotDate.value == DateTime(0, 0, 0))
+                  ? ''
+                  : DateFormat("yyyy년 MM월 dd일 ")
+                      .add_Hm()
+                      .format(controller.spotDate.value),
+              style:
+                  TextStyle(fontSize: sizeController.middleFontSize.value)))),
+          Gap(sizeController.screenHeight.value * 0.05),
         ],
-      ),
+      );
+    });
+  }
+
+  Widget spotWeather() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Gap(sizeController.screenHeight.value * 0.05),
+        _buildGroupTitle('날씨 정보'),
+        Gap(sizeController.screenHeight.value * 0.02),
+        SizedBox(
+          height: sizeController.screenHeight.value * 0.01,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Ink(
+              padding:
+                  EdgeInsets.all(sizeController.screenHeight.value * 0.001),
+              decoration: BoxDecoration(
+                color: (controller.spotWeather.value == 1)
+                    ? Colors.tealAccent
+                    : Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                onPressed: () {
+                  setState(() {
+                    controller.spotWeather.value = 1;
+                  });
+                },
+                icon: const Icon(MyFlutterApp.sun),
+                iconSize: sizeController.bigFontSize.value * 2,
+              ),
+            ),
+            Ink(
+              padding:
+                  EdgeInsets.all(sizeController.screenHeight.value * 0.001),
+              decoration: BoxDecoration(
+                color: (controller.spotWeather.value == 2)
+                    ? Colors.tealAccent
+                    : Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                onPressed: () {
+                  setState(() {
+                    controller.spotWeather.value = 2;
+                  });
+                },
+                icon: const Icon(MyFlutterApp.cloud),
+                iconSize: sizeController.bigFontSize.value * 2,
+              ),
+            ),
+            Ink(
+              padding:
+                  EdgeInsets.all(sizeController.screenHeight.value * 0.001),
+              decoration: BoxDecoration(
+                color: (controller.spotWeather.value == 3)
+                    ? Colors.tealAccent
+                    : Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                onPressed: () {
+                  setState(() {
+                    controller.spotWeather.value = 3;
+                  });
+                },
+                icon: const Icon(MyFlutterApp.rainy),
+                iconSize: sizeController.bigFontSize.value * 2,
+              ),
+            ),
+            Ink(
+              padding:
+                  EdgeInsets.all(sizeController.screenHeight.value * 0.001),
+              decoration: BoxDecoration(
+                color: (controller.spotWeather.value == 4)
+                    ? Colors.tealAccent
+                    : Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                onPressed: () {
+                  setState(() {
+                    controller.spotWeather.value = 4;
+                  });
+                },
+                icon: const Icon(MyFlutterApp.snow),
+                iconSize: sizeController.bigFontSize.value * 2,
+              ),
+            ),
+          ],
+        ),
+        Gap(sizeController.screenHeight.value * 0.02),
+        Obx(() => Text(
+            (controller.spotWeather.value == 0)
+                ? ""
+                : PostWeather.fromString(
+                        weather[controller.spotWeather.value - 1])
+                    .title,
+            style: TextStyle(fontSize: sizeController.mainFontSize.value))),
+        Gap(sizeController.screenHeight.value * 0.05),
+      ],
     );
   }
 
   Widget spotCategory() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: _buildGroupTitle('카테고리'),
-          ),
-          const Gap(4),
-          _buildLabeledItem(
-            Obx(() => Text(
-                (controller.spotCategory.value == 0)
-                    ? '카테고리를 선택해주세요'
-                    : PostCategory.fromString(
-                            category[controller.spotCategory.value - 1])
-                        .title,
-                style: TextStyle(fontSize: sizeController.mainFontSize.value))),
-            (context) {
-              return _buildRightArrow();
-            },
-            onTap: () {
-              if (pickedFile != null) {
-                Get.toNamed('/spotCategory');
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('먼저 사진을 업로드해주세요.'),
-                  ),
-                );
-              }
-            },
-          ),
-        ],
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Gap(sizeController.screenHeight.value * 0.05),
+        _buildGroupTitle('카테고리'),
+        Gap(sizeController.screenHeight.value * 0.02),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: (controller.spotCategory.value == 1)
+                    ? Colors.tealAccent
+                    : Colors.white,
+                shadowColor: Colors.black,
+                minimumSize: Size(sizeController.screenWidth.value * 0.4,
+                    sizeController.screenHeight.value * 0.07),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () {
+                setState(() {
+                  controller.spotCategory.value = 1;
+                });
+              },
+              child: Text('나홀로 인생샷',
+                  style:
+                      TextStyle(fontSize: sizeController.middleFontSize.value)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: (controller.spotCategory.value == 2)
+                    ? Colors.tealAccent
+                    : Colors.white,
+                shadowColor: Colors.black,
+                minimumSize: Size(sizeController.screenWidth.value * 0.4,
+                    sizeController.screenHeight.value * 0.07),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () {
+                setState(() {
+                  controller.spotCategory.value = 2;
+                });
+              },
+              child: Text('애인과 커플샷',
+                  style:
+                      TextStyle(fontSize: sizeController.middleFontSize.value)),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: sizeController.screenHeight * 0.03,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: (controller.spotCategory.value == 3)
+                    ? Colors.tealAccent
+                    : Colors.white,
+                shadowColor: Colors.black,
+                minimumSize: Size(sizeController.screenWidth.value * 0.4,
+                    sizeController.screenHeight.value * 0.07),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () {
+                setState(() {
+                  controller.spotCategory.value = 3;
+                });
+              },
+              child: Text('친구와 우정샷',
+                  style:
+                      TextStyle(fontSize: sizeController.middleFontSize.value)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: (controller.spotCategory.value == 4)
+                    ? Colors.tealAccent
+                    : Colors.white,
+                shadowColor: Colors.black,
+                minimumSize: Size(sizeController.screenWidth.value * 0.4,
+                    sizeController.screenHeight.value * 0.07),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () {
+                setState(() {
+                  controller.spotCategory.value = 4;
+                });
+              },
+              child: Text('가족과 추억샷',
+                  style:
+                      TextStyle(fontSize: sizeController.middleFontSize.value)),
+            ),
+          ],
+        ),
+        /*
+        Gap(sizeController.screenHeight.value * 0.02),
+        Obx(() => Text(
+            (controller.spotCategory.value == 0)
+                ? ''
+                : PostCategory.fromString(
+                        category[controller.spotCategory.value - 1])
+                    .title,
+            style: TextStyle(fontSize: sizeController.mainFontSize.value))),
+
+         */
+        Gap(sizeController.screenHeight.value * 0.05),
+      ],
     );
   }
 
   Widget _buildGroupTitle(String title) {
     return Align(
       alignment: Alignment.centerLeft,
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: sizeController.mainFontSize.value,
-          fontWeight: FontWeight.w500,
-          color: const Color(0xFFADADAD),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: sizeController.bigFontSize.value,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFFADADAD),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildLabeledItem(
-    Widget text,
+    String text,
     Widget Function(BuildContext context) builder, {
     void Function()? onTap,
   }) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Material(
+      color: Colors.transparent,
       child: InkWell(
-        splashColor: Colors.blue.withOpacity(0.3),
-        // splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+        splashColor: Colors.grey.withOpacity(0.3),
         onTap: onTap,
         child: Ink(
+          height: 40,
           padding: EdgeInsets.symmetric(
-              horizontal: sizeController.screenHeight.value * 0.04,
-              vertical: sizeController.screenWidth.value * 0.03),
-          color: Theme.of(context).scaffoldBackgroundColor,
+              horizontal: sizeController.screenHeight.value * 0.03),
           child: Row(
             children: [
-              SizedBox(width: screenWidth * 0.7, child: text),
+              SizedBox(
+                width: sizeController.screenWidth.value * 0.7,
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: sizeController.mainFontSize.value,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
               Expanded(
                 child: builder(context),
               ),
@@ -409,11 +579,18 @@ class _Tab3State extends State<Tab3> {
     );
   }
 
+  Widget _buildSpotInfo(Widget info) {
+    return Align(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24), child: info));
+  }
+
   Widget _buildRightArrow() {
     return Align(
       alignment: Alignment.centerRight,
       child: Icon(
-        Icons.arrow_forward_ios_outlined,
+        Icons.arrow_forward_ios,
         color: Colors.black,
         size: sizeController.mainFontSize.value,
       ),
@@ -465,6 +642,10 @@ class _Tab3State extends State<Tab3> {
                 if (pickedFile != null) {
                   //TODO: 조건 더 붙이기
                   await _uploadImage();
+                  String spotAddress =
+                      "${controller.spotMainAddress.value} ${controller.spotExtraAddress.value}";
+                  double spotlongitude = controller.spotLongitude.value;
+                  double spotLatitude = controller.spotLatitude.value;
                   DateTime spotDate = controller.spotDate.value;
                   String spotWeather =
                       weather[controller.spotWeather.value - 1];
@@ -475,10 +656,10 @@ class _Tab3State extends State<Tab3> {
                       postID: '',
                       createdAt: DateTime.now(),
                       userUid: '',
-                      imageURL: imageDownLoadURL,
-                      address: '',
-                      longitude: 0.0,
-                      latitude: 0.0,
+                      imageURL: imageDownLoadURL!,
+                      address: spotAddress,
+                      longitude: spotlongitude,
+                      latitude: spotLatitude,
                       date: spotDate,
                       weather: PostWeather.fromString(spotWeather),
                       category: PostCategory.fromString(spotCategory));
@@ -516,4 +697,20 @@ class _Tab3State extends State<Tab3> {
       },
     );
   }
+}
+
+class MyFlutterApp {
+  MyFlutterApp._();
+
+  static const _kFontFam = 'MyFlutterApp';
+  static const String? _kFontPkg = null;
+
+  static const IconData snow =
+      IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData rainy =
+      IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData sun =
+      IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData cloud =
+      IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

@@ -67,8 +67,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '528948528935',
     projectId: 'photois-e0f82',
     storageBucket: 'photois-e0f82.appspot.com',
-    androidClientId: '528948528935-g6gk0lsfai79qif3342m0kb2qqoa74sm.apps.googleusercontent.com',
-    iosClientId: '528948528935-io65rrmnmo1r9drh61eg3s5atcc8vedg.apps.googleusercontent.com',
+    androidClientId:
+        '528948528935-g6gk0lsfai79qif3342m0kb2qqoa74sm.apps.googleusercontent.com',
+    iosClientId:
+        '528948528935-io65rrmnmo1r9drh61eg3s5atcc8vedg.apps.googleusercontent.com',
     iosBundleId: 'com.example.photois',
   );
 
@@ -78,8 +80,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '528948528935',
     projectId: 'photois-e0f82',
     storageBucket: 'photois-e0f82.appspot.com',
-    androidClientId: '528948528935-g6gk0lsfai79qif3342m0kb2qqoa74sm.apps.googleusercontent.com',
-    iosClientId: '528948528935-df4uv17oddt125narc9ondmil6b7gcfj.apps.googleusercontent.com',
+    androidClientId:
+        '528948528935-g6gk0lsfai79qif3342m0kb2qqoa74sm.apps.googleusercontent.com',
+    iosClientId:
+        '528948528935-df4uv17oddt125narc9ondmil6b7gcfj.apps.googleusercontent.com',
     iosBundleId: 'com.cau.photois.RunnerTests',
   );
 }
