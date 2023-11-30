@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:native_exif/native_exif.dart';
 
 import 'package:photois/model/post_model.dart';
-import '../Tab3_Add/firestore_post.dart';
+import '../service/post_api_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class Tab3 extends StatefulWidget {
