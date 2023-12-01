@@ -52,6 +52,7 @@ enum PrefferedCategory {
   }
 }
 
+// set createdAt nullable, and make copyWith
 class UserModel {
   late String uid;
   late String nickname;
@@ -59,7 +60,7 @@ class UserModel {
   late String? instagramId;
   late UserType type;
   late PrefferedCategory category;
-  late DateTime createdAt;
+  late DateTime? createdAt;
 
   UserModel({
     required this.uid,
@@ -68,8 +69,22 @@ class UserModel {
     this.instagramId,
     required this.type,
     required this.category,
-    required this.createdAt,
+    this.createdAt,
   });
+
+  UserModel copyWith({
+    UserType? type,
+    PrefferedCategory? category,
+    String? nickname,
+  }) {
+    return UserModel(
+      email: email,
+      nickname: nickname ?? this.nickname,
+      category: category ?? this.category,
+      type: type ?? this.type,
+      uid: uid,
+    );
+  }
 
   factory UserModel.temp({
     String nickname = '전혜지',
@@ -116,7 +131,7 @@ class UserModel {
       'instagramId': instagramId,
       'type': type.name,
       'category': category.name,
-      'createdAt': createdAt.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
     };
   }
 

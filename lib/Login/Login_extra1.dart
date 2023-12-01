@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:photois/Main/data.dart';
+import 'package:photois/service/account.dart';
 
 class LoginExtra1 extends StatefulWidget {
   const LoginExtra1({super.key});
@@ -85,6 +86,7 @@ class _LoginExtra1State extends State<LoginExtra1> {
           final formKeyState = _formKey.currentState!;
           if (formKeyState.validate()) {
             formKeyState.save();
+            Get.find<AccountController>().updateNickname(controller.nickname.value);
             Get.toNamed('/login2');
           }
         },
