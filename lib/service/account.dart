@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:photois/common/ext.string.dart';
 import 'package:photois/model/user_model.dart';
+import 'package:photois/service/firebase.auth.dart';
 import 'package:photois/setting.dart';
 
 class Account extends GetxService {
@@ -41,16 +43,33 @@ class AccountController extends GetxController {
     }
   }
 
-  // 계정 변경 가정했을 때
-  changeUser() async {
-    _user = UserModel(
-      uid: 'uid',
-      nickname: 'nickname',
-      email: 'email',
-      type: UserType.normal,
-      category: PrefferedCategory.family,
-      createdAt: DateTime.now(),
-    );
+  getUserInfo(User? user) {
+    if (user == null) {
+      _user = UserModel.temp();
+      return true;
+    } else {
+      _user = UserModel(
+        uid: user.uid,
+        nickname: user.displayName ?? 'email',
+        email: user.email ?? '',
+        type: UserType.normal,
+        category: PrefferedCategory.family,
+      );
+    }
+  }
+
+  updateNickname(String nickname) {
+   _user = _user!.copyWith(nickname: nickname);
+    update();
+  }
+
+  changeUserType(UserType type) {
+    _user = _user!.copyWith(type: type);
+    update();
+  }
+
+  changeUserCategory(PrefferedCategory category) {
+    _user = _user!.copyWith(category: category);
     update();
   }
 }

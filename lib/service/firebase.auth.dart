@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:photois/service/account.dart';
 
 class FbAuth {
   static User? fbUser;
@@ -38,6 +40,8 @@ class FbAuth {
         //   _fbToken = value.token;
         //   _fbTokenExpire = value.expirationTime;
         // });
+      } else {
+        Get.offNamed('/login');
       }
     });
     _subsUser!.onError((err) async {
@@ -66,10 +70,11 @@ class FbAuth {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      final userCredential = await FirebaseAuth.instance
+      final UserCredential userCredential = await FirebaseAuth.instance
           .signInWithCredential(authCredential)
           .timeout(const Duration(seconds: 10));
 
+      Get.find<AccountController>().getUserInfo(userCredential.user);
       return userCredential.user?.uid;
     } catch (e) {}
     return null;
@@ -86,6 +91,16 @@ class FbAuth {
 
     try {
       await FirebaseAuth.instance.signOut();
+      fbUser = null;
+    } catch (e) {}
+  }
+
+  static Future<void> deleteUser() async {
+    if (!isLogged) return;
+
+    try {
+      await fbUser?.delete();
+
       fbUser = null;
     } catch (e) {}
   }

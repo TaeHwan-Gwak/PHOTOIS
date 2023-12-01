@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:photois/Main/data.dart';
+import 'package:photois/model/user_model.dart';
+import 'package:photois/service/account.dart';
 
 class LoginExtra2 extends StatefulWidget {
   const LoginExtra2({super.key});
@@ -138,6 +140,11 @@ class _LoginExtra2State extends State<LoginExtra2> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (controller.checkPhotographer.value != 0) {
+            //todo UserType 추가
+            Get.find<AccountController>().changeUserType(
+                UserType.fromString(controller.checkPhotographer.value == 1 ? '포토그래퍼' : '일반 사용자'),
+            );
+
             Get.toNamed('/login3');
           } else {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

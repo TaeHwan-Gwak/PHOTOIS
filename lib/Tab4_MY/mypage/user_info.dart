@@ -11,6 +11,8 @@ class UserInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     try {
       return GetBuilder<AccountController>(builder: (controller) {
+        print(controller.user?.nickname);
+
         return Container(
           margin:
               const EdgeInsets.symmetric(horizontal: 24, vertical: 16).copyWith(

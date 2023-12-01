@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:photois/common/ext.key.dart';
 import 'package:photois/Tab4_MY/mypage/user_info.dart';
 import 'package:photois/service/account.dart';
+import 'package:photois/service/firebase.auth.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class MyPage extends StatefulWidget {
@@ -226,8 +227,7 @@ class _MyPageState extends State<MyPage> {
                 height: kH,
                 child: RoundedButton(
                   onTap: () {
-                    // 계정 변경 테스트
-                    Get.find<AccountController>().changeUser();
+                    FbAuth.signOut();
                   },
                   child: const Text('로그아웃'),
                 ),
@@ -236,7 +236,9 @@ class _MyPageState extends State<MyPage> {
                 width: w,
                 height: kH,
                 child: RoundedButton(
-                  onTap: () {},
+                  onTap: () {
+                    FbAuth.deleteUser();
+                  },
                   child: const Text(
                     '탈퇴하기',
                     style: TextStyle(
