@@ -22,6 +22,7 @@ class _Tab1State extends State<Tab1> {
     const String imageLogoName = 'assets/images/PHOTOIS_LOGO.png';
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Image.asset(
           imageLogoName,
           width: sizeController.screenWidth.value * 0.3,

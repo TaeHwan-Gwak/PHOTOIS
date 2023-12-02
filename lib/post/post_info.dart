@@ -38,7 +38,8 @@ class _PhotoInfoState extends State<PhotoInfo> {
         title: const Text('게시물'),
         leading: IconButton(
           onPressed: () {
-            Get.offNamed('/main');
+            Get.offAllNamed('/main');
+            //Get.back();
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),

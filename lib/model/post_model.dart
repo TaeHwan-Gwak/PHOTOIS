@@ -69,6 +69,10 @@ class LikeModel {
     final Map<String, dynamic> data = {'userIDs': userIDs};
     return data;
   }
+
+  void update() {
+    update();
+  }
 }
 
 class PostModel {
