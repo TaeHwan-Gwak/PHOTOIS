@@ -21,14 +21,10 @@ class _LoginExtra1State extends State<LoginExtra1> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize:
-            Size.fromHeight(sizeController.screenHeight.value * 0.05),
-        child: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            automaticallyImplyLeading: false),
-      ),
+      appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          automaticallyImplyLeading: false),
       body: Padding(
         padding: EdgeInsets.all(sizeController.screenHeight.value * 0.03),
         child: Column(
@@ -86,11 +82,11 @@ class _LoginExtra1State extends State<LoginExtra1> {
           final formKeyState = _formKey.currentState!;
           if (formKeyState.validate()) {
             formKeyState.save();
-            Get.find<AccountController>().updateNickname(controller.nickname.value);
+            Get.find<AccountController>()
+                .updateNickname(controller.nickname.value);
             Get.toNamed('/login2');
           }
         },
-        mini: true,
         child: Icon(Icons.arrow_forward_ios,
             size: sizeController.bigFontSize.value),
       ),

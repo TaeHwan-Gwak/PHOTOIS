@@ -56,7 +56,8 @@ class LoginPage extends StatelessWidget {
           const Expanded(child: SizedBox()),
           InkWell(
               onTap: () {
-                Get.offNamed('/main');
+                Get.offNamed('/login2');
+                //Get.offNamed('/main');
               },
               child: Container(
                 decoration: BoxDecoration(
