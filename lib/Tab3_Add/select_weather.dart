@@ -5,6 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../style/weather_icon.dart';
+
 class SelectWeather extends StatefulWidget {
   const SelectWeather({super.key});
 
@@ -119,7 +121,7 @@ class _SelectCategoryState extends State<SelectWeather> {
                         controller.spotWeather.value = 1;
                       });
                     },
-                    icon: const Icon(MyFlutterApp.sun),
+                    icon: const Icon(WeatherIcon.sun),
                     iconSize: sizeController.bigFontSize.value * 2,
                   ),
                 ),
@@ -138,7 +140,7 @@ class _SelectCategoryState extends State<SelectWeather> {
                         controller.spotWeather.value = 2;
                       });
                     },
-                    icon: const Icon(MyFlutterApp.cloud),
+                    icon: const Icon(WeatherIcon.cloud),
                     iconSize: sizeController.bigFontSize.value * 2,
                   ),
                 ),
@@ -157,7 +159,7 @@ class _SelectCategoryState extends State<SelectWeather> {
                         controller.spotWeather.value = 3;
                       });
                     },
-                    icon: const Icon(MyFlutterApp.rainy),
+                    icon: const Icon(WeatherIcon.rainy),
                     iconSize: sizeController.bigFontSize.value * 2,
                   ),
                 ),
@@ -176,7 +178,7 @@ class _SelectCategoryState extends State<SelectWeather> {
                         controller.spotWeather.value = 4;
                       });
                     },
-                    icon: const Icon(MyFlutterApp.snow),
+                    icon: const Icon(WeatherIcon.snow),
                     iconSize: sizeController.bigFontSize.value * 2,
                   ),
                 ),
@@ -213,20 +215,4 @@ class _SelectCategoryState extends State<SelectWeather> {
       ),
     );
   }
-}
-
-class MyFlutterApp {
-  MyFlutterApp._();
-
-  static const _kFontFam = 'MyFlutterApp';
-  static const String? _kFontPkg = null;
-
-  static const IconData snow =
-      IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData rainy =
-      IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData sun =
-      IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData cloud =
-      IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }
