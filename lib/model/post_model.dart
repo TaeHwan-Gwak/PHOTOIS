@@ -54,6 +54,23 @@ enum PostCategory {
   }
 }
 
+class LikeModel {
+  late List<String> userIDs;
+
+  LikeModel({required this.userIDs});
+
+  // json => Object
+  LikeModel.fromJson(dynamic json) {
+    userIDs = List<String>.from(json['userIDs']);
+  }
+
+  // Object => json
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {'userIDs': userIDs};
+    return data;
+  }
+}
+
 class PostModel {
   // 사용되는 자료형
   late String? postID;
@@ -66,7 +83,7 @@ class PostModel {
   late Timestamp? date;
   late PostWeather? weather;
   late PostCategory? category;
-  late int? like;
+  late LikeModel likes;
   late DocumentReference? reference;
 
   //생성자
@@ -81,7 +98,7 @@ class PostModel {
       required this.date,
       required this.weather,
       required this.category,
-      required this.like,
+      required this.likes,
       this.reference});
 
   //json => Object로, firestore에서 불러올때
@@ -94,7 +111,7 @@ class PostModel {
     longitude = json['longitude'];
     latitude = json['latitude'];
     date = json['date'];
-    like = json['like'];
+    likes = LikeModel.fromJson(json['likes']);
     weather = PostWeather.fromString(json['weather'] as String);
     category = PostCategory.fromString(json['category'] as String);
   }
@@ -125,8 +142,8 @@ class PostModel {
     map['latitude'] = latitude;
     map['date'] = date;
     map['weather'] = weather?.name;
-    map['category'] = category?.title;
-    map['like'] = like;
+    map['category'] = category?.name;
+    map['likes'] = likes.toJson();
     return map;
   }
 }

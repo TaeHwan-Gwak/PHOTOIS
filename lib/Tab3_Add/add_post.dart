@@ -26,7 +26,7 @@ class Tab3 extends StatefulWidget {
 class _Tab3State extends State<Tab3> {
   int selectedIconNum = 0;
 
-  List<String> weather = ['sun', 'clouds', 'rain', 'snow'];
+  List<String> weather = ['sun', 'cloud', 'rain', 'snow'];
 
   List<String> category = ['solo', 'couple', 'friend', 'family'];
 
@@ -656,9 +656,9 @@ class _Tab3State extends State<Tab3> {
                       category[controller.spotCategory.value - 1];
 
                   PostModel fireModel = PostModel(
-                      postID: '',
+                      postID: 'post1',
                       createdAt: Timestamp.now(),
-                      userUid: '',
+                      userUid: 'jin',
                       imageURL: imageDownLoadURL,
                       address: spotAddress,
                       longitude: spotLongitude,
@@ -666,7 +666,7 @@ class _Tab3State extends State<Tab3> {
                       date: Timestamp.fromDate(spotDate),
                       weather: PostWeather.fromString(spotWeather),
                       category: PostCategory.fromString(spotCategory),
-                      like: 0);
+                      likes: LikeModel(userIDs: []));
 
                   await FireService().createPostInfo(fireModel.toJson());
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

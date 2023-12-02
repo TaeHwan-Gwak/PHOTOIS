@@ -40,7 +40,7 @@ class FireService {
     CollectionReference<Map<String, dynamic>> collectionReference =
         FirebaseFirestore.instance.collection("PostInfo");
     QuerySnapshot<Map<String, dynamic>> querySnapshot =
-        await collectionReference.orderBy("date").get();
+        await collectionReference.orderBy("like", descending: true).get();
 
     List<PostModel> posts = [];
     for (var doc in querySnapshot.docs) {
@@ -59,6 +59,6 @@ class FireService {
   Future<void> updatePost(
       {required Map<String, dynamic> json,
       required DocumentReference reference}) async {
-    await reference.set(json);
+    await reference.set(json, SetOptions(merge: true));
   }
 }
