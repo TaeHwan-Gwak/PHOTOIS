@@ -8,7 +8,7 @@ class WeatherIcon {
 
   static const IconData snow =
       IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData rainy =
+  static const IconData rain =
       IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData sun =
       IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);

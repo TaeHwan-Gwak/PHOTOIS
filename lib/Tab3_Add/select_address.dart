@@ -271,12 +271,6 @@ class _SelectAddressState extends State<SelectAddress> {
                             ),
                           ),
                         ),
-                        inputFormatters: [
-                          FilteringTextInputFormatter(
-                            RegExp('[a-z A-Z ㄱ-ㅎ|가-힣|0-9]'),
-                            allow: true,
-                          )
-                        ],
                         onSaved: (value) {
                           photoController.spotExtraAddress.value = value!;
                         },

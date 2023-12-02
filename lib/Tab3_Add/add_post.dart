@@ -367,7 +367,7 @@ class _Tab3State extends State<Tab3> {
                     controller.spotWeather.value = 3;
                   });
                 },
-                icon: const Icon(WeatherIcon.rainy),
+                icon: const Icon(WeatherIcon.rain),
                 iconSize: sizeController.bigFontSize.value * 2,
               ),
             ),

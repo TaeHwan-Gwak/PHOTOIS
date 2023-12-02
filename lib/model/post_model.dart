@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum PostWeather {
   sun,
-  clouds,
+  cloud,
   rain,
   snow,
   ;
 
   String get title => const <PostWeather, String>{
         PostWeather.sun: '맑음',
-        PostWeather.clouds: '구름',
+        PostWeather.cloud: '구름',
         PostWeather.rain: '비',
         PostWeather.snow: '눈',
       }[this]!;
@@ -124,7 +124,7 @@ class PostModel {
     map['longitude'] = longitude;
     map['latitude'] = latitude;
     map['date'] = date;
-    map['weather'] = weather?.title;
+    map['weather'] = weather?.name;
     map['category'] = category?.title;
     map['like'] = like;
     return map;
