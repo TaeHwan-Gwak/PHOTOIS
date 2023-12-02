@@ -40,7 +40,8 @@ class FireService {
     CollectionReference<Map<String, dynamic>> collectionReference =
         FirebaseFirestore.instance.collection("PostInfo");
     QuerySnapshot<Map<String, dynamic>> querySnapshot =
-        await collectionReference.orderBy("like", descending: true).get();
+        //await collectionReference.orderBy("like", descending: true).get();
+        await collectionReference.get();
 
     List<PostModel> posts = [];
     for (var doc in querySnapshot.docs) {

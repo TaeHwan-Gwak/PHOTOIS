@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:native_exif/native_exif.dart';
 
 import 'package:photois/model/post_model.dart';
+import '../getWeather.dart';
 import '../service/post_api_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -29,6 +30,8 @@ class _Tab3State extends State<Tab3> {
   List<String> weather = ['sun', 'cloud', 'rain', 'snow'];
 
   List<String> category = ['solo', 'couple', 'friend', 'family'];
+
+  bool clickWeatherButton = false;
 
   final picker = ImagePicker();
   String? imageDownLoadURL;
@@ -188,8 +191,10 @@ class _Tab3State extends State<Tab3> {
                                 key: UniqueKey(),
                                 replacement: Column(
                                   children: [
-                                    const Text(
-                                      "* 날씨 정보를 자동으로 불러오지 못했습니다.\n* 직접 입력해주세요.",
+                                    Text(
+                                      clickWeatherButton == false
+                                          ? "* 버튼을 눌러 날씨 정보를 받아와주세요.\n* 언제든 수정 가능합니다."
+                                          : "* 날씨 정보를 자동으로 불러오지 못했습니다.\n* 직접 입력해주세요.",
                                       style: TextStyle(
                                           color: Colors.deepOrangeAccent),
                                     ),
@@ -306,7 +311,37 @@ class _Tab3State extends State<Tab3> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Gap(sizeController.screenHeight.value * 0.05),
-        _buildGroupTitle('날씨 정보'),
+        Row(
+          children: [
+            _buildGroupTitle('날씨 정보'),
+            IconButton(
+              onPressed: () async {
+                clickWeatherButton = true;
+                GetWeather weatherService = GetWeather();
+                String condition = await weatherService.getWeatherCondition(
+                    controller.spotLatitude.value,
+                    controller.spotLongitude.value,
+                    controller.spotDate.value);
+
+                setState(() {
+                  switch (condition) {
+                    case 'Clear':
+                      controller.spotWeather.value = 1;
+                    case 'Clouds':
+                      controller.spotWeather.value = 2;
+                    case 'Rain':
+                      controller.spotWeather.value = 3;
+                    case 'Snow':
+                      controller.spotWeather.value = 4;
+                    default:
+                      controller.spotWeather.value = 0;
+                  }
+                });
+              },
+              icon: const Icon(Icons.refresh_sharp, size: 25),
+            ),
+          ],
+        ),
         Gap(sizeController.screenHeight.value * 0.02),
         SizedBox(
           height: sizeController.screenHeight.value * 0.01,

@@ -43,11 +43,13 @@ class PostCard extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 child: Row(
                   children: [
-                    Text(
-                      "${data.address}",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: sizeController.middleFontSize.value * 0.8,
+                    Expanded(
+                      child: Text(
+                        "${data.address}",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: sizeController.middleFontSize.value * 0.8,
+                        ),
                       ),
                     ),
                   ],
