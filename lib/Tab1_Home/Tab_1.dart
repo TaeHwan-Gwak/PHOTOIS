@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:photois/Main/data.dart';
 
+import '../post/post_card.dart';
 import '../Tab3_Add/add_post.dart';
 import '../model/post_model.dart';
 import '../service/post_api_service.dart';
@@ -64,7 +65,10 @@ class _Tab1State extends State<Tab1> {
                             itemCount: datas.length,
                             itemBuilder: (BuildContext context, int index) {
                               PostModel data = datas[index];
-                              return postCard(data);
+                              return PostCard(
+                                  data: data,
+                                  size:
+                                      sizeController.screenHeight.value * 0.3);
                             },
                           );
                         } else if (snapshot.hasError) {
@@ -101,7 +105,10 @@ class _Tab1State extends State<Tab1> {
                             itemCount: datas.length,
                             itemBuilder: (BuildContext context, int index) {
                               PostModel data = datas[index];
-                              return postCard(data);
+                              return PostCard(
+                                  data: data,
+                                  size:
+                                      sizeController.screenHeight.value * 0.3);
                             },
                           );
                         } else if (snapshot.hasError) {
@@ -138,7 +145,10 @@ class _Tab1State extends State<Tab1> {
                             itemCount: datas.length,
                             itemBuilder: (BuildContext context, int index) {
                               PostModel data = datas[index];
-                              return postCard(data);
+                              return PostCard(
+                                  data: data,
+                                  size:
+                                      sizeController.screenHeight.value * 0.3);
                             },
                           );
                         } else if (snapshot.hasError) {
@@ -156,59 +166,5 @@ class _Tab1State extends State<Tab1> {
         ),
       ),
     );
-  }
-
-  Widget postCard(PostModel data) {
-    return Stack(children: [
-      SizedBox(
-          height: sizeController.screenHeight.value * 0.3,
-          width: sizeController.screenHeight.value * 0.3,
-          child: Image.network(
-            data.imageURL ?? 'No imageURL',
-            fit: BoxFit.cover,
-          )),
-      Positioned(
-        bottom: 0,
-        left: 0,
-        right: 0,
-        child: Container(
-          color: Colors.black.withOpacity(0.2), // 배경색 및 투명도 설정
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            children: [
-              Text(
-                "${data.address}",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: sizeController.middleFontSize.value * 0.8,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      Positioned(
-        left: 0,
-        right: 0,
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.favorite_outlined,
-                color: Colors.deepOrange,
-              ),
-              Text(
-                " ${data.like ?? 0}",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: sizeController.middleFontSize.value,
-                ),
-              ),
-            ],
-          ),
-        ),
-      )
-    ]);
   }
 }

@@ -14,6 +14,8 @@ import 'package:photois/model/post_model.dart';
 import '../service/post_api_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+import '../style/weather_icon.dart';
+
 class Tab3 extends StatefulWidget {
   const Tab3({super.key});
 
@@ -24,7 +26,7 @@ class Tab3 extends StatefulWidget {
 class _Tab3State extends State<Tab3> {
   int selectedIconNum = 0;
 
-  List<String> weather = ['sun', 'clouds', 'rain', 'snow'];
+  List<String> weather = ['sun', 'cloud', 'rain', 'snow'];
 
   List<String> category = ['solo', 'couple', 'friend', 'family'];
 
@@ -327,7 +329,7 @@ class _Tab3State extends State<Tab3> {
                     controller.spotWeather.value = 1;
                   });
                 },
-                icon: const Icon(MyFlutterApp.sun),
+                icon: const Icon(WeatherIcon.sun),
                 iconSize: sizeController.bigFontSize.value * 2,
               ),
             ),
@@ -346,7 +348,7 @@ class _Tab3State extends State<Tab3> {
                     controller.spotWeather.value = 2;
                   });
                 },
-                icon: const Icon(MyFlutterApp.cloud),
+                icon: const Icon(WeatherIcon.cloud),
                 iconSize: sizeController.bigFontSize.value * 2,
               ),
             ),
@@ -365,7 +367,7 @@ class _Tab3State extends State<Tab3> {
                     controller.spotWeather.value = 3;
                   });
                 },
-                icon: const Icon(MyFlutterApp.rainy),
+                icon: const Icon(WeatherIcon.rain),
                 iconSize: sizeController.bigFontSize.value * 2,
               ),
             ),
@@ -384,7 +386,7 @@ class _Tab3State extends State<Tab3> {
                     controller.spotWeather.value = 4;
                   });
                 },
-                icon: const Icon(MyFlutterApp.snow),
+                icon: const Icon(WeatherIcon.snow),
                 iconSize: sizeController.bigFontSize.value * 2,
               ),
             ),
@@ -654,9 +656,9 @@ class _Tab3State extends State<Tab3> {
                       category[controller.spotCategory.value - 1];
 
                   PostModel fireModel = PostModel(
-                      postID: '',
+                      postID: 'post1',
                       createdAt: Timestamp.now(),
-                      userUid: '',
+                      userUid: 'jin',
                       imageURL: imageDownLoadURL,
                       address: spotAddress,
                       longitude: spotLongitude,
@@ -664,7 +666,7 @@ class _Tab3State extends State<Tab3> {
                       date: Timestamp.fromDate(spotDate),
                       weather: PostWeather.fromString(spotWeather),
                       category: PostCategory.fromString(spotCategory),
-                      like: 0);
+                      likes: LikeModel(userIDs: []));
 
                   await FireService().createPostInfo(fireModel.toJson());
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -699,20 +701,4 @@ class _Tab3State extends State<Tab3> {
       },
     );
   }
-}
-
-class MyFlutterApp {
-  MyFlutterApp._();
-
-  static const _kFontFam = 'MyFlutterApp';
-  static const String? _kFontPkg = null;
-
-  static const IconData snow =
-      IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData rainy =
-      IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData sun =
-      IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData cloud =
-      IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }
