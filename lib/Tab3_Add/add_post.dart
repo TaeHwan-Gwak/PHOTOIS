@@ -89,9 +89,7 @@ class _Tab3State extends State<Tab3> {
     exif = null;
     coordinates = null;
 
-    setState(() {
-      controller.removeData();
-    });
+    setState(() {});
   }
 
   Future<void> _uploadImage() async {
@@ -655,7 +653,6 @@ class _Tab3State extends State<Tab3> {
               onPressed: () {
                 Get.back();
                 Get.back();
-                controller.removeData();
               },
               child: Text('확인',
                   style: TextStyle(
@@ -716,7 +713,6 @@ class _Tab3State extends State<Tab3> {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('사진 등록 완료'),
                   ));
-                  controller.removeData();
                   Get.back();
                   Get.back();
                 } else {
