@@ -55,6 +55,20 @@ class PhotoSpotInfo extends GetxController {
     }
   }
 
+  void removeData() {
+    checkPickedFile.value = false;
+    spotCategory.value = 0;
+    spotDate.value = DateTime(0, 0, 0, 0, 0);
+    spotTimeHour.value = 0;
+    spotTimeMinute.value = 0;
+    spotTimePeriod = [true, false]; // [AM, PM]
+    spotWeather.value = 0;
+    spotMainAddress.value = '';
+    spotExtraAddress.value = '';
+    spotLatitude.value = 0.0;
+    spotLongitude.value = 0.0;
+  }
+
   void printInfo() {
     print('checkPickedFile: ${checkPickedFile.value}');
     print('spotCategory: ${spotCategory.value}');

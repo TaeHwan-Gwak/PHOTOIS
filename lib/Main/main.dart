@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'PHOTOIS',
-      theme: ThemeData(primarySwatch: Colors.grey, fontFamily: 'BMHANNAPro'),
+      theme: ThemeData(primarySwatch: Colors.grey, fontFamily: 'NotoSansKR'),
       initialRoute: '/',
       getPages: page,
       debugShowCheckedModeBanner: false,
