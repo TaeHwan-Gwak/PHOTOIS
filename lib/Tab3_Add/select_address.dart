@@ -19,10 +19,11 @@ class SelectAddress extends StatefulWidget {
   State<SelectAddress> createState() => _SelectAddressState();
 }
 
-final photoController = Get.put((PhotoSpotInfo()));
-final _formKey = GlobalKey<FormState>();
-
 class _SelectAddressState extends State<SelectAddress> {
+  final photoController = Get.put((PhotoSpotInfo()));
+  final sizeController = Get.put((SizeController()));
+  final _formKey = GlobalKey<FormState>();
+
   NaverMapController? _controller;
   late NMarker marker;
 
@@ -31,8 +32,8 @@ class _SelectAddressState extends State<SelectAddress> {
     "X-NCP-APIGW-API-KEY": "i5bTtbxYq6VpOvNCYN4A6Qlw8hDzAdFKw0AsEk6s"
   };
 
-  double lat = 37;
-  double lng = 126;
+  double lat = 0;
+  double lng = 0;
 
   List<String> which = [];
   var which_one = "";
@@ -96,8 +97,6 @@ class _SelectAddressState extends State<SelectAddress> {
 
   @override
   Widget build(BuildContext context) {
-    final sizeController = Get.put((SizeController()));
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -159,8 +158,7 @@ class _SelectAddressState extends State<SelectAddress> {
 
                       _controller?.addOverlay(marker);
 
-                      photoController.spotMainAddress.value =
-                          photoController.spotMainAddress.value;
+                      //photoController.spotMainAddress.value = photoController.spotMainAddress.value;
                     },
                     onMapTapped: (point, latLng) async {
                       lat = latLng.latitude;
@@ -291,13 +289,13 @@ class _SelectAddressState extends State<SelectAddress> {
                         ),
                       ),
                       onPressed: () {
-                        photoController.printInfo();
                         final formKeyState = _formKey.currentState!;
                         if (formKeyState.validate()) {
                           formKeyState.save();
                           photoController.spotLatitude.value = lat;
                           photoController.spotLongitude.value = lng;
                           Get.back();
+                          photoController.printInfo();
                         }
                       },
                       child: Center(

@@ -10,11 +10,51 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 // naver client ID : 'ud3er0cxg6'
 
-enum SearchSeason { season, spring, summer, autumn, winter }
+enum SearchSeason {
+  season,
+  spring,
+  summer,
+  autumn,
+  winter,
+  ;
 
-enum SearchTime { time, day, night }
+  String get title => const <SearchSeason, String>{
+        SearchSeason.season: '계절 선택',
+        SearchSeason.spring: '봄',
+        SearchSeason.summer: '여름',
+        SearchSeason.autumn: '가을',
+        SearchSeason.winter: '겨울',
+      }[this]!;
+}
 
-enum SearchWeather { weather, sun, clouds, rain, snow }
+enum SearchTime {
+  time,
+  day,
+  night,
+  ;
+
+  String get title => const <SearchTime, String>{
+        SearchTime.time: '시간 선택',
+        SearchTime.day: '주간',
+        SearchTime.night: '야간',
+      }[this]!;
+}
+
+enum SearchWeather {
+  weather,
+  sun,
+  clouds,
+  rain,
+  snow;
+
+  String get title => const <SearchWeather, String>{
+        SearchWeather.weather: '날씨 선택',
+        SearchWeather.sun: '맑음',
+        SearchWeather.clouds: '구름',
+        SearchWeather.rain: '비',
+        SearchWeather.snow: '눈',
+      }[this]!;
+}
 
 class SearchSpot extends StatefulWidget {
   const SearchSpot({super.key});
@@ -231,8 +271,7 @@ class _SearchSpotState extends State<SearchSpot> {
                         items: SearchSeason.values.map((SearchSeason status) {
                           return DropdownMenuItem<SearchSeason>(
                             value: status,
-                            child:
-                                Text("   ${status.toString().split('.').last}"),
+                            child: Text(status.title),
                           );
                         }).toList()),
                   ),
@@ -261,8 +300,7 @@ class _SearchSpotState extends State<SearchSpot> {
                       items: SearchTime.values.map((SearchTime status) {
                         return DropdownMenuItem<SearchTime>(
                           value: status,
-                          child:
-                              Text("   ${status.toString().split('.').last}"),
+                          child: Text(status.title),
                         );
                       }).toList(),
                     ),
@@ -293,8 +331,7 @@ class _SearchSpotState extends State<SearchSpot> {
                       items: SearchWeather.values.map((SearchWeather status) {
                         return DropdownMenuItem<SearchWeather>(
                           value: status,
-                          child:
-                              Text("   ${status.toString().split('.').last}"),
+                          child: Text(status.title),
                         );
                       }).toList(),
                     ),

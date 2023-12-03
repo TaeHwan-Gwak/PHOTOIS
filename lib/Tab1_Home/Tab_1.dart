@@ -51,7 +51,9 @@ class _Tab1State extends State<Tab1> {
             children: [
               Text(
                 " 주변 인기사진 스팟",
-                style: TextStyle(fontSize: sizeController.mainFontSize.value),
+                style: TextStyle(
+                    fontSize: sizeController.mainFontSize.value,
+                    fontWeight: FontWeight.w400),
               ),
               SizedBox(
                   height: sizeController.screenHeight.value * 0.3,

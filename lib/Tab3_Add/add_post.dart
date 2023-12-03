@@ -25,6 +25,9 @@ class Tab3 extends StatefulWidget {
 }
 
 class _Tab3State extends State<Tab3> {
+  final controller = Get.put((PhotoSpotInfo()));
+  final sizeController = Get.put((SizeController()));
+
   int selectedIconNum = 0;
 
   List<String> weather = ['sun', 'cloud', 'rain', 'snow'];
@@ -48,6 +51,7 @@ class _Tab3State extends State<Tab3> {
   }
 
   Future getImage() async {
+    controller.printInfo();
     pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile == null) {
       return;
@@ -85,7 +89,9 @@ class _Tab3State extends State<Tab3> {
     exif = null;
     coordinates = null;
 
-    setState(() {});
+    setState(() {
+      controller.removeData();
+    });
   }
 
   Future<void> _uploadImage() async {
@@ -120,9 +126,6 @@ class _Tab3State extends State<Tab3> {
             color: Colors.grey,
           );
   }
-
-  final controller = Get.put((PhotoSpotInfo()));
-  final sizeController = Get.put((SizeController()));
 
   @override
   Widget build(BuildContext context) {
@@ -247,7 +250,7 @@ class _Tab3State extends State<Tab3> {
         children: [
           Gap(sizeController.screenHeight.value * 0.05),
           _buildGroupTitle('위치 및 시간 정보'),
-          Gap(sizeController.screenHeight.value * 0.05),
+          Gap(sizeController.screenHeight.value * 0.03),
           _buildLabeledItem(
             '위치 추가',
             (context) {
@@ -281,6 +284,7 @@ class _Tab3State extends State<Tab3> {
               return _buildRightArrow();
             },
             onTap: () {
+              controller.printInfo();
               if (pickedFile != null) {
                 Get.toNamed('/spotTime');
               } else {
@@ -295,7 +299,7 @@ class _Tab3State extends State<Tab3> {
           _buildSpotInfo(Obx(() => Text(
               (controller.spotDate.value == DateTime(0, 0, 0))
                   ? ''
-                  : DateFormat("yyyy년 MM월 dd일 ")
+                  : DateFormat("yyyy년 MM월 dd일")
                       .add_Hm()
                       .format(controller.spotDate.value),
               style:
@@ -327,12 +331,16 @@ class _Tab3State extends State<Tab3> {
                   switch (condition) {
                     case 'Clear':
                       controller.spotWeather.value = 1;
+                      break;
                     case 'Clouds':
                       controller.spotWeather.value = 2;
+                      break;
                     case 'Rain':
                       controller.spotWeather.value = 3;
+                      break;
                     case 'Snow':
                       controller.spotWeather.value = 4;
+                      break;
                     default:
                       controller.spotWeather.value = 0;
                   }
@@ -647,6 +655,7 @@ class _Tab3State extends State<Tab3> {
               onPressed: () {
                 Get.back();
                 Get.back();
+                controller.removeData();
               },
               child: Text('확인',
                   style: TextStyle(
@@ -707,6 +716,7 @@ class _Tab3State extends State<Tab3> {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('사진 등록 완료'),
                   ));
+                  controller.removeData();
                   Get.back();
                   Get.back();
                 } else {
