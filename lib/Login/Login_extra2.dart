@@ -12,6 +12,22 @@ class LoginExtra2 extends StatefulWidget {
 }
 
 class _LoginExtra2State extends State<LoginExtra2> {
+
+  String _getUserType(int userTypeValue) {
+    switch (userTypeValue) {
+      case 1:
+        return '나홀로 인생샷';
+      case 2:
+        return '애인과 커플샷';
+      case 3:
+        return '친구와 우정샷';
+      case 4:
+        return '가족과 추억샷';
+      default:
+        return '알수 없는 값';
+    }
+  }
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -138,14 +154,16 @@ class _LoginExtra2State extends State<LoginExtra2> {
                                   color: Colors.red,
                                   width: 2,
                                 ))),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return '포토그래퍼를 선택하시면 인스타그램 입력은 필수입니다.';
-                              }
-                              return null;
-                            },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return '포토그래퍼를 선택하시면 인스타그램 입력은 필수입니다.';
+                                } else if (!value.contains('@')) {
+                                  return '입력값에 "@"가 포함되어야 합니다';
+                                }
+                                return null;
+                              },
                             onSaved: (value) {
-                              controller.instagramID.value = value!;
+                              controller.phoneNumber.value = value!;
                             },
                           ),
                         ),
@@ -310,6 +328,16 @@ class _LoginExtra2State extends State<LoginExtra2> {
                                     ? '포토그래퍼'
                                     : '일반 사용자'),
                           );
+                           Get.find<AccountController>().changeUserCategory(
+                             PrefferedCategory.fromString(
+                                 controller.checkCategory.value == 1
+                                     ? '포토그래퍼'
+                                     : '일반 사용자'),
+                           );
+                           Get.find<AccountController>()
+                               .changeUserNumber(controller.phoneNumber.value);
+
+                           _getUserType(controller.checkCategory.value);
 
                           Get.offAllNamed('/main');
                         }
