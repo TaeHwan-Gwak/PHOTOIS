@@ -29,7 +29,12 @@ class FbAuth {
   }
 
   static void _listenUser() {
-    final auth = FirebaseAuth.instance;
+    final FirebaseAuth auth = FirebaseAuth.instance;
+
+    fbUser = auth.currentUser;
+    if(fbUser != null) {
+      Get.find<AccountController>().getUserInfo(fbUser);
+    }
 
     _subsUser?.cancel();
     _subsUser = auth.userChanges().listen((user) {
@@ -53,19 +58,19 @@ class FbAuth {
   //------------------------------------------------------------
   // login, logout
   //------------------------------------------------------------
-  static Future<String?> signInWithGoogleSignIn({
+  static Future<String> signInWithGoogleSignIn({
     bool unlink = false,
   }) async {
     if (unlink) {
       await unlinkGoogle();
     }
-    if (isLogged) {
-      await signOut();
-    }
+    // if (isLogged) {
+    //   await signOut();
+    // }
 
     try {
-      final googleUser = (await GoogleSignIn(scopes: ['email']).signIn())!;
-      final googleAuth = await googleUser.authentication;
+      final GoogleSignInAccount googleUser = (await GoogleSignIn(scopes: ['email']).signIn())!;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final authCredential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
@@ -74,10 +79,18 @@ class FbAuth {
           .signInWithCredential(authCredential)
           .timeout(const Duration(seconds: 10));
 
+      print('userCredential.additionalUserInfo?.isNewUser :${userCredential.additionalUserInfo?.isNewUser} ');
       Get.find<AccountController>().getUserInfo(userCredential.user);
-      return userCredential.user?.uid;
-    } catch (e) {}
-    return null;
+      if(userCredential.additionalUserInfo?.isNewUser ?? true) {
+        return 'register';
+      } else {
+        return 'success';
+      }
+
+    } catch (e) {
+      return 'fail';
+    }
+
   }
 
   static Future<void> unlinkGoogle() async {

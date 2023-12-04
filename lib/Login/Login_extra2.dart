@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:photois/Main/data.dart';
+import 'package:photois/Main/data.dart' as my_data;
 import 'package:photois/model/user_model.dart';
 import 'package:photois/service/account.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginExtra2 extends StatefulWidget {
   const LoginExtra2({super.key});
@@ -12,12 +14,30 @@ class LoginExtra2 extends StatefulWidget {
 }
 
 class _LoginExtra2State extends State<LoginExtra2> {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  String _getUserType(int userTypeValue) {
+    switch (userTypeValue) {
+      case 1:
+        return '나홀로 인생샷';
+      case 2:
+        return '애인과 커플샷';
+      case 3:
+        return '친구와 우정샷';
+      case 4:
+        return '가족과 추억샷';
+      default:
+        return '알수 없는 값';
+    }
+  }
+
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(UserInfo());
-    final sizeController = Get.put(SizeController());
+    final controller = Get.put(my_data.UserInfo());
+    final sizeController = Get.put(my_data.SizeController());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -141,11 +161,13 @@ class _LoginExtra2State extends State<LoginExtra2> {
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return '포토그래퍼를 선택하시면 인스타그램 입력은 필수입니다.';
+                              } else if (!value.contains('@')) {
+                                return '입력값에 "@"가 포함되어야 합니다';
                               }
                               return null;
                             },
                             onSaved: (value) {
-                              controller.instagramID.value = value!;
+                              controller.phoneNumber.value = value!;
                             },
                           ),
                         ),
@@ -282,15 +304,15 @@ class _LoginExtra2State extends State<LoginExtra2> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                       ),
-                      onPressed: () {
-                        final formKeyState = _formKey.currentState!;
+                      onPressed: () async {
                         if (controller.checkPhotographer.value == 0) {
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
                             content: Text('포토그래퍼 여부를 선택해주세요'),
                           ));
                         } else if (controller.checkPhotographer.value == 1 &&
-                            !formKeyState.validate()) {
+                           !( _formKey.currentState?.validate() ?? false)) {
+
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
                             content: Text('인스타그램 아이디를 입력해주세요'),
@@ -301,16 +323,27 @@ class _LoginExtra2State extends State<LoginExtra2> {
                             content: Text('카테고리 중 하나를 선택해주세요'),
                           ));
                         } else {
-                          //todo UserType 추가
-                          formKeyState.save();
-                          Get.find<AccountController>()
-                              .updateNickname(controller.nickname.value);
-                          Get.find<AccountController>().changeUserType(
-                            UserType.fromString(
-                                controller.checkPhotographer.value == 1
-                                    ? '포토그래퍼'
-                                    : '일반 사용자'),
-                          );
+                           _formKey.currentState?.save();
+                          Get.find<AccountController>().updateNickname(controller.nickname.value);
+                          Get.find<AccountController>().changeUserType(UserType.fromString(_getUserType(controller.checkPhotographer.value)));
+                           Get.find<AccountController>().changeUserCategory(PrefferedCategory.fromString(controller.checkCategory.value == 1
+                                     ? '포토그래퍼'
+                                     : '일반 사용자'),
+                           );
+                           Get.find<AccountController>()
+                               .changeUserNumber(controller.phoneNumber.value);
+
+
+                           final String uid = auth.currentUser!.uid;
+
+                           await firestore.collection('userInfo').doc(uid).set({
+                             'uid' : Get.find<AccountController>().user!.uid,
+                             'email' : Get.find<AccountController>().user!.email,
+                             'nickname' : controller.nickname.value,
+                             'photoGrapher': controller.checkPhotographer.value,
+                             'phoneNumber': controller.phoneNumber.value,
+                             'categoryName': _getUserType(controller.checkCategory.value),
+                           });
 
                           Get.offAllNamed('/main');
                         }

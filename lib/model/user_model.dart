@@ -57,7 +57,7 @@ class UserModel {
   late String uid;
   late String nickname;
   late String email;
-  late String? instagramId;
+  late String? phoneNumber;
   late UserType type;
   late PrefferedCategory category;
   late DateTime? createdAt;
@@ -66,7 +66,7 @@ class UserModel {
     required this.uid,
     required this.nickname,
     required this.email,
-    this.instagramId,
+    this.phoneNumber,
     required this.type,
     required this.category,
     this.createdAt,
@@ -76,12 +76,14 @@ class UserModel {
     UserType? type,
     PrefferedCategory? category,
     String? nickname,
+    String? phoneNumber,
   }) {
     return UserModel(
       email: email,
       nickname: nickname ?? this.nickname,
       category: category ?? this.category,
       type: type ?? this.type,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
       uid: uid,
     );
   }
@@ -94,7 +96,7 @@ class UserModel {
       uid: FbAuth.isLogged ? FbAuth.uid! : 'test-uid',
       nickname: nickname,
       email: email,
-      instagramId: null,
+      phoneNumber: null,
       type: UserType.normal,
       category: PrefferedCategory.solo,
       createdAt: DateTime.now().toUtc(),
@@ -106,7 +108,7 @@ class UserModel {
       uid: json['uid'] as String,
       nickname: json['nickname'] as String,
       email: json['email'] as String,
-      instagramId: json['instagramId'] as String?,
+      phoneNumber: json['phoneNumber'] as String?,
       type: UserType.fromString(json['type'] as String),
       category: PrefferedCategory.fromString(json['category'] as String),
       createdAt: DateTime.parse(json['cretedAt'] as String).toUtc(),
@@ -128,7 +130,7 @@ class UserModel {
       'uid': uid,
       'nickname': nickname,
       'email': email,
-      'instagramId': instagramId,
+      'phoneNumber': phoneNumber,
       'type': type.name,
       'category': category.name,
       'createdAt': createdAt?.toIso8601String(),

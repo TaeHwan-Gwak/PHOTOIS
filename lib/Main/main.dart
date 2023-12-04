@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:photois/common/ext.string.dart';
 import 'package:photois/Main/routes.dart';
+import 'package:photois/service.dart';
 import 'package:photois/service/firebase.boot.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,6 +13,7 @@ Future<void> main() async {
 
   await NaverMapSdk.instance.initialize(clientId: 'ud3er0cxg6');
 
+  initServices();
   await initFirebase();
   await initializeDateFormatting();
   await Firebase.initializeApp();

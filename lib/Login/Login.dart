@@ -87,9 +87,11 @@ class LoginPage extends StatelessWidget {
                   await FbAuth.signInWithGoogleSignIn(unlink: true);
               debugPrint('loggedUid: $loggedUid');
 
-              if (loggedUid != null) {
+              if (loggedUid == 'success') {
                 Get.snackbar('로그인 성공', '로그인에 성공했습니다.');
-                Get.offNamed('/login1');
+                Get.offNamed('/main');
+              } else if(loggedUid == 'register') {
+                Get.toNamed('/login1');
               } else {
                 Get.snackbar('로그인 실패', '로그인에 실패했습니다.');
               }

@@ -52,6 +52,7 @@ class AccountController extends GetxController {
         uid: user.uid,
         nickname: user.displayName ?? 'email',
         email: user.email ?? '',
+        phoneNumber: user.phoneNumber ?? '',
         type: UserType.normal,
         category: PrefferedCategory.family,
       );
@@ -72,4 +73,10 @@ class AccountController extends GetxController {
     _user = _user!.copyWith(category: category);
     update();
   }
+
+  changeUserNumber(String phoneNumber) {
+    _user = _user!.copyWith(phoneNumber: phoneNumber);
+    update();
+  }
+
 }
