@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:photois/Main/data.dart';
+import 'package:photois/Main/data.dart' as my_data;
 import 'package:photois/service/account.dart';
 
 class LoginExtra1 extends StatefulWidget {
@@ -12,12 +14,15 @@ class LoginExtra1 extends StatefulWidget {
 }
 
 class _LoginExtra1State extends State<LoginExtra1> {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put((UserInfo()));
-    final sizeController = Get.put((SizeController()));
+    final controller = Get.put((my_data.UserInfo()));
+    final sizeController = Get.put((my_data.SizeController()));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -69,8 +74,18 @@ class _LoginExtra1State extends State<LoginExtra1> {
                   }
                   return null;
                 },
-                onSaved: (value) {
+                onSaved: (value) async {
                   controller.nickname.value = value!;
+                  final String uid = auth.currentUser!.uid;
+
+                  debugPrint('####################################################');
+                  debugPrint('uid: ${uid}');
+                  debugPrint('value: ${value}');
+                  debugPrint('####################################################');
+                  await firestore.collection('userInfo').doc(uid).set({
+                    'nickname': value,
+                  });
+
                 },
               ),
             )
