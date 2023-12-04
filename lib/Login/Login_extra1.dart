@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:photois/Main/data.dart';
 import 'package:photois/service/account.dart';
 
+//TODO: 디자인 변경
 class LoginExtra1 extends StatefulWidget {
   const LoginExtra1({super.key});
 

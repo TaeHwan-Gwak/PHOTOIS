@@ -5,10 +5,12 @@ import 'package:photois/service/account.dart';
 import 'package:photois/setting.dart';
 import 'package:photois/Main/data.dart';
 
-import '../Tab1_Home/Tab_1.dart';
-import '../Tab2_Around/Tab_2.dart';
+import '../Tab1_Home/recommend_spot.dart';
+import '../Tab2_Around/search_spot.dart';
 import '../Tab3_Add/add_post.dart';
 import 'package:photois/Tab4_MY/mypage/my_page.dart';
+
+import '../style/style.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -60,15 +62,15 @@ class _MainPageState extends State<MainPage> {
     final sizeController = Get.put((SizeController()));
 
     return Scaffold(
-      // body: pages[_selectedIndex],
       body: buildContentPage(),
       extendBodyBehindAppBar: true,
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: AppColor.backgroundColor,
         type: BottomNavigationBarType.fixed,
         iconSize: sizeController.bigFontSize.value,
-        unselectedItemColor: Colors.black,
+        unselectedItemColor: AppColor.textColor,
         unselectedFontSize: sizeController.middleFontSize.value,
-        selectedItemColor: Colors.lightBlue,
+        selectedItemColor: AppColor.objectColor,
         selectedFontSize: sizeController.middleFontSize.value,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'HOME'),
@@ -85,13 +87,13 @@ class _MainPageState extends State<MainPage> {
   Widget buildContentPage() {
     switch (_selectedIndex) {
       case 0:
-        return const Tab1();
+        return const RecommendSpot();
       case 1:
         return const SearchSpot();
       case 3:
         return const MyPage();
       default:
-        return const Tab1();
+        return const RecommendSpot();
     }
   }
 }

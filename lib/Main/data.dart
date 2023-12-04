@@ -44,6 +44,7 @@ class PhotoSpotInfo extends GetxController {
   RxInt spotWeather = 0.obs;
   RxString spotMainAddress = ''.obs;
   RxString spotExtraAddress = ''.obs;
+  RxString spotContent = ''.obs;
   RxDouble spotLatitude = 0.0.obs;
   RxDouble spotLongitude = 0.0.obs;
 
@@ -65,6 +66,7 @@ class PhotoSpotInfo extends GetxController {
     spotWeather.value = 0;
     spotMainAddress.value = '';
     spotExtraAddress.value = '';
+    spotContent.value = '';
     spotLatitude.value = 0.0;
     spotLongitude.value = 0.0;
   }
@@ -75,7 +77,7 @@ class PhotoSpotInfo extends GetxController {
     print('spotDate: ${spotDate.value}');
     print('spotTimeHour: ${spotTimeHour.value}');
     print('spotTimeMinute: ${spotTimeMinute.value}');
-    print('spotTimePeriod: ${spotTimePeriod}');
+    print('spotTimePeriod: $spotTimePeriod');
     print('spotWeather: ${spotWeather.value}');
     print('spotMainAddress: ${spotMainAddress.value}');
     print('spotExtraAddress: ${spotExtraAddress.value}');

@@ -2,10 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:get/get.dart';
 import 'package:photois/common/ext.key.dart';
 import 'package:photois/Tab4_MY/mypage/user_info.dart';
-import 'package:photois/service/account.dart';
 import 'package:photois/service/firebase.auth.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -285,7 +283,6 @@ class RoundedButton extends StatelessWidget {
           child: DefaultTextStyle(
             style: const TextStyle(
               fontSize: 16,
-              // fontFamily: 'BMHANNAPro',
               color: Colors.black,
               fontWeight: FontWeight.w700,
             ),
