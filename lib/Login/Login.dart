@@ -33,75 +33,76 @@ class LoginPage extends StatelessWidget {
     final sizeController = Get.put((SizeController()));
 
     return Scaffold(
-      backgroundColor: AppColor.backgroundColor,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: sizeController.screenHeight * 0.25,
-            ),
-            Image.asset(
-              imageLogoName,
-              width: sizeController.screenWidth.value * 0.7,
-              height: sizeController.screenHeight.value * 0.1,
-            ),
-            Divider(
-                thickness: 4,
-                indent: sizeController.screenWidth.value * 0.12,
-                endIndent: sizeController.screenWidth.value * 0.12,
-                color: AppColor.objectColor),
-            Text(
-              "\" 당신만의 사진 스팟 \"",
-              style: TextStyle(
-                  fontSize: sizeController.mainFontSize.value + 3,
-                  fontWeight: FontWeight.w700,
-                  color: AppColor.textColor),
-            ),
-            const Expanded(child: SizedBox()),
-            InkWell(
-              onLongPress: () {
-                Get.offNamed('/main');
-              },
-              onTap: () async {
-                final loggedUid =
-                    await FbAuth.signInWithGoogleSignIn(unlink: true);
-                debugPrint('loggedUid: $loggedUid');
+        backgroundColor: AppColor.backgroundColor,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: sizeController.screenHeight * 0.25,
+              ),
+              Image.asset(
+                imageLogoName,
+                width: sizeController.screenWidth.value * 0.7,
+                height: sizeController.screenHeight.value * 0.1,
+              ),
+              Divider(
+                  thickness: 4,
+                  indent: sizeController.screenWidth.value * 0.12,
+                  endIndent: sizeController.screenWidth.value * 0.12,
+                  color: AppColor.objectColor),
+              Text(
+                "\" 당신만의 사진 스팟 \"",
+                style: TextStyle(
+                    fontSize: sizeController.mainFontSize.value + 3,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.textColor),
+              ),
+              const Expanded(child: SizedBox()),
+              InkWell(
+                onLongPress: () {
+                  Get.offNamed('/main');
+                },
+                onTap: () async {
+                  final loggedUid =
+                      await FbAuth.signInWithGoogleSignIn(unlink: true);
+                  debugPrint('loggedUid: $loggedUid');
 
-              if (loggedUid == 'success') {
-                Get.snackbar('로그인 성공', '로그인에 성공했습니다.');
-                Get.offNamed('/main');
-              } else if(loggedUid == 'register') {
-                Get.toNamed('/login1');
-              } else {
-                Get.snackbar('로그인 실패', '로그인에 실패했습니다.');
-              }
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.teal,
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 0,
-                    blurRadius: 5.0,
-                    offset: const Offset(0, 10), // changes position of shadow
+                  if (loggedUid == 'success') {
+                    Get.snackbar('로그인 성공', '로그인에 성공했습니다.');
+                    Get.offNamed('/main');
+                  } else if (loggedUid == 'register') {
+                    Get.toNamed('/login1');
+                  } else {
+                    Get.snackbar('로그인 실패', '로그인에 실패했습니다.');
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.teal,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 0,
+                        blurRadius: 5.0,
+                        offset:
+                            const Offset(0, 10), // changes position of shadow
+                      ),
+                    ],
                   ),
-                ],
+                  child: Image.asset(
+                    "assets/images/google_login.png",
+                    width: sizeController.screenWidth.value * 0.6,
+                    fit: BoxFit.fill,
+                  ),
+                ),
               ),
-              child: Image.asset(
-                "assets/images/google_login.png",
-                width: sizeController.screenWidth.value * 0.6,
-                fit: BoxFit.fill,
-              ),
-            ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.15,
+              )
+            ],
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.15,
-          )
-        ],
-      ),
-    );
+        ));
   }
 }

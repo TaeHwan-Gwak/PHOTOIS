@@ -1,8 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:photois/service.dart';
 import 'package:photois/service/firebase.auth.dart';
 
 import '../style/style.dart';
@@ -23,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Get.offNamed('/login');
     });
     */
-    if(FbAuth.isLogged) {
+    if (FbAuth.isLogged) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         Get.offNamed('/main');
       });
@@ -32,7 +29,6 @@ class _SplashScreenState extends State<SplashScreen> {
         Get.offNamed('/login');
       });
     }
-
 
     // initServices();
   }
