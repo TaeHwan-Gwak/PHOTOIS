@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:intl/intl.dart';
 import '../Main/data.dart';
 import 'package:get/get.dart';
 import '../model/post_model.dart';
 import '../service/post_api_service.dart';
-import '../style/weather_icon.dart';
+import '../style/style.dart';
 
 class PhotoInfo extends StatefulWidget {
   final PostModel data;
@@ -20,6 +21,17 @@ class _PhotoInfoState extends State<PhotoInfo> {
   final sizeController = Get.put((SizeController()));
   bool isFavorite = false;
 
+  NaverMapController? _controller;
+  late NMarker marker;
+
+  Map<String, String> headerss = {
+    "X-NCP-APIGW-API-KEY-ID": "ud3er0cxg6",
+    "X-NCP-APIGW-API-KEY": "i5bTtbxYq6VpOvNCYN4A6Qlw8hDzAdFKw0AsEk6s"
+  };
+
+  double lat = 0;
+  double lng = 0;
+
   @override
   void initState() {
     super.initState();
@@ -32,16 +44,44 @@ class _PhotoInfoState extends State<PhotoInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColor.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text('게시물'),
+        backgroundColor: AppColor.backgroundColor,
+        title: Center(
+          child: Text(
+            "ABOUT POST",
+            style: TextStyle(
+                fontSize: sizeController.bigFontSize.value,
+                fontWeight: FontWeight.w900,
+                color: AppColor.textColor),
+          ),
+        ),
         leading: IconButton(
-          onPressed: () {
-            Get.offAllNamed('/main');
-            //Get.back();
-          },
-          icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Get.back();
+            },
+            icon: const Icon(
+              Icons.arrow_back,
+              size: 25,
+              color: AppColor.objectColor,
+            )),
+        actions: [
+          IconButton(
+              onPressed: () {
+                //TODO: 신고 기능
+              },
+              icon: const Icon(
+                Icons.report_problem,
+                size: 30,
+                color: Colors.deepOrangeAccent,
+              )),
+        ],
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(5),
+          child: Divider(
+            color: AppColor.objectColor,
+            thickness: 3, // 줄의 색상 설정
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -49,56 +89,82 @@ class _PhotoInfoState extends State<PhotoInfo> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            ///TODO: 인스타정보 불러오기
+            Container(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "@jingjing_2_ 님의 게시물",
+                    style: TextStyle(
+                        color: AppColor.textColor,
+                        fontSize: sizeController.middleFontSize.value + 1,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    DateFormat("yyyy년 MM월 dd일 H:m  ")
+                        .format(data.date!.toDate()),
+                    style: TextStyle(
+                        fontSize: sizeController.middleFontSize.value - 2,
+                        fontWeight: FontWeight.w300,
+                        color: AppColor.textColor),
+                  ),
+                ],
+              ),
+            ),
             Stack(
               children: [
                 SizedBox(
-                  height: sizeController.screenWidth.value,
-                  width: double.infinity,
+                  height: sizeController.screenWidth.value * 1.25,
+                  width: sizeController.screenWidth.value,
                   child: Image.network(
                     data.imageURL ?? 'No imageURL',
                     fit: BoxFit.cover,
                   ),
                 ),
-
-                ///TODO: 인스타정보 불러오기
                 Positioned(
+                  bottom: 0,
+                  left: 0,
                   right: 0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "@jingjing_2_",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: sizeController.middleFontSize.value,
-                      ),
-                    ),
-                  ),
-                )
-                /*
-                  Visibility(
-                    visible:
-                    child: Positioned(
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        child: Text(
-                          " ",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: sizeController.middleFontSize.value,
+                  child: Container(
+                    color: AppColor.backgroundColor.withOpacity(0.1),
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${data.mainAddress}",
+                                style: TextStyle(
+                                    fontSize:
+                                        sizeController.mainFontSize.value + 3,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColor.textColor),
+                              ),
+                              Text(
+                                "${data.extraAddress}",
+                                style: TextStyle(
+                                    fontSize:
+                                        sizeController.middleFontSize.value - 3,
+                                    fontWeight: FontWeight.w300,
+                                    color: AppColor.textColor),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  )
-                   */
+                  ),
+                ),
               ],
-            ), //받아온 게시물 이미지 넣기
+            ),
             SizedBox(
               height: sizeController.screenHeight * 0.07,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Row(
                     children: [
@@ -115,7 +181,9 @@ class _PhotoInfoState extends State<PhotoInfo> {
                               createdAt: data.createdAt,
                               userUid: data.userUid,
                               imageURL: data.imageURL,
-                              address: data.address,
+                              mainAddress: data.mainAddress,
+                              extraAddress: data.extraAddress,
+                              content: data.content,
                               longitude: data.longitude,
                               latitude: data.latitude,
                               date: data.date,
@@ -136,60 +204,109 @@ class _PhotoInfoState extends State<PhotoInfo> {
                                   color: Colors.red, size: 30)
                               : const Icon(
                                   Icons.favorite_border,
-                                  color: Colors.black,
+                                  color: AppColor.textColor,
                                   size: 30,
                                 )),
-                      Text("${data.likes.userIDs.length} Likes",
-                          style: TextStyle(
-                              fontSize: sizeController.mainFontSize.value)),
+                      Text(
+                        "${data.likes.userIDs.length} Likes",
+                        style: TextStyle(
+                            fontSize: sizeController.mainFontSize.value,
+                            fontWeight: FontWeight.w300,
+                            color: AppColor.textColor),
+                      ),
                     ],
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                              DateFormat("yyyy년 MM월 dd일 H:m  ")
-                                  .format(data.date!.toDate()),
-                              style: TextStyle(
-                                  fontSize:
-                                      sizeController.middleFontSize.value)),
-                          Icon(getWeatherIcon(data.weather)),
-                          SizedBox(
-                            width: sizeController.screenWidth.value * 0.05,
-                          )
-                        ],
-                      ),
-                      Text("CATEGORY: ${data.category!.title}",
-                          style: TextStyle(
-                              fontSize: sizeController.middleFontSize.value)),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                        "#${data.weather!.title}# ${data.category!.title}",
+                        style: TextStyle(
+                            fontSize: sizeController.middleFontSize.value,
+                            fontWeight: FontWeight.w400,
+                            color: AppColor.textColor)),
                   ),
                 ],
               ),
             ),
-            const Divider(),
-            SizedBox(height: sizeController.screenHeight.value * 0.3),
-
-            ///TODO: 글 정보 불러오기
-            const Divider(),
-            SizedBox(height: sizeController.screenHeight.value * 0.02),
+            const Divider(color: AppColor.objectColor, thickness: 1),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: data.content != ''
+                  ? Text("${data.content}",
+                      style: TextStyle(
+                          fontSize: sizeController.middleFontSize.value,
+                          fontWeight: FontWeight.w400,
+                          color: AppColor.textColor))
+                  : Text("더보기",
+                      style: TextStyle(
+                          fontSize: sizeController.middleFontSize.value,
+                          fontWeight: FontWeight.w400,
+                          color: AppColor.textColor)),
+            ),
+            const Divider(color: AppColor.objectColor, thickness: 1),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(data.address ?? 'No address',
-                  style:
-                      TextStyle(fontSize: sizeController.mainFontSize.value)),
+              child: Text("${data.extraAddress}",
+                  style: TextStyle(
+                      fontSize: sizeController.middleFontSize.value,
+                      fontWeight: FontWeight.w400,
+                      color: AppColor.textColor)),
             ),
 
-            ///TODO: 맵 정보 띄우기
-            SizedBox(
-              height: sizeController.screenWidth.value * 0.8,
-              width: double.infinity,
-              child: Image.network(
-                'https://firebasestorage.googleapis.com/v0/b/codeless-app.appspot.com/o/projects%2FzakEUsma5ZFzdojmEHbo%2Fc6fabe925d0592e219433bb60619b5122c12871aMap.png?alt=media&token=38de594f-df1d-42b7-8eef-c66212f64d07',
-                fit: BoxFit.cover,
+            Center(
+              child: SizedBox(
+                height: sizeController.screenWidth.value * 0.95,
+                width: sizeController.screenWidth.value * 0.95,
+                child: FutureBuilder(
+                  future: Future.value(true),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      lat = data.latitude!;
+                      lng = data.longitude!;
+
+                      final cameraPosition = NCameraPosition(
+                        target: NLatLng(lat, lng),
+                        zoom: 15,
+                        bearing: 0,
+                        tilt: 0,
+                      );
+                      return NaverMap(
+                        options: NaverMapViewOptions(
+                          scaleBarEnable: true,
+                          locationButtonEnable: false,
+                          logoClickEnable: false,
+                          extent: const NLatLngBounds(
+                            southWest: NLatLng(31.43, 122.37),
+                            northEast: NLatLng(44.35, 132.0),
+                          ),
+                          initialCameraPosition: cameraPosition,
+                        ),
+                        onMapReady: (controller) async {
+                          _controller = controller;
+
+                          final iconImage = await NOverlayImage.fromWidget(
+                            widget: const Icon(Icons.place,
+                                size: 32, color: AppColor.backgroundColor),
+                            size: const Size(32, 32),
+                            context: context,
+                          );
+
+                          marker = NMarker(
+                            id: 'which',
+                            position: NLatLng(lat, lng),
+                            icon: iconImage,
+                          );
+
+                          _controller?.addOverlay(marker);
+                        },
+                      );
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                ),
               ),
             ),
             SizedBox(height: sizeController.screenHeight.value * 0.1),
@@ -197,20 +314,5 @@ class _PhotoInfoState extends State<PhotoInfo> {
         ),
       ),
     );
-  }
-
-  IconData getWeatherIcon(PostWeather? weather) {
-    switch (weather) {
-      case PostWeather.sun:
-        return WeatherIcon.sun;
-      case PostWeather.cloud:
-        return WeatherIcon.cloud;
-      case PostWeather.rain:
-        return WeatherIcon.rain;
-      case PostWeather.snow:
-        return WeatherIcon.snow;
-      default:
-        return WeatherIcon.sun;
-    }
   }
 }
