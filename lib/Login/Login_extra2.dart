@@ -6,6 +6,7 @@ import 'package:photois/service/account.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+//TODO: 디자인 변경
 class LoginExtra2 extends StatefulWidget {
   const LoginExtra2({super.key});
 

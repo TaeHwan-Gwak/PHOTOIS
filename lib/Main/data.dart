@@ -44,6 +44,7 @@ class PhotoSpotInfo extends GetxController {
   RxInt spotWeather = 0.obs;
   RxString spotMainAddress = ''.obs;
   RxString spotExtraAddress = ''.obs;
+  RxString spotContent = ''.obs;
   RxDouble spotLatitude = 0.0.obs;
   RxDouble spotLongitude = 0.0.obs;
 
@@ -55,13 +56,28 @@ class PhotoSpotInfo extends GetxController {
     }
   }
 
+  void removeData() {
+    checkPickedFile.value = false;
+    spotCategory.value = 0;
+    spotDate.value = DateTime(0, 0, 0, 0, 0);
+    spotTimeHour.value = 0;
+    spotTimeMinute.value = 0;
+    spotTimePeriod = [true, false]; // [AM, PM]
+    spotWeather.value = 0;
+    spotMainAddress.value = '';
+    spotExtraAddress.value = '';
+    spotContent.value = '';
+    spotLatitude.value = 0.0;
+    spotLongitude.value = 0.0;
+  }
+
   void printInfo() {
     print('checkPickedFile: ${checkPickedFile.value}');
     print('spotCategory: ${spotCategory.value}');
     print('spotDate: ${spotDate.value}');
     print('spotTimeHour: ${spotTimeHour.value}');
     print('spotTimeMinute: ${spotTimeMinute.value}');
-    print('spotTimePeriod: ${spotTimePeriod}');
+    print('spotTimePeriod: $spotTimePeriod');
     print('spotWeather: ${spotWeather.value}');
     print('spotMainAddress: ${spotMainAddress.value}');
     print('spotExtraAddress: ${spotExtraAddress.value}');

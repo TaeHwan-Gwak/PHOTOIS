@@ -81,7 +81,9 @@ class PostModel {
   late Timestamp? createdAt;
   late String? userUid;
   late String? imageURL;
-  late String? address;
+  late String? mainAddress;
+  late String? extraAddress;
+  late String? content;
   late double? longitude;
   late double? latitude;
   late Timestamp? date;
@@ -96,7 +98,9 @@ class PostModel {
       required this.createdAt,
       required this.userUid,
       required this.imageURL,
-      required this.address,
+      required this.mainAddress,
+      required this.extraAddress,
+      required this.content,
       required this.longitude,
       required this.latitude,
       required this.date,
@@ -108,10 +112,12 @@ class PostModel {
   //json => Object로, firestore에서 불러올때
   PostModel.fromJson(dynamic json, this.reference) {
     postID = json['postID'];
-    createdAt = json['cretedAt'];
+    createdAt = json['createdAt'];
     userUid = json['userUid'];
     imageURL = json['imageURL'];
-    address = json['address'];
+    mainAddress = json['mainAddress'];
+    extraAddress = json['extraAddress'];
+    content = json['content'];
     longitude = json['longitude'];
     latitude = json['latitude'];
     date = json['date'];
@@ -141,7 +147,9 @@ class PostModel {
     map['createdAt'] = createdAt;
     map['userUid'] = userUid;
     map['imageURL'] = imageURL;
-    map['address'] = address;
+    map['mainAddress'] = mainAddress;
+    map['extraAddress'] = extraAddress;
+    map['content'] = content;
     map['longitude'] = longitude;
     map['latitude'] = latitude;
     map['date'] = date;

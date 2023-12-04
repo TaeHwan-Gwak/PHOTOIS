@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:photois/Main/data.dart';
+import 'package:photois/style/style.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class SelectTime extends StatefulWidget {
@@ -23,40 +24,65 @@ class _SelectTimeState extends State<SelectTime> {
     DateTime selectedDay = controller.spotDate.value;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColor.backgroundColor,
       resizeToAvoidBottomInset: false,
-      appBar: PreferredSize(
-        preferredSize:
-            Size.fromHeight(sizeController.screenHeight.value * 0.05),
-        child: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            automaticallyImplyLeading: false),
+      appBar: AppBar(
+        backgroundColor: AppColor.backgroundColor,
+        automaticallyImplyLeading: false,
+        title: Center(
+          child: Text(
+            "날짜 및 시간 조정",
+            style: TextStyle(
+                fontSize: sizeController.mainFontSize.value,
+                fontWeight: FontWeight.w700,
+                color: AppColor.textColor),
+          ),
+        ),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(5),
+          child: Divider(
+            color: AppColor.objectColor,
+            thickness: 3, // 줄의 색상 설정
+          ),
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.all(sizeController.screenHeight.value * 0.03),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "날짜와 시각 정보를 확인해주세요.",
-              style: TextStyle(fontSize: sizeController.bigFontSize.value),
+            SizedBox(
+              height: sizeController.screenHeight.value * 0.05,
+              child: Center(
+                child: Text(
+                  "\"사진 명소의 자세한 날짜와 시간으로 조정해주세요\"",
+                  style: TextStyle(
+                      fontSize: sizeController.middleFontSize.value,
+                      fontWeight: FontWeight.w300,
+                      color: AppColor.textColor),
+                ),
+              ),
             ),
             TableCalendar(
-              rowHeight: sizeController.screenHeight.value * 0.07,
-              daysOfWeekHeight: sizeController.screenHeight.value * 0.04,
+              daysOfWeekHeight: sizeController.screenHeight.value * 0.05,
               daysOfWeekStyle: DaysOfWeekStyle(
-                  weekdayStyle:
-                      TextStyle(fontSize: sizeController.mainFontSize.value),
-                  weekendStyle:
-                      TextStyle(fontSize: sizeController.mainFontSize.value)),
+                  weekdayStyle: TextStyle(
+                      fontSize: sizeController.mainFontSize.value,
+                      color: AppColor.textColor),
+                  weekendStyle: TextStyle(
+                      fontSize: sizeController.mainFontSize.value,
+                      color: AppColor.textColor)),
               headerStyle: HeaderStyle(
-                  headerPadding: EdgeInsets.all(
-                      sizeController.screenHeight.value * 0.0005),
-                  titleTextStyle:
-                      TextStyle(fontSize: sizeController.mainFontSize.value),
-                  formatButtonTextStyle:
-                      TextStyle(fontSize: sizeController.mainFontSize.value),
+                  leftChevronIcon: const Icon(Icons.chevron_left,
+                      color: AppColor.objectColor),
+                  rightChevronIcon: const Icon(Icons.chevron_right,
+                      color: AppColor.objectColor),
+                  titleTextStyle: TextStyle(
+                      fontSize: sizeController.mainFontSize.value,
+                      color: AppColor.textColor),
+                  formatButtonTextStyle: TextStyle(
+                      fontSize: sizeController.mainFontSize.value,
+                      color: AppColor.textColor),
                   formatButtonVisible: false,
                   titleCentered: true),
               focusedDay: focusedDay,
@@ -67,25 +93,34 @@ class _SelectTimeState extends State<SelectTime> {
                 return isSameDay(selectedDay, day);
               },
               calendarStyle: CalendarStyle(
+                  tableBorder: const TableBorder(
+                    top: BorderSide(color: AppColor.textColor),
+                    right: BorderSide(color: AppColor.textColor),
+                    bottom: BorderSide(color: AppColor.textColor),
+                    left: BorderSide(color: AppColor.textColor),
+                    horizontalInside: BorderSide(color: AppColor.textColor),
+                    verticalInside: BorderSide(color: AppColor.textColor),
+                    borderRadius: BorderRadius.zero,
+                  ),
+                  outsideDaysVisible: false,
                   defaultTextStyle: TextStyle(
-                      color: Colors.blueGrey,
+                      color: AppColor.textColor,
                       fontSize: sizeController.middleFontSize.value),
                   weekendTextStyle: TextStyle(
-                      color: Colors.grey,
+                      color: AppColor.textColor,
                       fontSize: sizeController.middleFontSize.value),
-                  outsideDaysVisible: false,
                   todayDecoration: const BoxDecoration(
                       color: Colors.transparent,
                       shape: BoxShape.circle // 현재 날짜의 배경을 투명으로 설정
                       ),
                   todayTextStyle: TextStyle(
-                      color: Colors.blueGrey,
+                      color: AppColor.textColor,
                       fontSize: sizeController.middleFontSize.value),
                   selectedDecoration: const BoxDecoration(
-                      color: Colors.tealAccent, shape: BoxShape.circle),
+                      color: AppColor.objectColor, shape: BoxShape.circle),
                   selectedTextStyle: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.teal,
+                      color: AppColor.backgroundColor,
                       fontSize: sizeController.middleFontSize.value)),
               onDaySelected: (newSelectedDay, newFocusedDay) {
                 setState(() {
@@ -95,29 +130,40 @@ class _SelectTimeState extends State<SelectTime> {
                 });
               },
             ),
-            SizedBox(
-              height: sizeController.screenHeight.value * 0.02,
+            const Expanded(
+              child: SizedBox(),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'TIME',
-                  style: TextStyle(fontSize: sizeController.mainFontSize.value),
+                  style: TextStyle(
+                      fontSize: sizeController.mainFontSize.value,
+                      fontWeight: FontWeight.w700,
+                      color: AppColor.textColor),
                 ),
                 const Expanded(child: SizedBox()),
                 DropdownButton<int>(
-                  icon: Text("시",
-                      style: TextStyle(
-                          fontSize: sizeController.mainFontSize.value)),
+                  dropdownColor: AppColor.backgroundColor,
+                  icon: Text(
+                    "시",
+                    style: TextStyle(
+                        fontSize: sizeController.mainFontSize.value,
+                        fontWeight: FontWeight.w300,
+                        color: AppColor.textColor),
+                  ),
                   value: controller.spotTimeHour.value,
                   items: List.generate(12, (index) => index)
                       .map((hour) => DropdownMenuItem<int>(
                             value: hour,
-                            child: Text('${hour + controller.getStartHour()}',
-                                style: TextStyle(
-                                    fontSize:
-                                        sizeController.mainFontSize.value)),
+                            child: Text(
+                              '${hour + controller.getStartHour()}',
+                              style: TextStyle(
+                                  fontSize: sizeController.mainFontSize.value,
+                                  fontWeight: FontWeight.w300,
+                                  color: AppColor.textColor),
+                            ),
                           ))
                       .toList(),
                   onChanged: (value) {
@@ -128,20 +174,31 @@ class _SelectTimeState extends State<SelectTime> {
                 ),
                 Text(
                   '  :  ',
-                  style: TextStyle(fontSize: sizeController.mainFontSize.value),
+                  style: TextStyle(
+                      fontSize: sizeController.mainFontSize.value,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.textColor),
                 ),
                 DropdownButton<int>(
-                  icon: Text("분",
-                      style: TextStyle(
-                          fontSize: sizeController.mainFontSize.value)),
+                  dropdownColor: AppColor.backgroundColor,
+                  icon: Text(
+                    "분",
+                    style: TextStyle(
+                        fontSize: sizeController.mainFontSize.value,
+                        fontWeight: FontWeight.w300,
+                        color: AppColor.textColor),
+                  ),
                   value: controller.spotTimeMinute.value,
                   items: List.generate(60, (index) => index)
                       .map((minute) => DropdownMenuItem<int>(
                             value: minute,
-                            child: Text('$minute',
-                                style: TextStyle(
-                                    fontSize:
-                                        sizeController.mainFontSize.value)),
+                            child: Text(
+                              '$minute',
+                              style: TextStyle(
+                                  fontSize: sizeController.mainFontSize.value,
+                                  fontWeight: FontWeight.w300,
+                                  color: AppColor.textColor),
+                            ),
                           ))
                       .toList(),
                   onChanged: (value) {
@@ -168,69 +225,81 @@ class _SelectTimeState extends State<SelectTime> {
                       }
                     });
                   },
-                  borderRadius: BorderRadius.circular(5.0),
-                  selectedColor: Colors.black,
-                  fillColor: Colors.tealAccent,
-                  highlightColor: Colors.tealAccent,
+                  borderRadius: BorderRadius.circular(10.0),
+                  fillColor: AppColor.objectColor,
                   constraints: BoxConstraints(
-                      minHeight: sizeController.screenHeight.value * 0.05,
-                      minWidth: sizeController.screenWidth.value * 0.1),
+                    minHeight: sizeController.screenHeight.value * 0.05,
+                    minWidth: sizeController.screenWidth.value * 0.1,
+                  ),
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: sizeController.screenHeight.value * 0.02),
-                      child: Text('AM',
-                          style: TextStyle(
-                              fontSize: sizeController.mainFontSize.value)),
+                        horizontal: sizeController.screenHeight.value * 0.02,
+                      ),
+                      child: Text(
+                        'AM',
+                        style: TextStyle(
+                            fontSize: sizeController.middleFontSize.value,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.textColor),
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: sizeController.screenHeight.value * 0.02),
-                      child: Text('PM',
-                          style: TextStyle(
-                              fontSize: sizeController.mainFontSize.value)),
+                        horizontal: sizeController.screenHeight.value * 0.02,
+                      ),
+                      child: Text(
+                        'PM',
+                        style: TextStyle(
+                            fontSize: sizeController.middleFontSize.value,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.textColor),
+                      ),
                     ),
                   ],
-                ),
+                )
               ],
             ),
             const Expanded(child: SizedBox()),
-            Center(
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.blueGrey,
-                    backgroundColor: Colors.blueGrey,
-                    shadowColor: Colors.black,
-                    minimumSize: Size(sizeController.screenWidth.value * 0.3,
-                        sizeController.screenHeight.value * 0.07),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                  onPressed: () {
-                    DateTime exDate = controller.spotDate.value;
-                    controller.spotDate.value =
-                        controller.spotTimePeriod[0] == true
-                            ? DateTime(
-                                exDate.year,
-                                exDate.month,
-                                exDate.day,
-                                controller.spotTimeHour.value,
-                                controller.spotTimeMinute.value)
-                            : DateTime(
-                                exDate.year,
-                                exDate.month,
-                                exDate.day,
-                                controller.spotTimeHour.value + 12,
-                                controller.spotTimeMinute.value);
-                    Get.back();
-                  },
-                  child: Center(
-                      child: Text(
-                    '확인',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: sizeController.middleFontSize.value),
-                  ))),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: AppColor.objectColor,
+                backgroundColor: AppColor.objectColor,
+                shadowColor: AppColor.objectColor,
+                minimumSize: Size(
+                  sizeController.screenWidth.value * 0.6,
+                  sizeController.screenHeight.value * 0.05,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () {
+                DateTime exDate = controller.spotDate.value;
+                controller.spotDate.value = controller.spotTimePeriod[0] == true
+                    ? DateTime(
+                        exDate.year,
+                        exDate.month,
+                        exDate.day,
+                        controller.spotTimeHour.value,
+                        controller.spotTimeMinute.value)
+                    : DateTime(
+                        exDate.year,
+                        exDate.month,
+                        exDate.day,
+                        controller.spotTimeHour.value + 12,
+                        controller.spotTimeMinute.value);
+                Get.back();
+              },
+              child: Center(
+                child: Text(
+                  '날짜 및 시간 설정',
+                  style: TextStyle(
+                      fontSize: sizeController.middleFontSize.value,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.backgroundColor),
+                ),
+              ),
             ),
             SizedBox(
               height: sizeController.screenHeight * 0.05,

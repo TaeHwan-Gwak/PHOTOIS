@@ -6,6 +6,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:photois/style/style.dart';
 import 'dart:convert';
 
 import '../Main/data.dart';
@@ -13,7 +14,7 @@ import '../Main/data.dart';
 // naver client ID : 'ud3er0cxg6'
 
 class SelectAddress extends StatefulWidget {
-  const SelectAddress({Key? key}) : super(key: key);
+  const SelectAddress({super.key});
 
   @override
   State<SelectAddress> createState() => _SelectAddressState();
@@ -22,7 +23,6 @@ class SelectAddress extends StatefulWidget {
 class _SelectAddressState extends State<SelectAddress> {
   final photoController = Get.put((PhotoSpotInfo()));
   final sizeController = Get.put((SizeController()));
-  final _formKey = GlobalKey<FormState>();
 
   NaverMapController? _controller;
   late NMarker marker;
@@ -85,7 +85,7 @@ class _SelectAddressState extends State<SelectAddress> {
 
     which_String = "$which_one $which_two $which_three $which_four";
 
-    photoController.spotMainAddress.value = which_String;
+    photoController.spotExtraAddress.value = which_String;
   }
 
   @override
@@ -93,32 +93,45 @@ class _SelectAddressState extends State<SelectAddress> {
     super.initState();
   }
 
-  TextEditingController addressController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColor.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Text(
-          "위치 추가",
-          style: TextStyle(fontSize: sizeController.bigFontSize.value),
+        backgroundColor: AppColor.backgroundColor,
+        automaticallyImplyLeading: false,
+        title: Center(
+          child: Text(
+            "세부 위치 조정",
+            style: TextStyle(
+                fontSize: sizeController.mainFontSize.value,
+                fontWeight: FontWeight.w700,
+                color: AppColor.textColor),
+          ),
         ),
-        leading: IconButton(
-          onPressed: () {
-            Get.back();
-          },
-          icon: Icon(
-            Icons.arrow_back,
-            size: sizeController.bigFontSize.value,
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(5),
+          child: Divider(
+            color: AppColor.objectColor,
+            thickness: 3, // 줄의 색상 설정
           ),
         ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(
+            height: sizeController.screenHeight.value * 0.05,
+            child: Center(
+              child: Text(
+                "\"사진 명소의 자세한 위치로 조정해주세요\"",
+                style: TextStyle(
+                    fontSize: sizeController.middleFontSize.value,
+                    fontWeight: FontWeight.w300,
+                    color: AppColor.textColor),
+              ),
+            ),
+          ),
           Expanded(
             child: FutureBuilder(
               future: getCurrentLocation(),
@@ -145,8 +158,9 @@ class _SelectAddressState extends State<SelectAddress> {
                       _controller = controller;
 
                       final iconImage = await NOverlayImage.fromWidget(
-                        widget: const FlutterLogo(),
-                        size: const Size(24, 24),
+                        widget: const Icon(Icons.place,
+                            size: 32, color: AppColor.backgroundColor),
+                        size: const Size(32, 32),
                         context: context,
                       );
 
@@ -163,7 +177,6 @@ class _SelectAddressState extends State<SelectAddress> {
                     onMapTapped: (point, latLng) async {
                       lat = latLng.latitude;
                       lng = latLng.longitude;
-                      photoController.printInfo();
 
                       http.Response response = await http.get(
                         Uri.parse(
@@ -193,8 +206,9 @@ class _SelectAddressState extends State<SelectAddress> {
                           "$which_one $which_two $which_three $which_four";
 
                       final iconImage = await NOverlayImage.fromWidget(
-                        widget: const FlutterLogo(),
-                        size: const Size(24, 24),
+                        widget: const Icon(Icons.place,
+                            size: 32, color: AppColor.backgroundColor),
+                        size: const Size(32, 32),
                         context: context,
                       );
 
@@ -212,13 +226,13 @@ class _SelectAddressState extends State<SelectAddress> {
 
                       _controller?.addOverlay(updatedMarker);
 
-                      photoController.spotMainAddress.value =
+                      photoController.spotExtraAddress.value =
                           "$which_one $which_two $which_three $which_four";
                     },
                   );
                 } else {
                   // 위치 정보를 아직 가져오지 못한 경우 로딩 표시 또는 다른 대응을 할 수 있습니다.
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(),
                   );
                 }
@@ -226,60 +240,36 @@ class _SelectAddressState extends State<SelectAddress> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(sizeController.screenHeight.value * 0.03),
+            padding: const EdgeInsets.all(8.0),
             child: SizedBox(
-              height: sizeController.screenHeight.value * 0.25,
+              height: sizeController.screenHeight.value * 0.2,
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.location_pin),
+                        const Icon(
+                          Icons.location_pin,
+                          color: AppColor.objectColor,
+                        ),
                         Obx(
                           () => Text(
-                            photoController.spotMainAddress.value,
+                            ' ${photoController.spotExtraAddress.value}',
                             style: TextStyle(
-                              fontSize: sizeController.mainFontSize.value,
-                            ),
+                                fontSize: sizeController.mainFontSize.value,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.textColor),
                           ),
                         )
                       ],
                     ),
-                    Form(
-                      key: _formKey,
-                      child: TextFormField(
-                        controller: addressController,
-                        decoration: InputDecoration(
-                          hintText: '상세 주소를 정확하게 기입해주세요',
-                          hintStyle: TextStyle(
-                            fontSize: sizeController.middleFontSize.value,
-                          ),
-                          errorBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 2,
-                              strokeAlign: BorderSide.strokeAlignOutside,
-                            ),
-                          ),
-                          focusedErrorBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                        onSaved: (value) {
-                          photoController.spotExtraAddress.value = value!;
-                        },
-                      ),
-                    ),
                     const Expanded(child: SizedBox()),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.blueGrey,
-                        backgroundColor: Colors.blueGrey,
-                        shadowColor: Colors.black,
+                        foregroundColor: AppColor.objectColor,
+                        backgroundColor: AppColor.objectColor,
+                        shadowColor: AppColor.objectColor,
                         minimumSize: Size(
                           sizeController.screenWidth.value * 0.6,
                           sizeController.screenHeight.value * 0.05,
@@ -289,27 +279,22 @@ class _SelectAddressState extends State<SelectAddress> {
                         ),
                       ),
                       onPressed: () {
-                        final formKeyState = _formKey.currentState!;
-                        if (formKeyState.validate()) {
-                          formKeyState.save();
-                          photoController.spotLatitude.value = lat;
-                          photoController.spotLongitude.value = lng;
-                          Get.back();
-                          photoController.printInfo();
-                        }
+                        photoController.spotLatitude.value = lat;
+                        photoController.spotLongitude.value = lng;
+                        Get.back();
                       },
                       child: Center(
                         child: Text(
                           '이 위치로 주소 설정',
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: sizeController.middleFontSize.value,
-                          ),
+                              fontSize: sizeController.middleFontSize.value,
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.backgroundColor),
                         ),
                       ),
                     ),
                     SizedBox(
-                      height: sizeController.screenHeight * 0.03,
+                      height: sizeController.screenHeight * 0.05,
                     ),
                   ],
                 ),
