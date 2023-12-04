@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:photois/service.dart';
+import 'package:photois/service/firebase.auth.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,11 +16,19 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(milliseconds: 1500), () {
-      Get.offNamed('/login');
-    });
 
-    initServices();
+    if(FbAuth.isLogged) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        Get.offNamed('/main');
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        Get.offNamed('/login');
+      });
+    }
+
+    
+    // initServices();
   }
 
   @override

@@ -283,14 +283,14 @@ class _LoginExtra2State extends State<LoginExtra2> {
                             borderRadius: BorderRadius.circular(10)),
                       ),
                       onPressed: () {
-                        final formKeyState = _formKey.currentState!;
                         if (controller.checkPhotographer.value == 0) {
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
                             content: Text('포토그래퍼 여부를 선택해주세요'),
                           ));
                         } else if (controller.checkPhotographer.value == 1 &&
-                            !formKeyState.validate()) {
+                           !( _formKey.currentState?.validate() ?? false)) {
+
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
                             content: Text('인스타그램 아이디를 입력해주세요'),
@@ -301,8 +301,7 @@ class _LoginExtra2State extends State<LoginExtra2> {
                             content: Text('카테고리 중 하나를 선택해주세요'),
                           ));
                         } else {
-                          //todo UserType 추가
-                          formKeyState.save();
+                           _formKey.currentState?.save();
                           Get.find<AccountController>()
                               .updateNickname(controller.nickname.value);
                           Get.find<AccountController>().changeUserType(
