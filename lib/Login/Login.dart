@@ -60,8 +60,10 @@ class LoginPage extends StatelessWidget {
               ),
               const Expanded(child: SizedBox()),
               InkWell(
+                ///TEST용 롱프레스 기능
                 onLongPress: () {
-                  Get.offNamed('/main');
+                  Get.offNamed('/login2');
+                  //Get.offNamed('/main');
                 },
                 onTap: () async {
                   final loggedUid =
@@ -72,7 +74,7 @@ class LoginPage extends StatelessWidget {
                     Get.snackbar('로그인 성공', '로그인에 성공했습니다.');
                     Get.offNamed('/main');
                   } else if (loggedUid == 'register') {
-                    Get.toNamed('/login1');
+                    Get.offNamed('/login1');
                   } else {
                     Get.snackbar('로그인 실패', '로그인에 실패했습니다.');
                   }
@@ -93,13 +95,13 @@ class LoginPage extends StatelessWidget {
                   ),
                   child: Image.asset(
                     "assets/images/google_login.png",
-                    width: sizeController.screenWidth.value * 0.6,
+                    width: sizeController.screenWidth.value * 0.7,
                     fit: BoxFit.fill,
                   ),
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.15,
+                height: MediaQuery.of(context).size.height * 0.17,
               )
             ],
           ),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:photois/service/firebase.auth.dart';
@@ -15,11 +17,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    /*
-    Timer(const Duration(milliseconds: 2000), () {
-      Get.offNamed('/login');
+    //TODO: 타이머 추가하기
+
+    Timer(const Duration(milliseconds: 1500), () {
+      navigateToScreen();
     });
-    */
+
+    /*
     if (FbAuth.isLogged) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         Get.offNamed('/main');
@@ -29,8 +33,17 @@ class _SplashScreenState extends State<SplashScreen> {
         Get.offNamed('/login');
       });
     }
+     */
 
     // initServices();
+  }
+
+  void navigateToScreen() {
+    if (FbAuth.isLogged) {
+      Get.offNamed('/main');
+    } else {
+      Get.offNamed('/login');
+    }
   }
 
   @override
