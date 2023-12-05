@@ -455,14 +455,20 @@ class _SearchSpotState extends State<SearchSpot> {
                                   tilt: 0,
                                 ),
                               ),
-                              onMapReady: (controller) {
-                                for (var data in documentsData) {
-                                  print(documentsData.length);
+                              onMapReady: (controller) async {
+                                final iconImage = await NOverlayImage.fromWidget(
+                                  widget: const Icon(Icons.place,
+                                      size: 32, color: AppColor.backgroundColor),
+                                  size: const Size(32, 32),
+                                  context: context,
+                                );
 
+                                for (var data in documentsData) {
                                   final marker = NMarker(
-                                    id: data['createdAt'],
+                                    id: data['content'],
                                     position: NLatLng(
                                         data['latitude'], data['longitude']),
+                                    icon: iconImage,
                                   );
 
                                   marker.setOnTapListener((NMarker marker) {
@@ -477,6 +483,7 @@ class _SearchSpotState extends State<SearchSpot> {
                                                   .size
                                                   .height *
                                               0.6, // 높이를 60%로 설정
+                                          width: MediaQuery.of(context).size.width * 1.0,
                                           padding: EdgeInsets.all(16.0),
                                           child: Column(
                                             crossAxisAlignment:
@@ -484,7 +491,7 @@ class _SearchSpotState extends State<SearchSpot> {
                                             children: [
                                               Text('마커 정보'),
                                               SizedBox(height: 8.0),
-                                              Text('데이터: ${data['createdAt']}'),
+                                              Text('데이터: ${data['content']}'),
                                               // 추가 필드들을 원하는 만큼 추가
                                               Spacer(), // 뒤로 가기 버튼을 하단으로 밀어냄
                                               Positioned(
