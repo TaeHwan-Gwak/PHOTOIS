@@ -77,6 +77,7 @@ class LikeModel {
 
 class PostModel {
   // 사용되는 자료형
+  late bool? postState;
   late String? postID;
   late Timestamp? createdAt;
   late String? userUid;
@@ -90,11 +91,13 @@ class PostModel {
   late PostWeather? weather;
   late PostCategory? category;
   late LikeModel likes;
+  late int likesCount;
   late DocumentReference? reference;
 
   //생성자
   PostModel(
-      {required this.postID,
+      {required this.postState,
+      required this.postID,
       required this.createdAt,
       required this.userUid,
       required this.imageURL,
@@ -107,10 +110,12 @@ class PostModel {
       required this.weather,
       required this.category,
       required this.likes,
+      required this.likesCount,
       this.reference});
 
   //json => Object로, firestore에서 불러올때
   PostModel.fromJson(dynamic json, this.reference) {
+    postState = json['postState'];
     postID = json['postID'];
     createdAt = json['createdAt'];
     userUid = json['userUid'];
@@ -118,10 +123,11 @@ class PostModel {
     mainAddress = json['mainAddress'];
     extraAddress = json['extraAddress'];
     content = json['content'];
-    longitude = json['longitude'];
-    latitude = json['latitude'];
+    longitude = double.parse(json['longitude'].toString());
+    latitude = double.parse(json['latitude'].toString());
     date = json['date'];
     likes = LikeModel.fromJson(json['likes']);
+    likesCount = json['likesCount'];
     weather = PostWeather.fromString(json['weather'] as String);
     category = PostCategory.fromString(json['category'] as String);
   }
@@ -143,6 +149,7 @@ class PostModel {
   //Object => json, firestore에 저장할때
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
+    map['postState'] = postState;
     map['postID'] = postID;
     map['createdAt'] = createdAt;
     map['userUid'] = userUid;
@@ -156,6 +163,12 @@ class PostModel {
     map['weather'] = weather?.name;
     map['category'] = category?.name;
     map['likes'] = likes.toJson();
+    map['likesCount'] = likes.userIDs.length;
     return map;
+  }
+
+  static int compareByLikes(PostModel a, PostModel b) {
+    // 'likesCount' 필드를 기준으로 정렬
+    return b.likesCount.compareTo(a.likesCount);
   }
 }

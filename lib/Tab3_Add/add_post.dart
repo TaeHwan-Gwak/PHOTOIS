@@ -1031,9 +1031,10 @@ class _Tab3State extends State<Tab3> {
 
                   //TODO: userUid 입력, postID???
                   PostModel fireModel = PostModel(
+                      postState: true,
                       postID: 'post1',
                       createdAt: Timestamp.now(),
-                      userUid: 'jin',
+                      userUid: 'jin3',
                       imageURL: imageDownLoadURL,
                       mainAddress: spotMainAddress,
                       extraAddress: spotExtraAddress,
@@ -1043,7 +1044,9 @@ class _Tab3State extends State<Tab3> {
                       date: Timestamp.fromDate(spotDate),
                       weather: PostWeather.fromString(spotWeather),
                       category: PostCategory.fromString(spotCategory),
-                      likes: LikeModel(userIDs: []));
+                      likes: LikeModel(
+                          userIDs: ['jin2', 'jin4', 'jin5', 'jin6', 'jin7']),
+                      likesCount: 0);
 
                   await FireService().createPostInfo(fireModel.toJson());
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
