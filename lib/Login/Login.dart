@@ -62,8 +62,8 @@ class LoginPage extends StatelessWidget {
               InkWell(
                 ///TEST용 롱프레스 기능
                 onLongPress: () {
-                  Get.offNamed('/login2');
-                  //Get.offNamed('/main');
+                  //Get.offNamed('/login2');
+                  Get.offNamed('/main');
                 },
                 onTap: () async {
                   final loggedUid =

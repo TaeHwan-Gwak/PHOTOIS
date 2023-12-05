@@ -77,7 +77,8 @@ class _RecommendSpotState extends State<RecommendSpot> {
                 SizedBox(
                     height: sizeController.screenHeight.value * 0.35 * 1.25,
                     child: FutureBuilder<List<PostModel>>(
-                      future: FireService().getFireModels(),
+                      future: FireService().getFireModelMain1(
+                          lat: 37.50839351655489, lon: 126.96352250024506),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           if (snapshot.hasData) {
@@ -133,10 +134,71 @@ class _RecommendSpotState extends State<RecommendSpot> {
                     ],
                   ),
                 ),
+                //TODO: user 선호 카테고리로 바꿔주기
                 SizedBox(
                     height: sizeController.screenHeight.value * 0.35 * 1.25,
                     child: FutureBuilder<List<PostModel>>(
-                      future: FireService().getFireModels(),
+                      future: FireService()
+                          .getFireModelMain2(category: PostCategory.family),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.hasData) {
+                            List<PostModel> datas = snapshot.data!;
+                            return ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: datas.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                PostModel data = datas[index];
+                                return Row(
+                                  children: [
+                                    const SizedBox(width: 5),
+                                    PostCard(
+                                        data: data,
+                                        size:
+                                            sizeController.screenHeight.value *
+                                                0.35),
+                                    const SizedBox(width: 5)
+                                  ],
+                                );
+                              },
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text("Error: ${snapshot.error}");
+                          } else {
+                            return const Text("No data");
+                          }
+                        } else {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                      },
+                    )),
+                SizedBox(
+                  height: sizeController.screenHeight.value * 0.02,
+                ),
+                const Divider(color: AppColor.objectColor, thickness: 1.5),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.location_on,
+                        color: AppColor.objectColor,
+                      ),
+                      Text(
+                        " 전체 랭킹",
+                        style: TextStyle(
+                            fontSize: sizeController.mainFontSize.value,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.textColor),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                    height: sizeController.screenHeight.value * 0.35 * 1.25,
+                    child: FutureBuilder<List<PostModel>>(
+                      future: FireService().getFireModelMain3(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           if (snapshot.hasData) {
