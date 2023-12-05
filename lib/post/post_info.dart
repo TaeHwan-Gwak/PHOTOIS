@@ -66,15 +66,69 @@ class _PhotoInfoState extends State<PhotoInfo> {
               color: AppColor.objectColor,
             )),
         actions: [
-          IconButton(
-              onPressed: () {
-                //TODO: 신고 기능
-              },
-              icon: const Icon(
-                Icons.report_problem,
-                size: 30,
-                color: Colors.deepOrangeAccent,
-              )),
+          PopupMenuButton<String>(
+            iconColor: AppColor.objectColor,
+            color: AppColor.objectColor,
+            onSelected: (value) {
+              if (value == 'report') {
+                print('신고');
+              } else if (value == 'delete') {
+                _deleteConfirmDialog(context);
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              List<PopupMenuEntry<String>> menuItems = [];
+              menuItems.add(
+                PopupMenuItem<String>(
+                  value: 'report',
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.report_problem,
+                        size: 25,
+                        color: Colors.deepOrangeAccent,
+                      ),
+                      Text(
+                        "   신고",
+                        style: TextStyle(
+                          fontSize: sizeController.middleFontSize.value,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.backgroundColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+
+              // TODO: userUID 집어넣기
+              if (data.userUid == 'jin') {
+                menuItems.add(
+                  PopupMenuItem<String>(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.delete_forever,
+                          size: 25,
+                          color: Colors.deepOrangeAccent,
+                        ),
+                        Text(
+                          "   삭제",
+                          style: TextStyle(
+                            fontSize: sizeController.middleFontSize.value,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.backgroundColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+              return menuItems;
+            },
+          ),
         ],
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(5),
@@ -177,6 +231,7 @@ class _PhotoInfoState extends State<PhotoInfo> {
                               likes.add('jin');
                             }
                             PostModel updatePost = PostModel(
+                              postState: data.postState,
                               postID: data.postID,
                               createdAt: data.createdAt,
                               userUid: data.userUid,
@@ -190,6 +245,7 @@ class _PhotoInfoState extends State<PhotoInfo> {
                               weather: data.weather,
                               category: data.category,
                               likes: LikeModel(userIDs: likes),
+                              likesCount: likes.length,
                               reference: data.reference,
                             );
                             FireService().updatePost(
@@ -309,10 +365,113 @@ class _PhotoInfoState extends State<PhotoInfo> {
                 ),
               ),
             ),
-            SizedBox(height: sizeController.screenHeight.value * 0.1),
+            SizedBox(height: sizeController.screenHeight.value * 0.2),
+
+            SizedBox(height: sizeController.screenHeight.value * 0.2),
           ],
         ),
       ),
+    );
+  }
+
+  void _deleteConfirmDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColor.objectColor,
+          title: Text(
+            '경고!',
+            style: TextStyle(
+                fontSize: sizeController.mainFontSize.value,
+                fontWeight: FontWeight.w900,
+                color: AppColor.backgroundColor),
+          ),
+          content: Text(
+            '해당 사진 명소를 삭제하시겠습니까?\n복구는 불가능합니다.',
+            style: TextStyle(
+                fontSize: sizeController.middleFontSize.value,
+                fontWeight: FontWeight.w500,
+                color: AppColor.backgroundColor),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                FireService().delPost(data.reference!);
+                Get.back();
+                Get.back();
+              },
+              child: Text(
+                '확인',
+                style: TextStyle(
+                    fontSize: sizeController.mainFontSize.value,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: Text('취소',
+                  style: TextStyle(
+                      fontSize: sizeController.mainFontSize.value,
+                      fontWeight: FontWeight.w600,
+                      color: AppColor.backgroundColor)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _reportConfirmDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColor.objectColor,
+          title: Text(
+            '경고!',
+            style: TextStyle(
+                fontSize: sizeController.mainFontSize.value,
+                fontWeight: FontWeight.w900,
+                color: AppColor.backgroundColor),
+          ),
+          content: Text(
+            '돌아가시겠습니까?\n작성 중인 글은 저장되지 않습니다.',
+            style: TextStyle(
+                fontSize: sizeController.middleFontSize.value,
+                fontWeight: FontWeight.w500,
+                color: AppColor.backgroundColor),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back();
+                Get.back();
+              },
+              child: Text(
+                '확인',
+                style: TextStyle(
+                    fontSize: sizeController.mainFontSize.value,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: Text('취소',
+                  style: TextStyle(
+                      fontSize: sizeController.mainFontSize.value,
+                      fontWeight: FontWeight.w600,
+                      color: AppColor.backgroundColor)),
+            ),
+          ],
+        );
+      },
     );
   }
 }
