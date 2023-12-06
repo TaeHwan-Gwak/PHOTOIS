@@ -58,7 +58,7 @@ class AccountController extends GetxController {
       );
     }
   }
-
+// todo : 정보수정 함수
   updateNickname(String nickname) {
    _user = _user!.copyWith(nickname: nickname);
     update();

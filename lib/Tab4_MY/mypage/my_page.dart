@@ -6,6 +6,8 @@ import 'package:photois/common/ext.key.dart';
 import 'package:photois/Tab4_MY/mypage/user_info.dart';
 import 'package:photois/service/firebase.auth.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as m;
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -16,6 +18,8 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   GlobalKey bottomButtonsKey = GlobalKey();
+  final m.FirebaseAuth auth = m.FirebaseAuth.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -236,6 +240,8 @@ class _MyPageState extends State<MyPage> {
                 child: RoundedButton(
                   onTap: () {
                     FbAuth.deleteUser();
+                    final String uid = auth.currentUser!.uid;
+                    firestore.collection('userInfo').doc(uid).delete();
                   },
                   child: const Text(
                     '탈퇴하기',

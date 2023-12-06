@@ -429,6 +429,7 @@ class _LoginExtra2State extends State<LoginExtra2> {
                     Get.find<AccountController>()
                         .changeUserNumber(controller.phoneNumber.value);
 
+                    // todo : userdata firestore에 저장
                     final String uid = auth.currentUser!.uid;
 
                     await firestore.collection('userInfo').doc(uid).set({
