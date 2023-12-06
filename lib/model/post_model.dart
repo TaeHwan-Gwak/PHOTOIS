@@ -92,6 +92,7 @@ class PostModel {
   late PostCategory? category;
   late LikeModel likes;
   late int likesCount;
+  late String? report;
   late DocumentReference? reference;
 
   //생성자
@@ -111,6 +112,7 @@ class PostModel {
       required this.category,
       required this.likes,
       required this.likesCount,
+      this.report,
       this.reference});
 
   //json => Object로, firestore에서 불러올때
@@ -130,6 +132,7 @@ class PostModel {
     likesCount = json['likesCount'];
     weather = PostWeather.fromString(json['weather'] as String);
     category = PostCategory.fromString(json['category'] as String);
+    report = json['report'];
   }
 
   // Named Constructor with Initializer
@@ -164,6 +167,7 @@ class PostModel {
     map['category'] = category?.name;
     map['likes'] = likes.toJson();
     map['likesCount'] = likes.userIDs.length;
+    map['report'] = report;
     return map;
   }
 

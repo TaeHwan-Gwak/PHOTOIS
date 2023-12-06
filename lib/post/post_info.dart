@@ -20,6 +20,7 @@ class _PhotoInfoState extends State<PhotoInfo> {
   late PostModel data;
   final sizeController = Get.put((SizeController()));
   bool isFavorite = false;
+  int isReportSelected = 0;
 
   NaverMapController? _controller;
   late NMarker marker;
@@ -71,7 +72,7 @@ class _PhotoInfoState extends State<PhotoInfo> {
             color: AppColor.objectColor,
             onSelected: (value) {
               if (value == 'report') {
-                print('신고');
+                _reportConfirmDialog(context);
               } else if (value == 'delete') {
                 _deleteConfirmDialog(context);
               }
@@ -432,14 +433,14 @@ class _PhotoInfoState extends State<PhotoInfo> {
         return AlertDialog(
           backgroundColor: AppColor.objectColor,
           title: Text(
-            '경고!',
+            '신고!',
             style: TextStyle(
                 fontSize: sizeController.mainFontSize.value,
                 fontWeight: FontWeight.w900,
                 color: AppColor.backgroundColor),
           ),
           content: Text(
-            '돌아가시겠습니까?\n작성 중인 글은 저장되지 않습니다.',
+            '해당 글을 신고하시겠습니까?',
             style: TextStyle(
                 fontSize: sizeController.middleFontSize.value,
                 fontWeight: FontWeight.w500,
@@ -449,7 +450,7 @@ class _PhotoInfoState extends State<PhotoInfo> {
             TextButton(
               onPressed: () {
                 Get.back();
-                Get.back();
+                _reportContextDialog(context);
               },
               child: Text(
                 '확인',
@@ -473,5 +474,118 @@ class _PhotoInfoState extends State<PhotoInfo> {
         );
       },
     );
+  }
+
+  void _reportContextDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColor.objectColor,
+          title: Text(
+            '신고!',
+            style: TextStyle(
+                fontSize: sizeController.mainFontSize.value,
+                fontWeight: FontWeight.w900,
+                color: AppColor.backgroundColor),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '어떤 이유로 해당 글을 신고하시겠습니까?\n버튼을 누르시면 해당 게시물이 내려가며\n바로 신고됩니다.',
+                style: TextStyle(
+                  fontSize: sizeController.middleFontSize.value - 2,
+                  fontWeight: FontWeight.w500,
+                  color: AppColor.backgroundColor,
+                ),
+              ),
+              SizedBox(height: sizeController.screenHeight.value * 0.02),
+              TextButton(
+                onPressed: () {
+                  report('게시물이 적합하지 않음');
+                },
+                child: Text(
+                  '게시물이 적합하지 않음',
+                  style: TextStyle(
+                    fontSize: sizeController.mainFontSize.value,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  report('인스타그램 정보 도용');
+                },
+                child: Text(
+                  '인스타그램 정보 도용',
+                  style: TextStyle(
+                    fontSize: sizeController.mainFontSize.value,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  report('유해한 사진 및 게시글');
+                },
+                child: Text(
+                  '유해한 사진 및 게시글',
+                  style: TextStyle(
+                    fontSize: sizeController.mainFontSize.value,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: Text('취소',
+                  style: TextStyle(
+                      fontSize: sizeController.mainFontSize.value,
+                      fontWeight: FontWeight.w600,
+                      color: AppColor.backgroundColor)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void report(String report) {
+    PostModel updatePost = PostModel(
+      postState: false,
+      postID: data.postID,
+      createdAt: data.createdAt,
+      userUid: data.userUid,
+      imageURL: data.imageURL,
+      mainAddress: data.mainAddress,
+      extraAddress: data.extraAddress,
+      content: data.content,
+      longitude: data.longitude,
+      latitude: data.latitude,
+      date: data.date,
+      weather: data.weather,
+      category: data.category,
+      likes: data.likes,
+      likesCount: data.likesCount,
+      report: report,
+      reference: data.reference,
+    );
+    FireService().updatePost(
+        reference: updatePost.reference!, json: updatePost.toJson());
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('신고 완료'),
+    ));
+    Get.back();
+    Get.back();
   }
 }
