@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as m;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:photois/Tab4_MY/user_info.dart';
@@ -16,6 +18,8 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   GlobalKey bottomButtonsKey = GlobalKey();
+  final m.FirebaseAuth auth = m.FirebaseAuth.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final sizeController = Get.put((SizeController()));
   final ScrollController _scrollController = ScrollController();
 
@@ -74,6 +78,8 @@ class _MyPageState extends State<MyPage> {
               }),
               accountButton("탈퇴", () {
                 FbAuth.deleteUser();
+                final String uid = auth.currentUser!.uid;
+                firestore.collection('userInfo').doc(uid).delete();
               }),
             ],
           ),
