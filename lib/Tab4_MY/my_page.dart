@@ -1,13 +1,11 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:photois/Tab4_MY/user_info.dart';
 import 'package:photois/service/firebase.auth.dart';
 
 import '../Main/data.dart';
 import '../style/style.dart';
+import 'modify_my_info.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -56,7 +54,9 @@ class _MyPageState extends State<MyPage> {
                   SizedBox(
                     height: sizeController.screenHeight.value * 0.02,
                   ),
-                  selectButton("내 정보 수정", () {}),
+                  selectButton("내 정보 수정", () {
+                    Get.to(ModifyMyInfo());
+                  }),
                   selectButton("내 갤러리", () {}),
                   selectButton("내 반응", () {}),
                   Visibility(child: selectButton("신고 받은 포스트", () {})),
