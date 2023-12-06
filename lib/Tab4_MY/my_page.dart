@@ -6,6 +6,7 @@ import 'package:photois/Tab4_MY/user_info.dart';
 import 'package:photois/service/firebase.auth.dart';
 
 import '../Main/data.dart';
+import '../post/post_user.dart';
 import '../style/style.dart';
 import 'modify_my_info.dart';
 
@@ -61,7 +62,11 @@ class _MyPageState extends State<MyPage> {
                   selectButton("내 정보 수정", () {
                     Get.to(ModifyMyInfo());
                   }),
-                  selectButton("내 갤러리", () {}),
+                  selectButton("내 갤러리", () {
+                    Get.to(UserPost(
+                      userUID: 'jin',
+                    ));
+                  }),
                   selectButton("내 반응", () {}),
                   Visibility(child: selectButton("신고 받은 포스트", () {})),
                 ],

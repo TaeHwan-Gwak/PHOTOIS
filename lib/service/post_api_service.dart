@@ -25,10 +25,10 @@ class FireService {
     }
   }*/
 
-  ///Tab1-1: 주변 인기장소 추천 - 체크 X
+  ///Tab1-1: 주변 인기장소 추천
   Future<List<PostModel>> getFireModelMain1(
       {required double lat, required double lon}) async {
-    double epsilon = 0.002; // 아주 작은 값을 정의
+    double epsilon = 0.002; //TODO: 값 지정
 
     CollectionReference<Map<String, dynamic>> collectionReference =
         FirebaseFirestore.instance.collection("PostInfo");
@@ -163,6 +163,21 @@ class FireService {
             .where("like", arrayContains: [userUid])
             .orderBy("likesCount", descending: true)
             .get();
+
+    List<PostModel> posts = [];
+    for (var doc in querySnapshot.docs) {
+      PostModel postModel = PostModel.fromQuerySnapshot(doc);
+      posts.add(postModel);
+    }
+    return posts;
+  }
+
+  ///Tab4: 신고 받은 포스트 불러오기 - 체크 X
+  Future<List<PostModel>> getFireModelReport() async {
+    CollectionReference<Map<String, dynamic>> collectionReference =
+        FirebaseFirestore.instance.collection("PostInfo");
+    QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        await collectionReference.where("postState", isEqualTo: false).get();
 
     List<PostModel> posts = [];
     for (var doc in querySnapshot.docs) {
