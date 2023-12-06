@@ -69,7 +69,7 @@ class PostCard extends StatelessWidget {
                       size: 18,
                     ),
                     Text(
-                      " ${data.likes.userIDs.length}",
+                      " ${data.likes.length}",
                       style: TextStyle(
                           color: AppColor.backgroundColor,
                           fontSize: sizeController.middleFontSize.value - 3,

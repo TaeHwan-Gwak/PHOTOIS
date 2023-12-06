@@ -1055,8 +1055,7 @@ class _Tab3State extends State<Tab3> {
                       date: Timestamp.fromDate(spotDate),
                       weather: PostWeather.fromString(spotWeather),
                       category: PostCategory.fromString(spotCategory),
-                      likes: LikeModel(
-                          userIDs: ['jin2', 'jin4', 'jin5', 'jin6', 'jin7']),
+                      likes: ['jin2', 'jin4', 'jin5', 'jin6', 'jin7'],
                       likesCount: 0);
 
                   await FireService().createPostInfo(fireModel.toJson());

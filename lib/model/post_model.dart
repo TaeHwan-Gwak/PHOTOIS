@@ -90,9 +90,9 @@ class PostModel {
   late Timestamp? date;
   late PostWeather? weather;
   late PostCategory? category;
-  late LikeModel likes;
+  late List<String> likes;
   late int likesCount;
-  late String? report;
+  String? report;
   late DocumentReference? reference;
 
   //생성자
@@ -128,7 +128,7 @@ class PostModel {
     longitude = double.parse(json['longitude'].toString());
     latitude = double.parse(json['latitude'].toString());
     date = json['date'];
-    likes = LikeModel.fromJson(json['likes']);
+    likes = List<String>.from(json['likes']);
     likesCount = json['likesCount'];
     weather = PostWeather.fromString(json['weather'] as String);
     category = PostCategory.fromString(json['category'] as String);
@@ -165,8 +165,8 @@ class PostModel {
     map['date'] = date;
     map['weather'] = weather?.name;
     map['category'] = category?.name;
-    map['likes'] = likes.toJson();
-    map['likesCount'] = likes.userIDs.length;
+    map['likes'] = likes;
+    map['likesCount'] = likes.length;
     map['report'] = report;
     return map;
   }

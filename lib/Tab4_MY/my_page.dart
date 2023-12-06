@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as m;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:photois/Tab4_MY/my_like_posts.dart';
 import 'package:photois/Tab4_MY/user_info.dart';
 import 'package:photois/service/firebase.auth.dart';
 
@@ -67,7 +68,11 @@ class _MyPageState extends State<MyPage> {
                       userUID: 'jin',
                     ));
                   }),
-                  selectButton("내 반응", () {}),
+                  selectButton("내가 좋아요한 게시물", () {
+                    Get.to(MyLikePost(
+                      userUID: 'jin',
+                    ));
+                  }),
                   Visibility(child: selectButton("신고 받은 포스트", () {})),
                 ],
               )),

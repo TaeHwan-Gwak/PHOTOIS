@@ -37,7 +37,7 @@ class _PhotoInfoState extends State<PhotoInfo> {
   void initState() {
     super.initState();
     data = widget.data;
-    if (data.likes.userIDs.contains('jin')) {
+    if (data.likes.contains('jin')) {
       isFavorite = true;
     }
   }
@@ -225,7 +225,7 @@ class _PhotoInfoState extends State<PhotoInfo> {
                     children: [
                       IconButton(
                           onPressed: () {
-                            final likes = data.likes.userIDs;
+                            final likes = data.likes;
                             if (isFavorite) {
                               likes.remove('jin');
                             } else {
@@ -245,7 +245,7 @@ class _PhotoInfoState extends State<PhotoInfo> {
                               date: data.date,
                               weather: data.weather,
                               category: data.category,
-                              likes: LikeModel(userIDs: likes),
+                              likes: likes,
                               likesCount: likes.length,
                               reference: data.reference,
                             );
@@ -265,7 +265,7 @@ class _PhotoInfoState extends State<PhotoInfo> {
                                   size: 30,
                                 )),
                       Text(
-                        "${data.likes.userIDs.length} Likes",
+                        "${data.likes.length} Likes",
                         style: TextStyle(
                             fontSize: sizeController.mainFontSize.value,
                             fontWeight: FontWeight.w300,
