@@ -35,12 +35,17 @@ class _SelectAddressState extends State<SelectAddress> {
   double lat = 0;
   double lng = 0;
 
-  List<String> which = [];
   var which_one = "";
   var which_two = "";
   var which_three = "";
   var which_four = "";
-  var which_String = "";
+  var which_five = "";
+  var which_six = "";
+  var which_seven = "";
+  var which_eight = "";
+  var mainAddress = "";
+  var extraAddress = "";
+  bool roadAddress = true;
 
   Future<void> getCurrentLocation() async {
     LocationPermission permission = await Geolocator.checkPermission();
@@ -65,27 +70,60 @@ class _SelectAddressState extends State<SelectAddress> {
 
     http.Response response = await http.get(
       Uri.parse(
-        "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json",
+        "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json&orders=admcode,addr,roadaddr",
       ),
       headers: headerss,
     );
 
     String jsonData = response.body;
 
-    which_one =
-        jsonDecode(jsonData)["results"][1]['region']['area1']['name'] ?? "";
-    which_two =
-        jsonDecode(jsonData)["results"][1]['region']['area2']['name'] ?? "";
-    which_three =
-        jsonDecode(jsonData)["results"][1]['region']['area3']['name'] ?? "";
-    which_four =
-        jsonDecode(jsonData)["results"][1]['region']['area4']['name'] ?? "";
+    try {
+      which_one =
+          jsonDecode(jsonData)["results"][2]['region']['area1']['name'] ?? "";
+      which_two =
+          jsonDecode(jsonData)["results"][2]['region']['area2']['name'] ?? "";
+      which_three =
+          jsonDecode(jsonData)["results"][2]['region']['area3']['name'] ?? "";
+      which_four =
+          jsonDecode(jsonData)["results"][2]['region']['area4']['name'] ?? "";
+      which_five = jsonDecode(jsonData)["results"][2]['land']['number1'] ?? "";
+      which_six = jsonDecode(jsonData)["results"][2]['land']['number2'] ?? "";
+      which_seven = jsonDecode(jsonData)["results"][2]['land']['addition0']
+              ['value'] ??
+          "";
+      which_eight = jsonDecode(jsonData)["results"][2]['land']['name'] ?? "";
+    } catch (e) {
+      which_one =
+          jsonDecode(jsonData)["results"][1]['region']['area1']['name'] ?? "";
+      which_two =
+          jsonDecode(jsonData)["results"][1]['region']['area2']['name'] ?? "";
+      which_three =
+          jsonDecode(jsonData)["results"][1]['region']['area3']['name'] ?? "";
+      which_four =
+          jsonDecode(jsonData)["results"][1]['region']['area4']['name'] ?? "";
+      which_five = jsonDecode(jsonData)["results"][1]['land']['number1'] ?? "";
+      which_six = jsonDecode(jsonData)["results"][1]['land']['number2'] ?? "";
+      which_seven = jsonDecode(jsonData)["results"][1]['land']['addition0']
+              ['value'] ??
+          "";
+      which_eight = jsonDecode(jsonData)["results"][1]['land']['name'] ?? "";
+      roadAddress = false;
+    }
 
-    which = [which_one, which_two, which_three, which_four];
-
-    which_String = "$which_one $which_two $which_three $which_four";
-
-    photoController.spotExtraAddress.value = which_String;
+    if (roadAddress) {
+      photoController.spotExtraAddress1.value = (which_six == "")
+          ? "$which_one $which_two $which_eight $which_five$which_six"
+          : "$which_one $which_two $which_eight $which_five-$which_six";
+      photoController.spotExtraAddress2.value = (which_seven == "")
+          ? "($which_three$which_four$which_seven)"
+          : "($which_three$which_four, $which_seven)";
+    } else {
+      photoController.spotExtraAddress1.value = (which_six == "")
+          ? "$which_one $which_two $which_three $which_four $which_five$which_six $which_seven $which_eight"
+          : "$which_one $which_two $which_three $which_four $which_five-$which_six $which_seven $which_eight";
+      photoController.spotExtraAddress2.value = '';
+    }
+    roadAddress = true;
   }
 
   @override
@@ -180,30 +218,83 @@ class _SelectAddressState extends State<SelectAddress> {
 
                       http.Response response = await http.get(
                         Uri.parse(
-                          "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json",
+                          "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json&orders=admcode,addr,roadaddr",
                         ),
                         headers: headerss,
                       );
 
                       String jsonData = response.body;
 
-                      which_one = jsonDecode(jsonData)["results"][1]['region']
-                              ['area1']['name'] ??
-                          "";
-                      which_two = jsonDecode(jsonData)["results"][1]['region']
-                              ['area2']['name'] ??
-                          "";
-                      which_three = jsonDecode(jsonData)["results"][1]['region']
-                              ['area3']['name'] ??
-                          "";
-                      which_four = jsonDecode(jsonData)["results"][1]['region']
-                              ['area4']['name'] ??
-                          "";
+                      try {
+                        which_one = jsonDecode(jsonData)["results"][2]['region']
+                                ['area1']['name'] ??
+                            "";
+                        which_two = jsonDecode(jsonData)["results"][2]['region']
+                                ['area2']['name'] ??
+                            "";
+                        which_three = jsonDecode(jsonData)["results"][2]
+                                ['region']['area3']['name'] ??
+                            "";
+                        which_four = jsonDecode(jsonData)["results"][2]
+                                ['region']['area4']['name'] ??
+                            "";
+                        which_five = jsonDecode(jsonData)["results"][2]['land']
+                                ['number1'] ??
+                            "";
+                        which_six = jsonDecode(jsonData)["results"][2]['land']
+                                ['number2'] ??
+                            "";
+                        which_seven = jsonDecode(jsonData)["results"][2]['land']
+                                ['addition0']['value'] ??
+                            "";
+                        which_eight = jsonDecode(jsonData)["results"][2]['land']
+                                ['name'] ??
+                            "";
+                      } catch (e) {
+                        which_one = jsonDecode(jsonData)["results"][1]['region']
+                                ['area1']['name'] ??
+                            "";
+                        which_two = jsonDecode(jsonData)["results"][1]['region']
+                                ['area2']['name'] ??
+                            "";
+                        which_three = jsonDecode(jsonData)["results"][1]
+                                ['region']['area3']['name'] ??
+                            "";
+                        which_four = jsonDecode(jsonData)["results"][1]
+                                ['region']['area4']['name'] ??
+                            "";
+                        which_five = jsonDecode(jsonData)["results"][1]['land']
+                                ['number1'] ??
+                            "";
+                        which_six = jsonDecode(jsonData)["results"][1]['land']
+                                ['number2'] ??
+                            "";
+                        which_seven = jsonDecode(jsonData)["results"][1]['land']
+                                ['addition0']['value'] ??
+                            "";
+                        which_eight = jsonDecode(jsonData)["results"][1]['land']
+                                ['name'] ??
+                            "";
+                        roadAddress = false;
+                      }
 
-                      which = [which_one, which_two, which_three, which_four];
-
-                      which_String =
-                          "$which_one $which_two $which_three $which_four";
+                      if (roadAddress) {
+                        photoController.spotExtraAddress1.value = (which_six ==
+                                "")
+                            ? "$which_one $which_two $which_eight $which_five$which_six"
+                            : "$which_one $which_two $which_eight $which_five-$which_six";
+                        photoController.spotExtraAddress2.value =
+                            (which_seven == "")
+                                ? "($which_three$which_four$which_seven)"
+                                : "($which_three$which_four, $which_seven)";
+                      } else {
+                        photoController.spotExtraAddress1.value = (which_six ==
+                                "")
+                            ? "$which_one $which_two $which_three $which_four $which_five$which_six $which_seven $which_eight"
+                            : "$which_one $which_two $which_three $which_four $which_five-$which_six $which_seven $which_eight";
+                        photoController.spotExtraAddress2.value = '';
+                      }
+                      roadAddress = true;
 
                       final iconImage = await NOverlayImage.fromWidget(
                         widget: const Icon(Icons.place,
@@ -223,11 +314,7 @@ class _SelectAddressState extends State<SelectAddress> {
                       );
 
                       _controller?.updateCamera(cameraUpdate);
-
                       _controller?.addOverlay(updatedMarker);
-
-                      photoController.spotExtraAddress.value =
-                          "$which_one $which_two $which_three $which_four";
                     },
                   );
                 } else {
@@ -246,6 +333,7 @@ class _SelectAddressState extends State<SelectAddress> {
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -253,16 +341,32 @@ class _SelectAddressState extends State<SelectAddress> {
                           Icons.location_pin,
                           color: AppColor.objectColor,
                         ),
-                        Obx(
-                          () => Text(
-                            ' ${photoController.spotExtraAddress.value}',
-                            style: TextStyle(
-                                fontSize: sizeController.mainFontSize.value,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.textColor),
-                          ),
-                        )
+                        Expanded(
+                          child: Obx(() {
+                            return Text(
+                              photoController.spotExtraAddress1.value,
+                              style: TextStyle(
+                                  fontSize: sizeController.mainFontSize.value,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColor.textColor),
+                            );
+                          }),
+                        ),
                       ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Expanded(
+                        child: Obx(() {
+                          return Text(
+                            photoController.spotExtraAddress2.value,
+                            style: TextStyle(
+                                fontSize: sizeController.middleFontSize.value,
+                                fontWeight: FontWeight.w400,
+                                color: AppColor.textColor),
+                          );
+                        }),
+                      ),
                     ),
                     const Expanded(child: SizedBox()),
                     ElevatedButton(
@@ -281,6 +385,9 @@ class _SelectAddressState extends State<SelectAddress> {
                       onPressed: () {
                         photoController.spotLatitude.value = lat;
                         photoController.spotLongitude.value = lng;
+                        photoController.spotExtraAddress.value =
+                            photoController.spotExtraAddress1.value +
+                                photoController.spotExtraAddress2.value;
                         Get.back();
                       },
                       child: Center(

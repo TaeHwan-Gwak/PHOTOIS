@@ -62,7 +62,6 @@ class _Tab3State extends State<Tab3> {
   }
 
   Future getImage() async {
-    controller.printInfo();
     pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile == null) {
       return;
@@ -87,8 +86,8 @@ class _Tab3State extends State<Tab3> {
             int.parse(DateFormat.m().format(shootingDate!));
         controller.checkPickedFile.value = true;
         controller.spotDate.value = shootingDate!;
-        controller.spotLongitude.value = coordinates!.longitude;
-        controller.spotLatitude.value = coordinates!.latitude;
+        controller.spotLongitude.value = coordinates?.longitude ?? 0.0;
+        controller.spotLatitude.value = coordinates?.latitude ?? 0.0;
       }
     });
   }
@@ -240,7 +239,6 @@ class _Tab3State extends State<Tab3> {
           ),
         ),
         body: Obx(() {
-          controller.printInfo();
           return SafeArea(
               child: SingleChildScrollView(
                   controller: _scrollController,
@@ -558,12 +556,25 @@ class _Tab3State extends State<Tab3> {
                       fontSize: sizeController.middleFontSize.value,
                       fontWeight: FontWeight.w300,
                       color: Colors.red))
-              : Text(
-                  controller.spotExtraAddress.value,
-                  style: TextStyle(
-                      fontSize: sizeController.mainFontSize.value,
-                      fontWeight: FontWeight.w300,
-                      color: AppColor.textColor),
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      controller.spotExtraAddress1.value,
+                      style: TextStyle(
+                          fontSize: sizeController.mainFontSize.value,
+                          fontWeight: FontWeight.w300,
+                          color: AppColor.textColor),
+                    ),
+                    if (controller.spotExtraAddress2.value != "")
+                      Text(
+                        controller.spotExtraAddress2.value,
+                        style: TextStyle(
+                            fontSize: sizeController.middleFontSize.value,
+                            fontWeight: FontWeight.w300,
+                            color: AppColor.textColor),
+                      ),
+                  ],
                 ))),
           Gap(sizeController.screenHeight.value * 0.05),
           _buildLabeledItem(
