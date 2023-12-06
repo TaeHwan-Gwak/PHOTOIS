@@ -46,7 +46,7 @@ class _Tab3State extends State<Tab3> {
   Map<String, Object>? attributes;
   DateTime? shootingDate;
   ExifLatLong? coordinates;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   void scrollToPosition(double position) {
     _scrollController.animateTo(

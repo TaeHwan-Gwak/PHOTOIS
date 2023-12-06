@@ -8,7 +8,7 @@ import 'package:photois/Main/data.dart';
 import '../Tab1_Home/recommend_spot.dart';
 import '../Tab2_Around/search_spot.dart';
 import '../Tab3_Add/add_post.dart';
-import 'package:photois/Tab4_MY/mypage/my_page.dart';
+import 'package:photois/Tab4_MY/my_page.dart';
 
 import '../style/style.dart';
 
