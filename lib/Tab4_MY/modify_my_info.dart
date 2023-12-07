@@ -20,21 +20,8 @@ class ModifyMyInfo extends StatefulWidget {
 class _ModifyMyInfoState extends State<ModifyMyInfo> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-  int _getTypeByCategory(String categoryName) {
-    switch (categoryName) {
-      case '나홀로 인생샷':
-        return 1;
-      case '애인과 커플샷':
-        return 2;
-      case '친구와 우정샷':
-        return 3;
-      case '가족과 추억샷':
-        return 4;
-      default:
-        return 0;
-    }
-  }
+  final controller = Get.put(my_data.UserInfo());
+  final sizeController = Get.put(my_data.SizeController());
 
   String _getUserType(int userTypeValue) {
     switch (userTypeValue) {
@@ -51,37 +38,18 @@ class _ModifyMyInfoState extends State<ModifyMyInfo> {
     }
   }
 
-  final _formKey = GlobalKey<FormState>();
+  final _formKey1 = GlobalKey<FormState>();
+  final _formKey2 = GlobalKey<FormState>();
   final TextEditingController _nickNameController = TextEditingController();
   final TextEditingController _instagramIDController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    loadData();
-  }
-
-  Future<void> loadData() async {
-    final controller = Get.put(my_data.UserInfo());
-    final sizeController = Get.put(my_data.SizeController());
-    final String uid = auth.currentUser!.uid;
-    var result = await firestore.collection('userInfo').doc(uid).get();
-
-    if(kDebugMode) {
-      print(result);
-    }
-
-    controller.nickname.value = result.data()!['nickname'];
-    controller.phoneNumber.value = result.data()!['phoneNumber'];
-    controller.checkCategory.value = _getTypeByCategory(result.data()!['categoryName']);
-    controller.checkPhotographer.value = result.data()!['photoGrapher'];
     _nickNameController.text = controller.nickname.string;
-    _instagramIDController.text = controller.phoneNumber.string;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {});
-    });
+    _instagramIDController.text = controller.instagramID.string;
   }
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(my_data.UserInfo());
@@ -118,465 +86,460 @@ class _ModifyMyInfoState extends State<ModifyMyInfo> {
           ),
         ),
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "닉네임",
-                        style: TextStyle(
-                            fontSize: sizeController.mainFontSize.value,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.textColor),
-                      ),
-                      SizedBox(
-                          height: sizeController.screenHeight.value * 0.02),
-                      Form(
-                        key: _formKey,
-                        child: TextFormField(
-                          controller: _nickNameController,
-                          maxLength: 11,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: '닉네임을 입력해주세요',
-                            hintStyle: TextStyle(
-                                fontSize:
-                                    sizeController.middleFontSize.value - 2,
-                                fontWeight: FontWeight.w300,
-                                color: AppColor.textColor),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: AppColor.objectColor,
-                                width: 2,
-                              ),
-                            ),
-                            errorBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.red,
-                                width: 2,
-                                strokeAlign: BorderSide.strokeAlignOutside,
-                              ),
-                            ),
-                            focusedErrorBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.red,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                          style: TextStyle(
-                              fontSize: sizeController.middleFontSize.value,
-                              fontWeight: FontWeight.w300,
-                              color: AppColor.textColor),
-                          inputFormatters: [
-                            FilteringTextInputFormatter(
-                              RegExp('[a-z A-Z ㄱ-ㅎ|가-힣|0-9]'),
-                              allow: true,
-                            )
-                          ],
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return '닉네임 입력은 필수입니다.';
-                            }
-                            return null;
-                          },
-                          onSaved: (value) async {
-                            controller.nickname.value = value!;
-                            final String uid = auth.currentUser!.uid;
-                            debugPrint('uid: ${uid}');
-                            debugPrint('value: ${value}');
-                            await firestore
-                                .collection('userInfo')
-                                .doc(uid)
-                                .set({
-                              'nickname': value,
-                            });
-                          },
-                        ),
-                      ),
-                      Text(
-                        "포토그래퍼 여부",
-                        style: TextStyle(
-                            fontSize: sizeController.mainFontSize.value,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.textColor),
-                      ),
-                      SizedBox(
-                          height: sizeController.screenHeight.value * 0.02),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor:
-                                  (controller.checkPhotographer.value == 1)
-                                      ? AppColor.objectColor
-                                      : AppColor.textColor,
-                              shadowColor: Colors.black,
-                              minimumSize: Size(
-                                  sizeController.screenWidth.value * 0.4,
-                                  sizeController.screenHeight.value * 0.07),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                controller.checkPhotographer.value = 1;
-                              });
-                            },
-                            child: Text(
-                              '포토그래퍼',
-                              style: TextStyle(
-                                  fontSize: sizeController.middleFontSize.value,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColor.backgroundColor),
-                            ),
-                          ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor:
-                                  (controller.checkPhotographer.value == 2)
-                                      ? AppColor.objectColor
-                                      : AppColor.textColor,
-                              shadowColor: Colors.black,
-                              minimumSize: Size(
-                                  sizeController.screenWidth.value * 0.4,
-                                  sizeController.screenHeight.value * 0.07),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                controller.checkPhotographer.value = 2;
-                              });
-                            },
-                            child: Text(
-                              '일반 사용자',
-                              style: TextStyle(
-                                  fontSize: sizeController.middleFontSize.value,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColor.backgroundColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: sizeController.screenHeight.value * 0.03,
-                      ),
-                      Visibility(
-                        visible: controller.checkPhotographer.value == 1,
-                        replacement: Text(
-                          "* 포토그래퍼 선택시 인스타그램 아이디를 입력받습니다\n",
-                          style: TextStyle(
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "닉네임",
+                      style: TextStyle(
+                          fontSize: sizeController.mainFontSize.value,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.textColor),
+                    ),
+                    SizedBox(height: sizeController.screenHeight.value * 0.02),
+                    Form(
+                      key: _formKey1,
+                      child: TextFormField(
+                        controller: _nickNameController,
+                        maxLength: 11,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: '닉네임을 입력해주세요',
+                          hintStyle: TextStyle(
                               fontSize: sizeController.middleFontSize.value - 2,
                               fontWeight: FontWeight.w300,
-                              color: AppColor.objectColor),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Instagram ID",
-                              style: TextStyle(
-                                  fontSize: sizeController.mainFontSize.value,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColor.textColor),
+                              color: AppColor.textColor),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColor.objectColor,
+                              width: 2,
                             ),
-                            SizedBox(
-                                height:
-                                    sizeController.screenHeight.value * 0.02),
-                            Form(
-                              key: _formKey,
-                              child: TextFormField(
-                                controller: _instagramIDController,
-                                decoration: InputDecoration(
-                                  prefixText: '@ ',
-                                  prefixStyle: TextStyle(
-                                      fontSize:
-                                          sizeController.middleFontSize.value,
-                                      fontWeight: FontWeight.w300,
-                                      color: AppColor.textColor),
-                                  border: OutlineInputBorder(),
-                                  hintText: 'Instagram ID',
-                                  hintStyle: TextStyle(
-                                      fontSize:
-                                          sizeController.middleFontSize.value -
-                                              2,
-                                      fontWeight: FontWeight.w300,
-                                      color: AppColor.textColor),
-                                  labelText: '@뒤에 ID를 정확히 입력해주세요',
-                                  labelStyle: TextStyle(
-                                      fontSize:
-                                          sizeController.middleFontSize.value -
-                                              2,
-                                      fontWeight: FontWeight.w300,
-                                      color: AppColor.textColor),
-                                  focusedBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: AppColor.objectColor,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  errorBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.red,
-                                      width: 2,
-                                      strokeAlign:
-                                          BorderSide.strokeAlignOutside,
-                                    ),
-                                  ),
-                                  focusedErrorBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.red,
-                                      width: 2,
-                                    ),
-                                  ),
-                                ),
-                                style: TextStyle(
+                          ),
+                          errorBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.red,
+                              width: 2,
+                              strokeAlign: BorderSide.strokeAlignOutside,
+                            ),
+                          ),
+                          focusedErrorBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.red,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                        style: TextStyle(
+                            fontSize: sizeController.middleFontSize.value,
+                            fontWeight: FontWeight.w300,
+                            color: AppColor.textColor),
+                        inputFormatters: [
+                          FilteringTextInputFormatter(
+                            RegExp('[a-z A-Z ㄱ-ㅎ|가-힣|0-9]'),
+                            allow: true,
+                          )
+                        ],
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '닉네임 입력은 필수입니다.';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) async {
+                          controller.nickname.value = value!;
+                          final String uid = auth.currentUser!.uid;
+                          debugPrint('uid: ${uid}');
+                          debugPrint('value: ${value}');
+                          await firestore.collection('userInfo').doc(uid).set({
+                            'nickname': value,
+                          });
+                        },
+                      ),
+                    ),
+                    Text(
+                      "포토그래퍼 여부",
+                      style: TextStyle(
+                          fontSize: sizeController.mainFontSize.value,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.textColor),
+                    ),
+                    SizedBox(height: sizeController.screenHeight.value * 0.02),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.black,
+                            backgroundColor:
+                                (controller.checkPhotographer.value == 2)
+                                    ? AppColor.objectColor
+                                    : AppColor.textColor,
+                            shadowColor: Colors.black,
+                            minimumSize: Size(
+                                sizeController.screenWidth.value * 0.4,
+                                sizeController.screenHeight.value * 0.07),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              controller.checkPhotographer.value = 2;
+                            });
+                          },
+                          child: Text(
+                            '일반 사용자',
+                            style: TextStyle(
+                                fontSize: sizeController.middleFontSize.value,
+                                fontWeight: FontWeight.w500,
+                                color: AppColor.backgroundColor),
+                          ),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.black,
+                            backgroundColor:
+                                (controller.checkPhotographer.value == 1)
+                                    ? AppColor.objectColor
+                                    : AppColor.textColor,
+                            shadowColor: Colors.black,
+                            minimumSize: Size(
+                                sizeController.screenWidth.value * 0.4,
+                                sizeController.screenHeight.value * 0.07),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              controller.checkPhotographer.value = 1;
+                            });
+                          },
+                          child: Text(
+                            '포토그래퍼',
+                            style: TextStyle(
+                                fontSize: sizeController.middleFontSize.value,
+                                fontWeight: FontWeight.w500,
+                                color: AppColor.backgroundColor),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: sizeController.screenHeight.value * 0.03,
+                    ),
+                    Visibility(
+                      visible: controller.checkPhotographer.value == 1,
+                      replacement: Text(
+                        "* 포토그래퍼 선택시 인스타그램 아이디를 입력받습니다\n",
+                        style: TextStyle(
+                            fontSize: sizeController.middleFontSize.value - 2,
+                            fontWeight: FontWeight.w300,
+                            color: AppColor.objectColor),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Instagram ID",
+                            style: TextStyle(
+                                fontSize: sizeController.mainFontSize.value,
+                                fontWeight: FontWeight.w700,
+                                color: AppColor.textColor),
+                          ),
+                          SizedBox(
+                              height: sizeController.screenHeight.value * 0.02),
+                          Form(
+                            key: _formKey2,
+                            child: TextFormField(
+                              controller: _instagramIDController,
+                              decoration: InputDecoration(
+                                prefixText: '@ ',
+                                prefixStyle: TextStyle(
                                     fontSize:
                                         sizeController.middleFontSize.value,
                                     fontWeight: FontWeight.w300,
                                     color: AppColor.textColor),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return '포토그래퍼를 선택하시면 인스타그램 입력은 필수입니다.';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (value) {
-                                  controller.phoneNumber.value = '@${value!}';
-                                },
+                                border: OutlineInputBorder(),
+                                hintText: 'Instagram ID',
+                                hintStyle: TextStyle(
+                                    fontSize:
+                                        sizeController.middleFontSize.value - 2,
+                                    fontWeight: FontWeight.w300,
+                                    color: AppColor.textColor),
+                                labelText: '@뒤에 ID를 정확히 입력해주세요',
+                                labelStyle: TextStyle(
+                                    fontSize:
+                                        sizeController.middleFontSize.value - 2,
+                                    fontWeight: FontWeight.w300,
+                                    color: AppColor.textColor),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: AppColor.objectColor,
+                                    width: 2,
+                                  ),
+                                ),
+                                errorBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.red,
+                                    width: 2,
+                                    strokeAlign: BorderSide.strokeAlignOutside,
+                                  ),
+                                ),
+                                focusedErrorBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.red,
+                                    width: 2,
+                                  ),
+                                ),
                               ),
+                              style: TextStyle(
+                                  fontSize: sizeController.middleFontSize.value,
+                                  fontWeight: FontWeight.w300,
+                                  color: AppColor.textColor),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return '포토그래퍼를 선택하시면 인스타그램 입력은 필수입니다.';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                controller.instagramID.value = '@${value!}';
+                              },
                             ),
-                            SizedBox(
-                              height: sizeController.screenHeight.value * 0.03,
-                            ),
-                          ],
+                          ),
+                          SizedBox(
+                            height: sizeController.screenHeight.value * 0.03,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: sizeController.screenHeight.value * 0.03,
+                    ),
+                    Text(
+                      "선호하는 카테고리를 선택해주세요",
+                      style: TextStyle(
+                          fontSize: sizeController.mainFontSize.value,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.textColor),
+                    ),
+                    SizedBox(
+                      height: sizeController.screenHeight.value * 0.02,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.black,
+                            backgroundColor:
+                                (controller.checkCategory.value == 1)
+                                    ? AppColor.objectColor
+                                    : AppColor.textColor,
+                            shadowColor: Colors.black,
+                            minimumSize: Size(
+                                sizeController.screenWidth.value * 0.4,
+                                sizeController.screenHeight.value * 0.07),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              controller.checkCategory.value = 1;
+                            });
+                          },
+                          child: Text(
+                            '나홀로 인생샷',
+                            style: TextStyle(
+                                fontSize: sizeController.middleFontSize.value,
+                                fontWeight: FontWeight.w500,
+                                color: AppColor.backgroundColor),
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: sizeController.screenHeight.value * 0.03,
-                      ),
-                      Text(
-                        "선호하는 카테고리를 선택해주세요",
-                        style: TextStyle(
-                            fontSize: sizeController.mainFontSize.value,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.textColor),
-                      ),
-                      SizedBox(
-                        height: sizeController.screenHeight.value * 0.02,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor:
-                                  (controller.checkCategory.value == 1)
-                                      ? AppColor.objectColor
-                                      : AppColor.textColor,
-                              shadowColor: Colors.black,
-                              minimumSize: Size(
-                                  sizeController.screenWidth.value * 0.4,
-                                  sizeController.screenHeight.value * 0.07),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                controller.checkCategory.value = 1;
-                              });
-                            },
-                            child: Text(
-                              '나홀로 인생샷',
-                              style: TextStyle(
-                                  fontSize: sizeController.middleFontSize.value,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColor.backgroundColor),
-                            ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.black,
+                            backgroundColor:
+                                (controller.checkCategory.value == 2)
+                                    ? AppColor.objectColor
+                                    : AppColor.textColor,
+                            shadowColor: Colors.black,
+                            minimumSize: Size(
+                                sizeController.screenWidth.value * 0.4,
+                                sizeController.screenHeight.value * 0.07),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
                           ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor:
-                                  (controller.checkCategory.value == 2)
-                                      ? AppColor.objectColor
-                                      : AppColor.textColor,
-                              shadowColor: Colors.black,
-                              minimumSize: Size(
-                                  sizeController.screenWidth.value * 0.4,
-                                  sizeController.screenHeight.value * 0.07),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                controller.checkCategory.value = 2;
-                              });
-                            },
-                            child: Text(
-                              '애인과 커플샷',
-                              style: TextStyle(
-                                  fontSize: sizeController.middleFontSize.value,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColor.backgroundColor),
-                            ),
+                          onPressed: () {
+                            setState(() {
+                              controller.checkCategory.value = 2;
+                            });
+                          },
+                          child: Text(
+                            '애인과 커플샷',
+                            style: TextStyle(
+                                fontSize: sizeController.middleFontSize.value,
+                                fontWeight: FontWeight.w500,
+                                color: AppColor.backgroundColor),
                           ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: sizeController.screenHeight * 0.03,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor:
-                                  (controller.checkCategory.value == 3)
-                                      ? AppColor.objectColor
-                                      : AppColor.textColor,
-                              shadowColor: Colors.black,
-                              minimumSize: Size(
-                                  sizeController.screenWidth.value * 0.4,
-                                  sizeController.screenHeight.value * 0.07),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                controller.checkCategory.value = 3;
-                              });
-                            },
-                            child: Text(
-                              '친구와 우정샷',
-                              style: TextStyle(
-                                  fontSize: sizeController.middleFontSize.value,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColor.backgroundColor),
-                            ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: sizeController.screenHeight * 0.03,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.black,
+                            backgroundColor:
+                                (controller.checkCategory.value == 3)
+                                    ? AppColor.objectColor
+                                    : AppColor.textColor,
+                            shadowColor: Colors.black,
+                            minimumSize: Size(
+                                sizeController.screenWidth.value * 0.4,
+                                sizeController.screenHeight.value * 0.07),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
                           ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor:
-                                  (controller.checkCategory.value == 4)
-                                      ? AppColor.objectColor
-                                      : AppColor.textColor,
-                              shadowColor: Colors.black,
-                              minimumSize: Size(
-                                  sizeController.screenWidth.value * 0.4,
-                                  sizeController.screenHeight.value * 0.07),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                controller.checkCategory.value = 4;
-                              });
-                            },
-                            child: Text(
-                              '가족과 추억샷',
-                              style: TextStyle(
-                                  fontSize: sizeController.middleFontSize.value,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColor.backgroundColor),
-                            ),
+                          onPressed: () {
+                            setState(() {
+                              controller.checkCategory.value = 3;
+                            });
+                          },
+                          child: Text(
+                            '친구와 우정샷',
+                            style: TextStyle(
+                                fontSize: sizeController.middleFontSize.value,
+                                fontWeight: FontWeight.w500,
+                                color: AppColor.backgroundColor),
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.black,
+                            backgroundColor:
+                                (controller.checkCategory.value == 4)
+                                    ? AppColor.objectColor
+                                    : AppColor.textColor,
+                            shadowColor: Colors.black,
+                            minimumSize: Size(
+                                sizeController.screenWidth.value * 0.4,
+                                sizeController.screenHeight.value * 0.07),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              controller.checkCategory.value = 4;
+                            });
+                          },
+                          child: Text(
+                            '가족과 추억샷',
+                            style: TextStyle(
+                                fontSize: sizeController.middleFontSize.value,
+                                fontWeight: FontWeight.w500,
+                                color: AppColor.backgroundColor),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: AppColor.objectColor,
-                  backgroundColor: AppColor.objectColor,
-                  shadowColor: AppColor.objectColor,
-                  minimumSize: Size(
-                    sizeController.screenWidth.value * 0.6,
-                    sizeController.screenHeight.value * 0.05,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: AppColor.objectColor,
+                backgroundColor: AppColor.objectColor,
+                shadowColor: AppColor.objectColor,
+                minimumSize: Size(
+                  sizeController.screenWidth.value * 0.6,
+                  sizeController.screenHeight.value * 0.05,
                 ),
-                onPressed: () async {
-                  if (controller.checkPhotographer.value == 0) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('포토그래퍼 여부를 선택해주세요'),
-                    ));
-                  } else if (controller.checkPhotographer.value == 1 &&
-                      !(_formKey.currentState?.validate() ?? false)) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('인스타그램 아이디를 입력해주세요'),
-                    ));
-                  } else if (controller.checkCategory.value == 0) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('카테고리 중 하나를 선택해주세요'),
-                    ));
-                  } else {
-                    _formKey.currentState?.save();
-                    Get.find<AccountController>()
-                        .updateNickname(controller.nickname.value);
-                    Get.find<AccountController>().changeUserType(
-                        UserType.fromString(
-                            _getUserType(controller.checkPhotographer.value)));
-                    Get.find<AccountController>().changeUserCategory(
-                      PrefferedCategory.fromString(
-                          controller.checkCategory.value == 1
-                              ? '포토그래퍼'
-                              : '일반 사용자'),
-                    );
-                    Get.find<AccountController>()
-                        .changeUserNumber(controller.phoneNumber.value);
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () async {
+                if (!(_formKey1.currentState?.validate() ?? false)) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('닉네임을 입력해주세요'),
+                  ));
+                } else if (controller.checkPhotographer.value == 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('포토그래퍼 여부를 선택해주세요'),
+                  ));
+                } else if (controller.checkPhotographer.value == 1 &&
+                    !(_formKey2.currentState?.validate() ?? false)) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('인스타그램 아이디를 입력해주세요'),
+                  ));
+                } else if (controller.checkCategory.value == 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('카테고리 중 하나를 선택해주세요'),
+                  ));
+                } else {
+                  _formKey1.currentState?.save();
+                  _formKey2.currentState?.save();
+                  Get.find<AccountController>()
+                      .updateNickname(controller.nickname.value);
+                  Get.find<AccountController>().changeUserType(
+                      UserType.fromString(
+                          _getUserType(controller.checkPhotographer.value)));
+                  Get.find<AccountController>().changeUserCategory(
+                    PrefferedCategory.fromString(
+                        controller.checkCategory.value == 1
+                            ? '포토그래퍼'
+                            : '일반 사용자'),
+                  );
+                  Get.find<AccountController>()
+                      .changeUserNumber(controller.instagramID.value);
 
-                    final String uid = auth.currentUser!.uid;
+                  final String uid = auth.currentUser!.uid;
 
-                    await firestore.collection('userInfo').doc(uid).set({
-                      'uid': Get.find<AccountController>().user!.uid,
-                      'email': Get.find<AccountController>().user!.email,
-                      'nickname': _nickNameController.text,//controller.nickname.value,
-                      'photoGrapher': controller.checkPhotographer.value,
-                      'phoneNumber': _instagramIDController.text,//controller.phoneNumber.value,
-                      'categoryName':
-                          _getUserType(controller.checkCategory.value),
-                    });
+                  await firestore.collection('userInfo').doc(uid).set({
+                    'uid': Get.find<AccountController>().user!.uid,
+                    'email': Get.find<AccountController>().user!.email,
+                    'nickname':
+                        _nickNameController.text, //controller.nickname.value,
+                    'photoGrapher': controller.checkPhotographer.value,
+                    'phoneNumber': (controller.checkPhotographer.value == 1)
+                        ? _instagramIDController.text
+                        : "", //controller.phoneNumber.value,
+                    'categoryName':
+                        _getUserType(controller.checkCategory.value),
+                  });
 
-                    Get.offAllNamed('/main');
-                  }
-                },
-                child: Center(
-                  child: Text(
-                    '수정하기',
-                    style: TextStyle(
-                        fontSize: sizeController.middleFontSize.value,
-                        fontWeight: FontWeight.w500,
-                        color: AppColor.backgroundColor),
-                  ),
+                  Get.offAllNamed('/main');
+                }
+              },
+              child: Center(
+                child: Text(
+                  '수정하기',
+                  style: TextStyle(
+                      fontSize: sizeController.middleFontSize.value,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.backgroundColor),
                 ),
               ),
             ),
-            SizedBox(
-              height: sizeController.screenHeight * 0.05,
-            ),
-          ],
-        ),
+          ),
+          SizedBox(
+            height: sizeController.screenHeight * 0.05,
+          ),
+        ],
       ),
     );
   }

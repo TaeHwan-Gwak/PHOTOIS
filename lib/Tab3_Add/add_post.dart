@@ -16,7 +16,6 @@ import 'package:photois/style/style.dart';
 import '../getWeather.dart';
 import '../service/post_api_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import '../style/weather_icon.dart';
 
@@ -34,7 +33,6 @@ class _Tab3State extends State<Tab3> {
   final sizeController = Get.put((SizeController()));
   final _formKey1 = GlobalKey<FormState>();
   final _formKey2 = GlobalKey<FormState>();
-  final FirebaseAuth auth = FirebaseAuth.instance;
 
   int selectedIconNum = 0;
   List<String> weather = ['sun', 'cloud', 'rain', 'snow'];

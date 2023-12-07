@@ -20,7 +20,6 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  GlobalKey bottomButtonsKey = GlobalKey();
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final sizeController = Get.put((SizeController()));
   final ScrollController _scrollController = ScrollController();

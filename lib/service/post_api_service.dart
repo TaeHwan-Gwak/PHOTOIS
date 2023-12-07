@@ -118,7 +118,6 @@ class FireService {
         await collectionReference
             .where("postState", isEqualTo: true)
             .orderBy("likesCount", descending: true)
-            .limit(5)
             .get();
 
     List<PostModel> posts = [];
