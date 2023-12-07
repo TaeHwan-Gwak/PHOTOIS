@@ -21,10 +21,19 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   GlobalKey bottomButtonsKey = GlobalKey();
-  final m.FirebaseAuth auth = m.FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final sizeController = Get.put((SizeController()));
   final ScrollController _scrollController = ScrollController();
+  final m.FirebaseAuth auth = m.FirebaseAuth.instance;
+  String uid = '';
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      uid = auth.currentUser!.uid;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,25 +72,27 @@ class _MyPageState extends State<MyPage> {
                   }),
                   selectButton("내 게시물", () {
                     Get.to(UserPost(
-                      userUID: 'jin',
+                      userUID: uid,
                     ));
                   }),
                   selectButton("내가 좋아요한 게시물", () {
                     Get.to(MyLikePost(
-                      userUID: 'jin',
+                      userUID: uid,
                     ));
                   }),
                   Visibility(
+                      visible: uid == 'iuiqdD2URcWFHzgjIVtFF9EANM62',
                       child: Column(
-                    children: [
-                      const Divider(color: AppColor.objectColor, thickness: 1),
-                      selectButton("신고 받은 포스트", () {
-                        Get.to(ReportPost(
-                          userUID: 'jin',
-                        ));
-                      }),
-                    ],
-                  )),
+                        children: [
+                          const Divider(
+                              color: AppColor.objectColor, thickness: 1),
+                          selectButton("신고 받은 포스트", () {
+                            Get.to(ReportPost(
+                              userUID: 'jin',
+                            ));
+                          }),
+                        ],
+                      )),
                 ],
               )),
           const Expanded(child: SizedBox()),
