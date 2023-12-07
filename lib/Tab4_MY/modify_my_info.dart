@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -20,6 +21,21 @@ class _ModifyMyInfoState extends State<ModifyMyInfo> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  int _getTypeByCategory(String categoryName) {
+    switch (categoryName) {
+      case '나홀로 인생샷':
+        return 1;
+      case '애인과 커플샷':
+        return 2;
+      case '친구와 우정샷':
+        return 3;
+      case '가족과 추억샷':
+        return 4;
+      default:
+        return 0;
+    }
+  }
+
   String _getUserType(int userTypeValue) {
     switch (userTypeValue) {
       case 1:
@@ -36,8 +52,36 @@ class _ModifyMyInfoState extends State<ModifyMyInfo> {
   }
 
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _nickNameController = TextEditingController();
+  final TextEditingController _instagramIDController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    final controller = Get.put(my_data.UserInfo());
+    final sizeController = Get.put(my_data.SizeController());
+    final String uid = auth.currentUser!.uid;
+    var result = await firestore.collection('userInfo').doc(uid).get();
+
+    if(kDebugMode) {
+      print(result);
+    }
+
+    controller.nickname.value = result.data()!['nickname'];
+    controller.phoneNumber.value = result.data()!['phoneNumber'];
+    controller.checkCategory.value = _getTypeByCategory(result.data()!['categoryName']);
+    controller.checkPhotographer.value = result.data()!['photoGrapher'];
+    _nickNameController.text = controller.nickname.string;
+    _instagramIDController.text = controller.phoneNumber.string;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {});
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(my_data.UserInfo());
@@ -96,7 +140,7 @@ class _ModifyMyInfoState extends State<ModifyMyInfo> {
                       Form(
                         key: _formKey,
                         child: TextFormField(
-                          controller: _controller,
+                          controller: _nickNameController,
                           maxLength: 11,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -145,13 +189,8 @@ class _ModifyMyInfoState extends State<ModifyMyInfo> {
                           onSaved: (value) async {
                             controller.nickname.value = value!;
                             final String uid = auth.currentUser!.uid;
-
-                            debugPrint(
-                                '####################################################');
                             debugPrint('uid: ${uid}');
                             debugPrint('value: ${value}');
-                            debugPrint(
-                                '####################################################');
                             await firestore
                                 .collection('userInfo')
                                 .doc(uid)
@@ -257,7 +296,7 @@ class _ModifyMyInfoState extends State<ModifyMyInfo> {
                             Form(
                               key: _formKey,
                               child: TextFormField(
-                                controller: _controller,
+                                controller: _instagramIDController,
                                 decoration: InputDecoration(
                                   prefixText: '@ ',
                                   prefixStyle: TextStyle(
@@ -512,9 +551,9 @@ class _ModifyMyInfoState extends State<ModifyMyInfo> {
                     await firestore.collection('userInfo').doc(uid).set({
                       'uid': Get.find<AccountController>().user!.uid,
                       'email': Get.find<AccountController>().user!.email,
-                      'nickname': controller.nickname.value,
+                      'nickname': _nickNameController.text,//controller.nickname.value,
                       'photoGrapher': controller.checkPhotographer.value,
-                      'phoneNumber': controller.phoneNumber.value,
+                      'phoneNumber': _instagramIDController.text,//controller.phoneNumber.value,
                       'categoryName':
                           _getUserType(controller.checkCategory.value),
                     });
