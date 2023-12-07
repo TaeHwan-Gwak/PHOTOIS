@@ -235,6 +235,12 @@ class _SearchSpotState extends State<SearchSpot> {
     List<PostModel> FilterPosts2 = allPosts;
     List<PostModel> FilterPosts3 = allPosts;
     try {
+      if (selectedWeather == SearchWeather.weather &&
+          selectedSeason == SearchSeason.season &&
+          selectedTime == SearchTime.time) {
+        print(allPosts.length);
+        return allPosts;
+      }
       if (selectedWeather != SearchWeather.weather) {
         weatherFilterPosts = await FireService().getFireModelWeather(
             weather: PostWeather.fromString(selectedWeather.name));
@@ -255,11 +261,10 @@ class _SearchSpotState extends State<SearchSpot> {
       }
       finalFilterPosts = FilterPosts1.where((post) => FilterPosts2.any(
           (otherPost) => post.reference == otherPost.reference)).toList();
-      finalFilterPosts = finalFilterPosts
+      return finalFilterPosts
           .where((post) => FilterPosts3.any(
               (otherPost) => post.reference == otherPost.reference))
           .toList();
-      return finalFilterPosts;
     } catch (e) {
       print('Error getting post info count: $e');
       return allPosts;
@@ -601,19 +606,11 @@ class _SearchSpotState extends State<SearchSpot> {
                                       icon: await NOverlayImage.fromWidget(
                                         widget: Column(
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0),
-                                              child: SizedBox(
-                                                height: 48,
-                                                width: 48,
-                                                child: Image.network(
-                                                  data.imageURL ??
-                                                      'No imageURL',
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ),
+                                            Icon(
+                                              Icons.place,
+                                              size: 24,
+                                              color: AppColor.backgroundColor,
+                                            )
                                           ],
                                         ),
                                         size: const Size(80, 80),

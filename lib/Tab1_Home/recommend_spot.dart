@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as m;
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:photois/Main/data.dart';
+import '../Main/data.dart' as my_data;
 import 'package:photois/style/style.dart';
 
 import '../post/post_card.dart';
@@ -17,7 +19,9 @@ class RecommendSpot extends StatefulWidget {
 }
 
 class _RecommendSpotState extends State<RecommendSpot> {
-  final sizeController = Get.put((SizeController()));
+  final sizeController = Get.put((my_data.SizeController()));
+  final controller = Get.put(my_data.UserInfo());
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   double lat = 0.0;
   double lng = 0.0;
@@ -39,10 +43,70 @@ class _RecommendSpotState extends State<RecommendSpot> {
     }
   }
 
+  final m.FirebaseAuth auth = m.FirebaseAuth.instance;
+  String uid = '';
+  String category = '';
+
   @override
   void initState() {
     super.initState();
     getCurrentLocation().then((_) {
+      setState(() {});
+    });
+    uid = auth.currentUser!.uid;
+    loadData().then((_) {
+      setState(() {});
+    });
+    print(category);
+  }
+/*
+  Future<void> loadData() async {
+    var result = await firestore.collection('userInfo').doc(uid).get();
+    category = result.data()!['categoryName'];
+    print(category);
+  }*/
+
+  int _getTypeByCategory(String categoryName) {
+    switch (categoryName) {
+      case '나홀로 인생샷':
+        return 1;
+      case '애인과 커플샷':
+        return 2;
+      case '친구와 우정샷':
+        return 3;
+      case '가족과 추억샷':
+        return 4;
+      default:
+        return 0;
+    }
+  }
+
+  String _getUserType(String userTypeValue) {
+    switch (userTypeValue) {
+      case '나홀로 인생샷':
+        return 'solo';
+      case '애인과 커플샷':
+        return 'couple';
+      case '친구와 우정샷':
+        return 'friend';
+      case '가족과 추억샷':
+        return 'family';
+      default:
+        return 'solo';
+    }
+  }
+
+  Future<void> loadData() async {
+    var result = await firestore.collection('userInfo').doc(uid).get();
+
+    controller.nickname.value = result.data()!['nickname'];
+    controller.instagramID.value = result.data()!['phoneNumber'];
+    controller.checkCategory.value =
+        _getTypeByCategory(result.data()!['categoryName']);
+    controller.checkPhotographer.value = result.data()!['photoGrapher'];
+    category = _getUserType(result.data()!['categoryName']);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {});
     });
   }
@@ -172,8 +236,8 @@ class _RecommendSpotState extends State<RecommendSpot> {
                 SizedBox(
                     height: sizeController.screenHeight.value * 0.3 * 1.25,
                     child: FutureBuilder<List<PostModel>>(
-                      future: FireService()
-                          .getFireModelMain2(category: PostCategory.family),
+                      future: FireService().getFireModelMain2(
+                          category: PostCategory.fromString(category)),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           if (snapshot.hasData) {

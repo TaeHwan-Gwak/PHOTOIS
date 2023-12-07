@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../model/post_model.dart';
 import '../service/post_api_service.dart';
 import '../style/style.dart';
+import '../Main/data.dart' as my_data;
 
 enum ViewSelect {
   likeDown,
@@ -41,6 +42,7 @@ class _UserPostState extends State<UserPost> {
   final sizeController = Get.put((SizeController()));
   int selectNum = 0;
   ViewSelect _viewSelect = ViewSelect.likeDown;
+  final controller = Get.put(my_data.UserInfo());
 
   @override
   void initState() {
@@ -93,7 +95,7 @@ class _UserPostState extends State<UserPost> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      userUID,
+                      controller.nickname.value,
                       style: TextStyle(
                           fontSize: sizeController.bigFontSize.value,
                           fontWeight: FontWeight.w700,
@@ -108,9 +110,10 @@ class _UserPostState extends State<UserPost> {
                     ),
                   ],
                 ),
-                //if()// TODO: 포토그래퍼 확인
                 Text(
-                  '@jingjing_2_',
+                  controller.instagramID.value == ''
+                      ? ""
+                      : "@${controller.instagramID.value}",
                   style: TextStyle(
                       fontSize: sizeController.middleFontSize.value - 2,
                       fontWeight: FontWeight.w400,

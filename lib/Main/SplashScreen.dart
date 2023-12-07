@@ -17,7 +17,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    //TODO: 타이머 추가하기
 
     Timer(const Duration(milliseconds: 1500), () {
       navigateToScreen();

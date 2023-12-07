@@ -6,36 +6,54 @@ import '../Main/data.dart' as my_data;
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
   final PostModel data;
-  final controller = Get.put(my_data.UserInfo());
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final double size;
 
   PostCard({super.key, required this.data, required this.size});
 
+  @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
+  final controller = Get.put(my_data.UserInfo());
+
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  String instagramID = '';
+
   Future<void> loadData() async {
-    var result = await firestore.collection('userInfo').doc(data.userUid).get();
-    controller.phoneNumber.value = result.data()!['phoneNumber'];
+    var result =
+        await firestore.collection('userInfo').doc(widget.data.userUid).get();
+    instagramID = result.data()?['phoneNumber'] ?? '';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData().then((_) {
+      setState(() {});
+    });
   }
 
   final sizeController = Get.put((my_data.SizeController()));
+
   @override
   Widget build(BuildContext context) {
-    loadData();
     return InkWell(
       splashColor: Colors.black.withOpacity(0.2),
       onTap: () {
-        Get.to(PhotoInfo(data: data));
+        Get.to(PhotoInfo(data: widget.data));
       },
       child: Ink(
         child: Stack(
           children: [
             SizedBox(
-              height: size * 1.25,
-              width: size,
+              height: widget.size * 1.25,
+              width: widget.size,
               child: Image.network(
-                data.imageURL ?? 'No imageURL',
+                widget.data.imageURL ?? 'No imageURL',
                 fit: BoxFit.cover,
               ),
             ),
@@ -52,7 +70,7 @@ class PostCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        "${data.mainAddress}",
+                        "${widget.data.mainAddress}",
                         style: TextStyle(
                             fontSize: sizeController.middleFontSize.value,
                             fontWeight: FontWeight.w700,
@@ -78,7 +96,7 @@ class PostCard extends StatelessWidget {
                       size: 18,
                     ),
                     Text(
-                      " ${data.likes.length}",
+                      " ${widget.data.likes.length}",
                       style: TextStyle(
                           color: AppColor.backgroundColor,
                           fontSize: sizeController.middleFontSize.value - 3,
@@ -96,7 +114,8 @@ class PostCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 child: Text(
-                  controller.phoneNumber.value,
+                  instagramID,
+                  //(instagramID == '') ? '' : "@{instagramID}",
                   style: TextStyle(
                       color: AppColor.textColor,
                       fontSize: sizeController.middleFontSize.value - 3,

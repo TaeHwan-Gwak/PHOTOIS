@@ -1,14 +1,15 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:intl/intl.dart';
-import '../Main/data.dart'as my_data;
+import '../Main/data.dart' as my_data;
 import 'package:get/get.dart';
 import '../model/post_model.dart';
 import '../service/post_api_service.dart';
 import '../style/style.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class PhotoInfo extends StatefulWidget {
   final PostModel data;
@@ -29,8 +30,9 @@ class _PhotoInfoState extends State<PhotoInfo> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   NaverMapController? _controller;
   late NMarker marker;
-  final FirebaseAuth auth = FirebaseAuth.instance;
   String uid = '';
+  String instagramID = '';
+  String nickName = '';
 
   Map<String, String> headerss = {
     "X-NCP-APIGW-API-KEY-ID": "ud3er0cxg6",
@@ -48,12 +50,14 @@ class _PhotoInfoState extends State<PhotoInfo> {
     if (data.likes.contains(uid)) {
       isFavorite = true;
     }
+    loadData();
   }
-
 
   Future<void> loadData() async {
     var result = await firestore.collection('userInfo').doc(data.userUid).get();
-    controller.phoneNumber.value = result.data()!['phoneNumber'];
+    instagramID = result.data()!['phoneNumber'];
+    nickName = result.data()!['nickname'];
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {});
     });
@@ -61,7 +65,6 @@ class _PhotoInfoState extends State<PhotoInfo> {
 
   @override
   Widget build(BuildContext context) {
-    loadData();
     final String uid = auth.currentUser!.uid;
     return Scaffold(
       backgroundColor: AppColor.backgroundColor,
@@ -120,7 +123,6 @@ class _PhotoInfoState extends State<PhotoInfo> {
                 ),
               );
 
-              // TODO: userUID 집어넣기
               if (data.userUid == uid) {
                 menuItems.add(
                   PopupMenuItem<String>(
@@ -162,24 +164,35 @@ class _PhotoInfoState extends State<PhotoInfo> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ///TODO: 인스타정보 불러오기
             Container(
               padding: const EdgeInsets.all(8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    controller.phoneNumber.value,
-                    style: TextStyle(
-                        color: AppColor.textColor,
-                        fontSize: sizeController.middleFontSize.value + 1,
-                        fontWeight: FontWeight.w500),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        nickName,
+                        style: TextStyle(
+                            color: AppColor.textColor,
+                            fontSize: sizeController.mainFontSize.value + 2,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        instagramID == '' ? "" : "@${instagramID}",
+                        style: TextStyle(
+                            color: AppColor.textColor,
+                            fontSize: sizeController.middleFontSize.value,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ],
                   ),
                   Text(
                     DateFormat("yyyy년 MM월 dd일 H:m  ")
                         .format(data.date!.toDate()),
                     style: TextStyle(
-                        fontSize: sizeController.middleFontSize.value - 2,
+                        fontSize: sizeController.middleFontSize.value,
                         fontWeight: FontWeight.w300,
                         color: AppColor.textColor),
                   ),
@@ -326,7 +339,6 @@ class _PhotoInfoState extends State<PhotoInfo> {
                       fontWeight: FontWeight.w400,
                       color: AppColor.textColor)),
             ),
-
             Center(
               child: SizedBox(
                 height: sizeController.screenWidth.value * 0.95,
@@ -383,8 +395,6 @@ class _PhotoInfoState extends State<PhotoInfo> {
                 ),
               ),
             ),
-            SizedBox(height: sizeController.screenHeight.value * 0.2),
-
             SizedBox(height: sizeController.screenHeight.value * 0.2),
           ],
         ),
