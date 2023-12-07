@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:photois/Main/data.dart';
 import 'package:photois/style/style.dart';
@@ -17,6 +18,34 @@ class RecommendSpot extends StatefulWidget {
 
 class _RecommendSpotState extends State<RecommendSpot> {
   final sizeController = Get.put((SizeController()));
+
+  double lat = 0.0;
+  double lng = 0.0;
+
+  Future<void> getCurrentLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      lat = position.latitude;
+      lng = position.longitude;
+    } catch (e) {
+      print('error');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentLocation().then((_) {
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +86,8 @@ class _RecommendSpotState extends State<RecommendSpot> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding:
+                      const EdgeInsets.only(left: 8.0, bottom: 16, top: 4.0),
                   child: Row(
                     children: [
                       const Icon(
@@ -75,11 +105,10 @@ class _RecommendSpotState extends State<RecommendSpot> {
                   ),
                 ),
                 SizedBox(
-                    height: sizeController.screenHeight.value * 0.35 * 1.25,
+                    height: sizeController.screenHeight.value * 0.3 * 1.25,
                     child: FutureBuilder<List<PostModel>>(
-                      future: FireService().getFireModelMain1(
-                          lat: 37.50839351655489, lon: 126.96352250024506),
-                      //TODO: 바꾸기
+                      future:
+                          FireService().getFireModelMain1(lat: lat, lng: lng),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           if (snapshot.hasData) {
@@ -91,13 +120,16 @@ class _RecommendSpotState extends State<RecommendSpot> {
                                 PostModel data = datas[index];
                                 return Row(
                                   children: [
-                                    const SizedBox(width: 5),
-                                    PostCard(
-                                        data: data,
-                                        size:
-                                            sizeController.screenHeight.value *
-                                                0.35),
-                                    const SizedBox(width: 5)
+                                    const SizedBox(width: 7),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                      child: PostCard(
+                                          data: data,
+                                          size: sizeController
+                                                  .screenHeight.value *
+                                              0.3),
+                                    ),
+                                    const SizedBox(width: 7)
                                   ],
                                 );
                               },
@@ -118,7 +150,8 @@ class _RecommendSpotState extends State<RecommendSpot> {
                 ),
                 const Divider(color: AppColor.objectColor, thickness: 1.5),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding:
+                      const EdgeInsets.only(left: 8.0, bottom: 16, top: 4.0),
                   child: Row(
                     children: [
                       const Icon(
@@ -137,7 +170,7 @@ class _RecommendSpotState extends State<RecommendSpot> {
                 ),
                 //TODO: user 선호 카테고리로 바꿔주기
                 SizedBox(
-                    height: sizeController.screenHeight.value * 0.35 * 1.25,
+                    height: sizeController.screenHeight.value * 0.3 * 1.25,
                     child: FutureBuilder<List<PostModel>>(
                       future: FireService()
                           .getFireModelMain2(category: PostCategory.family),
@@ -152,13 +185,16 @@ class _RecommendSpotState extends State<RecommendSpot> {
                                 PostModel data = datas[index];
                                 return Row(
                                   children: [
-                                    const SizedBox(width: 5),
-                                    PostCard(
-                                        data: data,
-                                        size:
-                                            sizeController.screenHeight.value *
-                                                0.35),
-                                    const SizedBox(width: 5)
+                                    const SizedBox(width: 7),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                      child: PostCard(
+                                          data: data,
+                                          size: sizeController
+                                                  .screenHeight.value *
+                                              0.3),
+                                    ),
+                                    const SizedBox(width: 7)
                                   ],
                                 );
                               },
@@ -179,7 +215,8 @@ class _RecommendSpotState extends State<RecommendSpot> {
                 ),
                 const Divider(color: AppColor.objectColor, thickness: 1.5),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding:
+                      const EdgeInsets.only(left: 8.0, bottom: 16, top: 4.0),
                   child: Row(
                     children: [
                       const Icon(
@@ -197,7 +234,7 @@ class _RecommendSpotState extends State<RecommendSpot> {
                   ),
                 ),
                 SizedBox(
-                    height: sizeController.screenHeight.value * 0.35 * 1.25,
+                    height: sizeController.screenHeight.value * 0.3 * 1.25,
                     child: FutureBuilder<List<PostModel>>(
                       future: FireService().getFireModelMain3(),
                       builder: (context, snapshot) {
@@ -211,13 +248,16 @@ class _RecommendSpotState extends State<RecommendSpot> {
                                 PostModel data = datas[index];
                                 return Row(
                                   children: [
-                                    const SizedBox(width: 5),
-                                    PostCard(
-                                        data: data,
-                                        size:
-                                            sizeController.screenHeight.value *
-                                                0.35),
-                                    const SizedBox(width: 5)
+                                    const SizedBox(width: 7),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                      child: PostCard(
+                                          data: data,
+                                          size: sizeController
+                                                  .screenHeight.value *
+                                              0.3),
+                                    ),
+                                    const SizedBox(width: 7)
                                   ],
                                 );
                               },

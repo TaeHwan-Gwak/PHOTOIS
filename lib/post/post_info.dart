@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:intl/intl.dart';
@@ -24,6 +25,8 @@ class _PhotoInfoState extends State<PhotoInfo> {
 
   NaverMapController? _controller;
   late NMarker marker;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  String uid = '';
 
   Map<String, String> headerss = {
     "X-NCP-APIGW-API-KEY-ID": "ud3er0cxg6",
@@ -37,7 +40,8 @@ class _PhotoInfoState extends State<PhotoInfo> {
   void initState() {
     super.initState();
     data = widget.data;
-    if (data.likes.contains('jin')) {
+    uid = auth.currentUser!.uid;
+    if (data.likes.contains(uid)) {
       isFavorite = true;
     }
   }
@@ -103,7 +107,7 @@ class _PhotoInfoState extends State<PhotoInfo> {
               );
 
               // TODO: userUID 집어넣기
-              if (data.userUid == 'jin') {
+              if (data.userUid == uid) {
                 menuItems.add(
                   PopupMenuItem<String>(
                     value: 'delete',
@@ -151,7 +155,7 @@ class _PhotoInfoState extends State<PhotoInfo> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "@jingjing_2_ 님의 게시물",
+                    "${uid}_ 님의 게시물",
                     style: TextStyle(
                         color: AppColor.textColor,
                         fontSize: sizeController.middleFontSize.value + 1,
@@ -227,13 +231,12 @@ class _PhotoInfoState extends State<PhotoInfo> {
                           onPressed: () {
                             final likes = data.likes;
                             if (isFavorite) {
-                              likes.remove('jin');
+                              likes.remove(uid);
                             } else {
-                              likes.add('jin');
+                              likes.add(uid);
                             }
                             PostModel updatePost = PostModel(
                               postState: data.postState,
-                              postID: data.postID,
                               createdAt: data.createdAt,
                               userUid: data.userUid,
                               imageURL: data.imageURL,
@@ -576,7 +579,6 @@ class _PhotoInfoState extends State<PhotoInfo> {
   void report(String report) {
     PostModel updatePost = PostModel(
       postState: false,
-      postID: data.postID,
       createdAt: data.createdAt,
       userUid: data.userUid,
       imageURL: data.imageURL,
