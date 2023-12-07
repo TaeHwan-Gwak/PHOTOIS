@@ -27,8 +27,8 @@ class FireService {
 
   ///Tab1-1: 주변 인기장소 추천
   Future<List<PostModel>> getFireModelMain1(
-      {required double lat, required double lon}) async {
-    double epsilon = 0.01; //TODO: 값 지정
+      {required double lat, required double lng}) async {
+    double epsilon = 0.01; //1km
 
     CollectionReference<Map<String, dynamic>> collectionReference =
         FirebaseFirestore.instance.collection("PostInfo");
@@ -42,8 +42,8 @@ class FireService {
     Query<Map<String, dynamic>> longitudeQuery = collectionReference
         .where("postState", isEqualTo: true)
         .where("longitude",
-            isGreaterThanOrEqualTo: lon - epsilon,
-            isLessThanOrEqualTo: lon + epsilon);
+            isGreaterThanOrEqualTo: lng - epsilon,
+            isLessThanOrEqualTo: lng + epsilon);
 
     List<QuerySnapshot<Map<String, dynamic>>> querySnapshots =
         await Future.wait([latitudeQuery.get(), longitudeQuery.get()]);

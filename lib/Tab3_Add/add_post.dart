@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -30,6 +31,7 @@ class _Tab3State extends State<Tab3> {
   final sizeController = Get.put((SizeController()));
   final _formKey1 = GlobalKey<FormState>();
   final _formKey2 = GlobalKey<FormState>();
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   int selectedIconNum = 0;
   List<String> weather = ['sun', 'cloud', 'rain', 'snow'];
@@ -367,19 +369,34 @@ class _Tab3State extends State<Tab3> {
         else
           Visibility(
               visible: !clickImageButton,
-              child: TextButton(
-                onPressed: () {
-                  setState(() {
-                    clickImageButton = true;
-                  });
-                },
-                child: Text(
-                  "사진 선택",
-                  style: TextStyle(
-                      fontSize: sizeController.mainFontSize.value,
-                      fontWeight: FontWeight.w700,
-                      color: AppColor.objectColor),
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: getImage,
+                    child: Text(
+                      "사진 변경",
+                      style: TextStyle(
+                          fontSize: sizeController.mainFontSize.value,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.objectColor),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        clickImageButton = true;
+                      });
+                    },
+                    child: Text(
+                      "사진 선택",
+                      style: TextStyle(
+                          fontSize: sizeController.mainFontSize.value,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.objectColor),
+                    ),
+                  ),
+                ],
               ))
       ],
     );
@@ -1039,13 +1056,12 @@ class _Tab3State extends State<Tab3> {
                       weather[controller.spotWeather.value - 1];
                   String spotCategory =
                       category[controller.spotCategory.value - 1];
+                  final String uid = auth.currentUser!.uid;
 
-                  //TODO: userUid 입력, postID???
                   PostModel fireModel = PostModel(
                       postState: true,
-                      postID: 'post1',
                       createdAt: Timestamp.now(),
-                      userUid: 'jin',
+                      userUid: uid, //'jin',
                       imageURL: imageDownLoadURL,
                       mainAddress: spotMainAddress,
                       extraAddress: spotExtraAddress,
@@ -1055,7 +1071,7 @@ class _Tab3State extends State<Tab3> {
                       date: Timestamp.fromDate(spotDate),
                       weather: PostWeather.fromString(spotWeather),
                       category: PostCategory.fromString(spotCategory),
-                      likes: ['jin2', 'jin4', 'jin5', 'jin6', 'jin7'],
+                      likes: [],
                       likesCount: 0);
 
                   await FireService().createPostInfo(fireModel.toJson());

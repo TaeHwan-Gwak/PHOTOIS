@@ -78,7 +78,6 @@ class LikeModel {
 class PostModel {
   // 사용되는 자료형
   late bool? postState;
-  late String? postID;
   late Timestamp? createdAt;
   late String? userUid;
   late String? imageURL;
@@ -98,7 +97,6 @@ class PostModel {
   //생성자
   PostModel(
       {required this.postState,
-      required this.postID,
       required this.createdAt,
       required this.userUid,
       required this.imageURL,
@@ -118,7 +116,6 @@ class PostModel {
   //json => Object로, firestore에서 불러올때
   PostModel.fromJson(dynamic json, this.reference) {
     postState = json['postState'];
-    postID = json['postID'];
     createdAt = json['createdAt'];
     userUid = json['userUid'];
     imageURL = json['imageURL'];
@@ -153,7 +150,6 @@ class PostModel {
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['postState'] = postState;
-    map['postID'] = postID;
     map['createdAt'] = createdAt;
     map['userUid'] = userUid;
     map['imageURL'] = imageURL;

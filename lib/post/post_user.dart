@@ -151,7 +151,7 @@ class _UserPostState extends State<UserPost> {
           Expanded(
             child: FutureBuilder<List<PostModel>>(
               future: FireService()
-                  .getFireModelUser(userUid: 'jin', selectNum: selectNum),
+                  .getFireModelUser(userUid: userUID, selectNum: selectNum),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (snapshot.hasData) {
