@@ -156,14 +156,35 @@ class _SearchSpotState extends State<SearchSpot> {
 
     print(condition);*/
 
-    http.Response responseWeahter = await http.get(
-      Uri.parse(
-          "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=2ed1135aa0f58dafe0d2ead1574e0242"),
-    );
+    Map<String, String> headerss = {
+      "X-NCP-APIGW-API-KEY-ID": "ud3er0cxg6",
+      "X-NCP-APIGW-API-KEY": "i5bTtbxYq6VpOvNCYN4A6Qlw8hDzAdFKw0AsEk6s"
+    };
 
-    String jsonDataWeather = responseWeahter.body;
-    condition = jsonDecode(jsonDataWeather)['weather'][0]['main'];
-    print(condition);
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      lat = position.latitude;
+      lng = position.longitude;
+
+      http.Response responseWeather = await http.get(
+        Uri.parse(
+            "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=2ed1135aa0f58dafe0d2ead1574e0242"),
+      );
+
+      String jsonDataWeather = responseWeather.body;
+      condition = jsonDecode(jsonDataWeather)['weather'][0]['main'];
+
+      print(condition);
+    } catch (e) {
+      print('error');
+    }
 
     switch (condition) {
       case 'Clear':
@@ -189,12 +210,12 @@ class _SearchSpotState extends State<SearchSpot> {
     getAllPost().then((_) {
       setState(() {});
     });
+    /*
     getCurrentLocation().then((_) {
       setState(() {});
     });
-    getCurrentState().then((_) {
-      setState(() {});
-    });
+    */
+    getCurrentState().then((_) {});
   }
 
   List<PostModel> allPosts = [];
@@ -331,7 +352,7 @@ class _SearchSpotState extends State<SearchSpot> {
                             '계절 선택',
                             style: TextStyle(
                                 fontSize: sizeController.middleFontSize.value,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w300,
                                 color: AppColor.textColor),
                           ),
                         ),
@@ -348,16 +369,19 @@ class _SearchSpotState extends State<SearchSpot> {
                           return DropdownMenuItem<SearchSeason>(
                             value: status,
                             child: Center(
-                              child: Text(
-                                  (status.title == nowSeason.title &&
-                                          nowSeason != SearchSeason.season)
-                                      ? '**${status.title}**' //TODO: 표기?
-                                      : status.title,
+                              child: Text(status.title,
                                   style: TextStyle(
                                       fontSize:
                                           sizeController.middleFontSize.value,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColor.objectColor)),
+                                      fontWeight: (status.title ==
+                                                  nowSeason.title &&
+                                              nowSeason != SearchSeason.season)
+                                          ? FontWeight.w900
+                                          : FontWeight.w300,
+                                      color: (status.title == nowSeason.title &&
+                                              nowSeason != SearchSeason.season)
+                                          ? AppColor.textColor
+                                          : AppColor.objectColor)),
                             ),
                           );
                         }).toList()),
@@ -373,7 +397,7 @@ class _SearchSpotState extends State<SearchSpot> {
                           '시간대 선택',
                           style: TextStyle(
                               fontSize: sizeController.middleFontSize.value,
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.w300,
                               color: AppColor.textColor),
                         ),
                       ),
@@ -389,15 +413,16 @@ class _SearchSpotState extends State<SearchSpot> {
                         return DropdownMenuItem<SearchTime>(
                           value: status,
                           child: Center(
-                            child: Text(
-                                (status.title == nowTime.title)
-                                    ? '**${status.title}**' //TODO: 표기?
-                                    : status.title,
+                            child: Text(status.title,
                                 style: TextStyle(
                                     fontSize:
                                         sizeController.middleFontSize.value,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColor.objectColor)),
+                                    fontWeight: (status.title == nowTime.title)
+                                        ? FontWeight.w900
+                                        : FontWeight.w300,
+                                    color: (status.title == nowTime.title)
+                                        ? AppColor.textColor
+                                        : AppColor.objectColor)),
                           ),
                         );
                       }).toList(),
@@ -414,7 +439,7 @@ class _SearchSpotState extends State<SearchSpot> {
                           '날씨 선택',
                           style: TextStyle(
                               fontSize: sizeController.middleFontSize.value,
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.w300,
                               color: AppColor.textColor),
                         ),
                       ),
@@ -431,16 +456,19 @@ class _SearchSpotState extends State<SearchSpot> {
                         return DropdownMenuItem<SearchWeather>(
                           value: status,
                           child: Center(
-                            child: Text(
-                                (status.title == nowWeather.title &&
-                                        nowWeather != SearchWeather.weather)
-                                    ? '**${status.title}**' //TODO: 표기?
-                                    : status.title,
+                            child: Text(status.title,
                                 style: TextStyle(
                                     fontSize:
                                         sizeController.middleFontSize.value,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColor.objectColor)),
+                                    fontWeight: (status.title ==
+                                                nowWeather.title &&
+                                            nowWeather != SearchWeather.weather)
+                                        ? FontWeight.w900
+                                        : FontWeight.w300,
+                                    color: (status.title == nowWeather.title &&
+                                            nowWeather != SearchWeather.weather)
+                                        ? AppColor.textColor
+                                        : AppColor.objectColor)),
                           ),
                         );
                       }).toList(),
@@ -565,8 +593,9 @@ class _SearchSpotState extends State<SearchSpot> {
 
                                 for (PostModel data in finalFilterPosts) {
                                   print(data.userUid);
+
                                   final marker = NMarker(
-                                      id: data.content ?? '',
+                                      id: data.imageURL ?? '',
                                       position: NLatLng(data.latitude ?? 0.0,
                                           data.longitude ?? 0.0),
                                       icon: await NOverlayImage.fromWidget(
@@ -585,10 +614,6 @@ class _SearchSpotState extends State<SearchSpot> {
                                                 ),
                                               ),
                                             ),
-                                            const Icon(Icons.place,
-                                                size: 24,
-                                                color:
-                                                    AppColor.backgroundColor),
                                           ],
                                         ),
                                         size: const Size(80, 80),
@@ -672,16 +697,89 @@ class _SearchSpotState extends State<SearchSpot> {
                                   tilt: 0,
                                 ),
                               ),
-                              onMapReady: (controller) {
-                                final marker = NMarker(
-                                  id: 'test',
-                                  position:
-                                      const NLatLng(37.506977, 126.953289),
-                                );
-                                marker.setOnTapListener((NMarker marker) {
-                                  // 마커를 클릭했을 때 실행할 코드
-                                });
-                                controller.addOverlay(marker);
+                              onMapReady: (controller) async {
+                                List<PostModel> finalFilterPost =
+                                    await getFilteringPost();
+                                print(finalFilterPosts.length);
+
+                                for (PostModel data in finalFilterPost) {
+                                  print(data.userUid);
+                                  final marker = NMarker(
+                                      id: data.content ?? '',
+                                      position: NLatLng(data.latitude ?? 0.0,
+                                          data.longitude ?? 0.0),
+                                      icon: await NOverlayImage.fromWidget(
+                                        widget: Column(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              child: SizedBox(
+                                                height: 48,
+                                                width: 48,
+                                                child: Image.network(
+                                                  data.imageURL ??
+                                                      'No imageURL',
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                            const Icon(Icons.place,
+                                                size: 24,
+                                                color:
+                                                    AppColor.backgroundColor),
+                                          ],
+                                        ),
+                                        size: const Size(80, 80),
+                                        context: context,
+                                      ));
+
+                                  marker.setOnTapListener((NMarker marker) {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          height: sizeController
+                                                  .screenHeight.value *
+                                              0.6,
+                                          width:
+                                              sizeController.screenWidth.value,
+                                          padding: const EdgeInsets.all(16.0),
+                                          decoration: const BoxDecoration(
+                                            color: AppColor
+                                                .backgroundColor, // 배경 색상
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(20.0),
+                                              topRight: Radius.circular(20.0),
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: SizedBox(
+                                              height: sizeController
+                                                      .screenHeight.value *
+                                                  0.5 *
+                                                  1.25,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        16.0), // 원하는 모서리 반지름 설정
+                                                child: PostCard(
+                                                  data: data,
+                                                  size: sizeController
+                                                          .screenHeight.value *
+                                                      0.5,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  });
+
+                                  controller.addOverlay(marker);
+                                }
                               },
                             );
                           } else {

@@ -115,7 +115,7 @@ class _MyLikePostState extends State<MyLikePost> {
           Expanded(
             child: FutureBuilder<List<PostModel>>(
               future: FireService()
-                  .getFireModelUserLike(userUid: 'jin', selectNum: selectNum),
+                  .getFireModelUserLike(userUid: userUID, selectNum: selectNum),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (snapshot.hasData) {

@@ -99,33 +99,6 @@ class _LoginExtra2State extends State<LoginExtra2> {
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.black,
                               backgroundColor:
-                                  (controller.checkPhotographer.value == 1)
-                                      ? AppColor.objectColor
-                                      : AppColor.textColor,
-                              shadowColor: Colors.black,
-                              minimumSize: Size(
-                                  sizeController.screenWidth.value * 0.4,
-                                  sizeController.screenHeight.value * 0.07),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                controller.checkPhotographer.value = 1;
-                              });
-                            },
-                            child: Text(
-                              '포토그래퍼',
-                              style: TextStyle(
-                                  fontSize: sizeController.middleFontSize.value,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColor.backgroundColor),
-                            ),
-                          ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor:
                                   (controller.checkPhotographer.value == 2)
                                       ? AppColor.objectColor
                                       : AppColor.textColor,
@@ -143,6 +116,33 @@ class _LoginExtra2State extends State<LoginExtra2> {
                             },
                             child: Text(
                               '일반 사용자',
+                              style: TextStyle(
+                                  fontSize: sizeController.middleFontSize.value,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.backgroundColor),
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.black,
+                              backgroundColor:
+                                  (controller.checkPhotographer.value == 1)
+                                      ? AppColor.objectColor
+                                      : AppColor.textColor,
+                              shadowColor: Colors.black,
+                              minimumSize: Size(
+                                  sizeController.screenWidth.value * 0.4,
+                                  sizeController.screenHeight.value * 0.07),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                controller.checkPhotographer.value = 1;
+                              });
+                            },
+                            child: Text(
+                              '포토그래퍼',
                               style: TextStyle(
                                   fontSize: sizeController.middleFontSize.value,
                                   fontWeight: FontWeight.w500,
