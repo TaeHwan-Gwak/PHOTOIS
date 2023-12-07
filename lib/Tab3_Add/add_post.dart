@@ -16,6 +16,7 @@ import 'package:photois/style/style.dart';
 import '../getWeather.dart';
 import '../service/post_api_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../style/weather_icon.dart';
 
@@ -27,6 +28,8 @@ class Tab3 extends StatefulWidget {
 }
 
 class _Tab3State extends State<Tab3> {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final controller = Get.put((PhotoSpotInfo()));
   final sizeController = Get.put((SizeController()));
   final _formKey1 = GlobalKey<FormState>();
@@ -1061,7 +1064,7 @@ class _Tab3State extends State<Tab3> {
                   PostModel fireModel = PostModel(
                       postState: true,
                       createdAt: Timestamp.now(),
-                      userUid: uid, //'jin',
+                      userUid: uid,
                       imageURL: imageDownLoadURL,
                       mainAddress: spotMainAddress,
                       extraAddress: spotExtraAddress,
