@@ -174,7 +174,7 @@ class _UserPostState extends State<UserPost> {
               },
             ),
           ),
-          const Divider(color: AppColor.objectColor, thickness: 5),
+          const Divider(color: AppColor.objectColor, thickness: 3),
           SizedBox(
             height: sizeController.screenHeight.value * 0.02,
           ),

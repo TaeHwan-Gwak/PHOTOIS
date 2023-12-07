@@ -150,7 +150,7 @@ class _MyLikePostState extends State<MyLikePost> {
               },
             ),
           ),
-          const Divider(color: AppColor.objectColor, thickness: 5),
+          const Divider(color: AppColor.objectColor, thickness: 3),
           SizedBox(
             height: sizeController.screenHeight.value * 0.02,
           ),

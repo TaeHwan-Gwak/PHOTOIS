@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart' as m;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:photois/Tab4_MY/my_like_posts.dart';
+import 'package:photois/Tab4_MY/report_posts.dart';
 import 'package:photois/Tab4_MY/user_info.dart';
 import 'package:photois/service/firebase.auth.dart';
 
@@ -57,13 +58,10 @@ class _MyPageState extends State<MyPage> {
                 children: [
                   GetUserInfo(),
                   const Divider(color: AppColor.objectColor, thickness: 1),
-                  SizedBox(
-                    height: sizeController.screenHeight.value * 0.02,
-                  ),
                   selectButton("내 정보 수정", () {
                     Get.to(ModifyMyInfo());
                   }),
-                  selectButton("내 갤러리", () {
+                  selectButton("내 게시물", () {
                     Get.to(UserPost(
                       userUID: 'jin',
                     ));
@@ -73,7 +71,17 @@ class _MyPageState extends State<MyPage> {
                       userUID: 'jin',
                     ));
                   }),
-                  Visibility(child: selectButton("신고 받은 포스트", () {})),
+                  Visibility(
+                      child: Column(
+                    children: [
+                      const Divider(color: AppColor.objectColor, thickness: 1),
+                      selectButton("신고 받은 포스트", () {
+                        Get.to(ReportPost(
+                          userUID: 'jin',
+                        ));
+                      }),
+                    ],
+                  )),
                 ],
               )),
           const Expanded(child: SizedBox()),
@@ -122,7 +130,7 @@ class _MyPageState extends State<MyPage> {
             title,
             style: TextStyle(
                 fontSize: sizeController.mainFontSize.value,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w700,
                 color: AppColor.objectColor),
           ),
           const Icon(

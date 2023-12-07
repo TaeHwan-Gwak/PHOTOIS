@@ -143,7 +143,7 @@ class FireService {
     return posts;
   }
 
-  ///Tab4: 사용자가 반응한 포스트 불러오기 - 체크 X
+  ///Tab4: 사용자가 반응한 포스트 불러오기
   ///1번 좋아요순 내림차순
   ///2번 좋아요순 오름차순
   ///3번 등록순 내림차순
@@ -177,11 +177,14 @@ class FireService {
   }
 
   ///Tab4: 신고 받은 포스트 불러오기 - 체크 X
-  Future<List<PostModel>> getFireModelReport() async {
+  Future<List<PostModel>> getFireModelReport({required String report}) async {
     CollectionReference<Map<String, dynamic>> collectionReference =
         FirebaseFirestore.instance.collection("PostInfo");
     QuerySnapshot<Map<String, dynamic>> querySnapshot =
-        await collectionReference.where("postState", isEqualTo: false).get();
+        await collectionReference
+            .where("postState", isEqualTo: false)
+            .where("report", isEqualTo: report)
+            .get();
 
     List<PostModel> posts = [];
     for (var doc in querySnapshot.docs) {

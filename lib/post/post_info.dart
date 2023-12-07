@@ -541,6 +541,19 @@ class _PhotoInfoState extends State<PhotoInfo> {
                   ),
                 ),
               ),
+              TextButton(
+                onPressed: () {
+                  report('기타');
+                },
+                child: Text(
+                  '기타',
+                  style: TextStyle(
+                    fontSize: sizeController.mainFontSize.value,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
             ],
           ),
           actions: [
