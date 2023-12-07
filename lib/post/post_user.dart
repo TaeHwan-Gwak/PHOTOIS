@@ -89,18 +89,30 @@ class _UserPostState extends State<UserPost> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "$userUID의 게시물",
-                  style: TextStyle(
-                      fontSize: sizeController.bigFontSize.value,
-                      fontWeight: FontWeight.w700,
-                      color: AppColor.textColor),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      userUID,
+                      style: TextStyle(
+                          fontSize: sizeController.bigFontSize.value,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.textColor),
+                    ),
+                    Text(
+                      " 의 게시물",
+                      style: TextStyle(
+                          fontSize: sizeController.mainFontSize.value,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.textColor),
+                    ),
+                  ],
                 ),
                 //if()// TODO: 포토그래퍼 확인
                 Text(
                   '@jingjing_2_',
                   style: TextStyle(
-                      fontSize: sizeController.middleFontSize.value,
+                      fontSize: sizeController.middleFontSize.value - 2,
                       fontWeight: FontWeight.w400,
                       color: AppColor.textColor),
                 ),

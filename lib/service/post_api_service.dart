@@ -28,7 +28,7 @@ class FireService {
   ///Tab1-1: 주변 인기장소 추천
   Future<List<PostModel>> getFireModelMain1(
       {required double lat, required double lon}) async {
-    double epsilon = 0.002; //TODO: 값 지정
+    double epsilon = 0.01; //TODO: 값 지정
 
     CollectionReference<Map<String, dynamic>> collectionReference =
         FirebaseFirestore.instance.collection("PostInfo");
@@ -100,6 +100,44 @@ class FireService {
             .where("postState", isEqualTo: true)
             .orderBy("likesCount", descending: true)
             .limit(5)
+            .get();
+
+    List<PostModel> posts = [];
+    for (var doc in querySnapshot.docs) {
+      PostModel postModel = PostModel.fromQuerySnapshot(doc);
+      posts.add(postModel);
+    }
+    return posts;
+  }
+
+  ///Tab2: 전체 포스트 불러오기
+  Future<List<PostModel>> getFireModelAll() async {
+    CollectionReference<Map<String, dynamic>> collectionReference =
+        FirebaseFirestore.instance.collection("PostInfo");
+    QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        await collectionReference
+            .where("postState", isEqualTo: true)
+            .orderBy("likesCount", descending: true)
+            .limit(5)
+            .get();
+
+    List<PostModel> posts = [];
+    for (var doc in querySnapshot.docs) {
+      PostModel postModel = PostModel.fromQuerySnapshot(doc);
+      posts.add(postModel);
+    }
+    return posts;
+  }
+
+  ///Tab2: 날씨 필터링
+  Future<List<PostModel>> getFireModelWeather(
+      {required PostWeather weather}) async {
+    CollectionReference<Map<String, dynamic>> collectionReference =
+        FirebaseFirestore.instance.collection("PostInfo");
+    QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        await collectionReference
+            .where("postState", isEqualTo: true)
+            .where("weather", isEqualTo: weather.name)
             .get();
 
     List<PostModel> posts = [];

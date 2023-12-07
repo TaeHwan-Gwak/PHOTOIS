@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:kpostal/kpostal.dart';
 import 'package:get/get.dart';
 import 'package:photois/Main/data.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:photois/post/post_card.dart';
 
+import '../model/post_model.dart';
+import '../service/post_api_service.dart';
 import '../style/style.dart';
 
 // naver client ID : 'ud3er0cxg6'
@@ -36,7 +39,7 @@ enum SearchTime {
   ;
 
   String get title => const <SearchTime, String>{
-        SearchTime.time: '시간 선택',
+        SearchTime.time: '시간대 선택',
         SearchTime.day: '주간',
         SearchTime.night: '야간',
       }[this]!;
@@ -45,14 +48,14 @@ enum SearchTime {
 enum SearchWeather {
   weather,
   sun,
-  clouds,
+  cloud,
   rain,
   snow;
 
   String get title => const <SearchWeather, String>{
         SearchWeather.weather: '날씨 선택',
         SearchWeather.sun: '맑음',
-        SearchWeather.clouds: '구름',
+        SearchWeather.cloud: '구름',
         SearchWeather.rain: '비',
         SearchWeather.snow: '눈',
       }[this]!;
@@ -66,34 +69,27 @@ class SearchSpot extends StatefulWidget {
 }
 
 class _SearchSpotState extends State<SearchSpot> {
-  double lat = 37;
-  double lng = 126;
+  double lat = 0;
+  double lng = 0;
   bool locationObtained = true;
   bool clickButton = false;
 
-  String address = '-';
-  String latitude = '-';
-  String longitude = '-';
-  String condition = '-';
-  List<String> which = [];
-  var which_one = "";
-  var which_two = "";
-  var which_three = "";
-  var which_four = "";
-  var which_String = "";
+  String address = '';
+  String latitude = '';
+  String longitude = '';
+  String condition = '';
 
   final TextEditingController _searchController = TextEditingController();
+  final sizeController = Get.put((SizeController()));
   SearchSeason selectedSeason = SearchSeason.season;
   SearchTime selectedTime = SearchTime.time;
   SearchWeather selectedWeather = SearchWeather.weather;
-  String searchLocation = '';
+  SearchSeason nowSeason = SearchSeason.season;
+  SearchTime nowTime = SearchTime.time;
+  SearchWeather nowWeather = SearchWeather.weather;
+  String searchLocation = '위치를 검색해주세요';
 
   Future<void> getCurrentLocation() async {
-    Map<String, String> headerss = {
-      "X-NCP-APIGW-API-KEY-ID": "ud3er0cxg6",
-      "X-NCP-APIGW-API-KEY": "i5bTtbxYq6VpOvNCYN4A6Qlw8hDzAdFKw0AsEk6s"
-    };
-
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -105,51 +101,6 @@ class _SearchSpotState extends State<SearchSpot> {
 
       lat = position.latitude;
       lng = position.longitude;
-
-      http.Response responseWeahter = await http.get(
-        Uri.parse(
-            "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=2ed1135aa0f58dafe0d2ead1574e0242"),
-      );
-
-      String jsonDataWeather = responseWeahter.body;
-      print(jsonDataWeather);
-      condition = jsonDecode(jsonDataWeather)['weather'][0]['main'];
-
-      http.Response responseAddress = await http.get(
-        Uri.parse(
-          "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&output=json",
-        ),
-        headers: headerss,
-      );
-
-      String jsonDataAddress = responseAddress.body;
-
-      which_one = jsonDecode(jsonDataAddress)["results"][1]['region']['area1']
-              ['name'] ??
-          "";
-      which_two = jsonDecode(jsonDataAddress)["results"][1]['region']['area2']
-              ['name'] ??
-          "";
-      which_three = jsonDecode(jsonDataAddress)["results"][1]['region']['area3']
-              ['name'] ??
-          "";
-      which_four = jsonDecode(jsonDataAddress)["results"][1]['region']['area4']
-              ['name'] ??
-          "";
-
-      which = [which_one, which_two, which_three, which_four];
-
-      which_String = "$which_one $which_two $which_three $which_four";
-
-      searchLocation = which_String;
-/*
-      var long = jsonDecode(jsonDataAddress)['addresses'][0]['x'];
-      var lati = jsonDecode(jsonDataAddress)['addresses'][0]['y'];
-
-      print(long);
-      print(lati);
-
- */
     } catch (e) {
       print('error');
     }
@@ -160,36 +111,176 @@ class _SearchSpotState extends State<SearchSpot> {
     lng = lng;
   }
 
+  Future<void> getCurrentState() async {
+    //계절 가져오기
+    switch (DateFormat.M().format(DateTime.now())) {
+      case '12':
+      case '1':
+      case '2':
+        nowSeason = SearchSeason.winter;
+        break;
+      case '3':
+      case '4':
+      case '5':
+        nowSeason = SearchSeason.spring;
+        break;
+      case '6':
+      case '7':
+      case '8':
+        nowSeason = SearchSeason.summer;
+        break;
+      case '9':
+      case '10':
+      case '11':
+        nowSeason = SearchSeason.autumn;
+        break;
+      default:
+        nowSeason = SearchSeason.season;
+        break;
+    }
+
+    //시간대 가져오기
+    if (6 <= int.parse(DateFormat.H().format(DateTime.now())) &&
+        int.parse(DateFormat.H().format(DateTime.now())) < 19) {
+      nowTime = SearchTime.day;
+    } else {
+      nowTime = SearchTime.night;
+    }
+
+    /*
+    //날씨 가져오기
+    GetWeather weatherService = GetWeather();
+    String condition =
+        await weatherService.getWeatherCondition(lat, lng, DateTime.now());
+
+
+    print(condition);*/
+
+    http.Response responseWeahter = await http.get(
+      Uri.parse(
+          "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=2ed1135aa0f58dafe0d2ead1574e0242"),
+    );
+
+    String jsonDataWeather = responseWeahter.body;
+    condition = jsonDecode(jsonDataWeather)['weather'][0]['main'];
+    print(condition);
+
+    switch (condition) {
+      case 'Clear':
+        nowWeather = SearchWeather.sun;
+        break;
+      case 'Clouds':
+        nowWeather = SearchWeather.cloud;
+        break;
+      case 'Rain':
+        nowWeather = SearchWeather.rain;
+        break;
+      case 'Snow':
+        nowWeather = SearchWeather.snow;
+        break;
+      default:
+        nowWeather = SearchWeather.weather;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    getPostInfoCount();
-    getCurrentLocation();
+    getAllPost().then((_) {
+      setState(() {});
+    });
+    getCurrentLocation().then((_) {
+      setState(() {});
+    });
+    getCurrentState().then((_) {
+      setState(() {});
+    });
   }
 
-  int postInfoCount = 0;
-  List<Map<String, dynamic>> documentsData = [];
+  List<PostModel> allPosts = [];
+  List<PostModel> weatherFilterPosts = [];
+  List<PostModel> finalFilterPosts = [];
 
-  Future<void> getPostInfoCount() async {
+  Future<void> getAllPost() async {
     try {
-      QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('PostInfo').get();
-
-      for (QueryDocumentSnapshot document in querySnapshot.docs) {
-        // Convert each document to a Map
-        Map<String, dynamic> documentData =
-            document.data() as Map<String, dynamic>;
-        documentsData.add(documentData);
-      }
-
-      // 문서 개수
-      int count = querySnapshot.size;
-
-      setState(() {
-        postInfoCount = count;
-      });
+      allPosts = await FireService().getFireModelAll();
     } catch (e) {
       print('Error getting post info count: $e');
+    }
+  }
+
+  Future<List<PostModel>> getFilteringPost() async {
+    List<PostModel> FilterPosts1 = allPosts;
+    List<PostModel> FilterPosts2 = allPosts;
+    List<PostModel> FilterPosts3 = allPosts;
+    try {
+      if (selectedWeather != SearchWeather.weather) {
+        weatherFilterPosts = await FireService().getFireModelWeather(
+            weather: PostWeather.fromString(selectedWeather.name));
+        FilterPosts1 = allPosts
+            .where((post) => weatherFilterPosts
+                .any((otherPost) => post.reference == otherPost.reference))
+            .toList();
+      }
+      if (selectedSeason != SearchSeason.season) {
+        FilterPosts2 = allPosts
+            .where((post) => checkSeason(post.date!.toDate()) == selectedSeason)
+            .toList();
+      }
+      if (selectedTime != SearchTime.time) {
+        FilterPosts3 = allPosts
+            .where((post) => checkTime(post.date!.toDate()) == selectedTime)
+            .toList();
+      }
+      finalFilterPosts = FilterPosts1.where((post) => FilterPosts2.any(
+          (otherPost) => post.reference == otherPost.reference)).toList();
+      finalFilterPosts = finalFilterPosts
+          .where((post) => FilterPosts3.any(
+              (otherPost) => post.reference == otherPost.reference))
+          .toList();
+      return finalFilterPosts;
+    } catch (e) {
+      print('Error getting post info count: $e');
+      return allPosts;
+    }
+  }
+
+  SearchSeason checkSeason(DateTime date) {
+    SearchSeason temp = SearchSeason.season;
+    switch (DateFormat.M().format(date)) {
+      case '12':
+      case '1':
+      case '2':
+        temp = SearchSeason.winter;
+        break;
+      case '3':
+      case '4':
+      case '5':
+        temp = SearchSeason.spring;
+        break;
+      case '6':
+      case '7':
+      case '8':
+        temp = SearchSeason.summer;
+        break;
+      case '9':
+      case '10':
+      case '11':
+        temp = SearchSeason.autumn;
+        break;
+      default:
+        temp = SearchSeason.season;
+        break;
+    }
+    return temp;
+  }
+
+  SearchTime checkTime(DateTime date) {
+    if (6 <= int.parse(DateFormat.H().format(date)) &&
+        int.parse(DateFormat.H().format(DateTime.now())) < 19) {
+      return SearchTime.day;
+    } else {
+      return SearchTime.night;
     }
   }
 
@@ -226,7 +317,7 @@ class _SearchSpotState extends State<SearchSpot> {
         child: Column(
           children: [
             SizedBox(
-              height: sizeController.screenHeight.value * 0.04,
+              height: sizeController.screenHeight.value * 0.05,
               child: Row(
                 children: [
                   Expanded(
@@ -240,7 +331,7 @@ class _SearchSpotState extends State<SearchSpot> {
                             '계절 선택',
                             style: TextStyle(
                                 fontSize: sizeController.middleFontSize.value,
-                                fontWeight: FontWeight.w300,
+                                fontWeight: FontWeight.w400,
                                 color: AppColor.textColor),
                           ),
                         ),
@@ -257,7 +348,11 @@ class _SearchSpotState extends State<SearchSpot> {
                           return DropdownMenuItem<SearchSeason>(
                             value: status,
                             child: Center(
-                              child: Text(status.title,
+                              child: Text(
+                                  (status.title == nowSeason.title &&
+                                          nowSeason != SearchSeason.season)
+                                      ? '**${status.title}**' //TODO: 표기?
+                                      : status.title,
                                   style: TextStyle(
                                       fontSize:
                                           sizeController.middleFontSize.value,
@@ -275,10 +370,10 @@ class _SearchSpotState extends State<SearchSpot> {
                       dropdownColor: AppColor.backgroundColor,
                       hint: Center(
                         child: Text(
-                          '시간 선택',
+                          '시간대 선택',
                           style: TextStyle(
                               fontSize: sizeController.middleFontSize.value,
-                              fontWeight: FontWeight.w300,
+                              fontWeight: FontWeight.w400,
                               color: AppColor.textColor),
                         ),
                       ),
@@ -294,7 +389,10 @@ class _SearchSpotState extends State<SearchSpot> {
                         return DropdownMenuItem<SearchTime>(
                           value: status,
                           child: Center(
-                            child: Text(status.title,
+                            child: Text(
+                                (status.title == nowTime.title)
+                                    ? '**${status.title}**' //TODO: 표기?
+                                    : status.title,
                                 style: TextStyle(
                                     fontSize:
                                         sizeController.middleFontSize.value,
@@ -316,7 +414,7 @@ class _SearchSpotState extends State<SearchSpot> {
                           '날씨 선택',
                           style: TextStyle(
                               fontSize: sizeController.middleFontSize.value,
-                              fontWeight: FontWeight.w300,
+                              fontWeight: FontWeight.w400,
                               color: AppColor.textColor),
                         ),
                       ),
@@ -333,7 +431,11 @@ class _SearchSpotState extends State<SearchSpot> {
                         return DropdownMenuItem<SearchWeather>(
                           value: status,
                           child: Center(
-                            child: Text(status.title,
+                            child: Text(
+                                (status.title == nowWeather.title &&
+                                        nowWeather != SearchWeather.weather)
+                                    ? '**${status.title}**' //TODO: 표기?
+                                    : status.title,
                                 style: TextStyle(
                                     fontSize:
                                         sizeController.middleFontSize.value,
@@ -352,26 +454,28 @@ class _SearchSpotState extends State<SearchSpot> {
               thickness: 1, // 줄의 색상 설정
             ),
             SizedBox(
-              height: sizeController.screenHeight.value * 0.04,
+              height: sizeController.screenHeight.value * 0.05,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    children: [
-                      const Text("  "),
-                      const Icon(
-                        Icons.location_pin,
-                        color: AppColor.objectColor,
-                      ),
-                      Text(
-                        " $searchLocation",
-                        style: TextStyle(
-                            fontSize: sizeController.middleFontSize.value,
-                            fontWeight: FontWeight.w600,
-                            color: AppColor.textColor),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.location_pin,
+                          color: AppColor.objectColor,
+                        ),
+                        Text(
+                          " $searchLocation",
+                          style: TextStyle(
+                              fontSize: sizeController.middleFontSize.value,
+                              fontWeight: FontWeight.w400,
+                              color: AppColor.textColor),
+                        ),
+                      ],
+                    ),
                   ),
                   IconButton(
                       onPressed: () async {
@@ -441,7 +545,7 @@ class _SearchSpotState extends State<SearchSpot> {
                               ConnectionState.done) {
                             return NaverMap(
                               options: NaverMapViewOptions(
-                                scaleBarEnable: false,
+                                scaleBarEnable: true,
                                 locationButtonEnable: true,
                                 logoClickEnable: false,
                                 extent: const NLatLngBounds(
@@ -456,56 +560,79 @@ class _SearchSpotState extends State<SearchSpot> {
                                 ),
                               ),
                               onMapReady: (controller) async {
-                                final iconImage = await NOverlayImage.fromWidget(
-                                  widget: const Icon(Icons.place,
-                                      size: 32, color: AppColor.backgroundColor),
-                                  size: const Size(32, 32),
-                                  context: context,
-                                );
+                                finalFilterPosts = await getFilteringPost();
+                                print(finalFilterPosts.length);
 
-                                for (var data in documentsData) {
+                                for (PostModel data in finalFilterPosts) {
+                                  print(data.userUid);
                                   final marker = NMarker(
-                                    id: data['content'],
-                                    position: NLatLng(
-                                        data['latitude'], data['longitude']),
-                                    icon: iconImage,
-                                  );
-
-                                  marker.setOnTapListener((NMarker marker) {
-                                    // 클릭 시 BottomSheet를 표시
-                                    showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled:
-                                          true, // 화면 전체에 BottomSheet를 표시
-                                      builder: (BuildContext context) {
-                                        return Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.6, // 높이를 60%로 설정
-                                          width: MediaQuery.of(context).size.width * 1.0,
-                                          padding: EdgeInsets.all(16.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text('마커 정보'),
-                                              SizedBox(height: 8.0),
-                                              Text('데이터: ${data['content']}'),
-                                              // 추가 필드들을 원하는 만큼 추가
-                                              Spacer(), // 뒤로 가기 버튼을 하단으로 밀어냄
-                                              Positioned(
-                                                bottom: 16.0, // 오른쪽 하단으로 배치
-                                                right: 16.0,
-                                                child: ElevatedButton(
-                                                  onPressed: () {
-                                                    // 뒤로 가기 버튼 클릭 시 BottomSheet를 닫음
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text('뒤로 가기'),
+                                      id: data.content ?? '',
+                                      position: NLatLng(data.latitude ?? 0.0,
+                                          data.longitude ?? 0.0),
+                                      icon: await NOverlayImage.fromWidget(
+                                        widget: Column(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              child: SizedBox(
+                                                height: 48,
+                                                width: 48,
+                                                child: Image.network(
+                                                  data.imageURL ??
+                                                      'No imageURL',
+                                                  fit: BoxFit.cover,
                                                 ),
                                               ),
-                                            ],
+                                            ),
+                                            const Icon(Icons.place,
+                                                size: 24,
+                                                color:
+                                                    AppColor.backgroundColor),
+                                          ],
+                                        ),
+                                        size: const Size(80, 80),
+                                        context: context,
+                                      ));
+
+                                  marker.setOnTapListener((NMarker marker) {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          height: sizeController
+                                                  .screenHeight.value *
+                                              0.6,
+                                          width:
+                                              sizeController.screenWidth.value,
+                                          padding: const EdgeInsets.all(16.0),
+                                          decoration: const BoxDecoration(
+                                            color: AppColor
+                                                .backgroundColor, // 배경 색상
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(20.0),
+                                              topRight: Radius.circular(20.0),
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: SizedBox(
+                                              height: sizeController
+                                                      .screenHeight.value *
+                                                  0.5 *
+                                                  1.25,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        16.0), // 원하는 모서리 반지름 설정
+                                                child: PostCard(
+                                                  data: data,
+                                                  size: sizeController
+                                                          .screenHeight.value *
+                                                      0.5,
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         );
                                       },
@@ -531,7 +658,7 @@ class _SearchSpotState extends State<SearchSpot> {
                               ConnectionState.done) {
                             return NaverMap(
                               options: NaverMapViewOptions(
-                                scaleBarEnable: false,
+                                scaleBarEnable: true,
                                 locationButtonEnable: true,
                                 logoClickEnable: false,
                                 extent: const NLatLngBounds(
@@ -565,39 +692,16 @@ class _SearchSpotState extends State<SearchSpot> {
                           }
                         },
                       )),
-            Visibility(
-              visible: false,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  height: sizeController.screenHeight.value * 0.2,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.location_pin,
-                              color: AppColor.objectColor,
-                            ),
-                            Obx(
-                              () => Text(
-                                searchLocation,
-                                style: TextStyle(
-                                    fontSize: sizeController.mainFontSize.value,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColor.textColor),
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            )
+            SizedBox(
+              height: sizeController.screenHeight.value * 0.002,
+            ),
+            const Divider(
+              color: AppColor.objectColor,
+              thickness: 1, // 줄의 색상 설정
+            ),
+            SizedBox(
+              height: sizeController.screenHeight.value * 0.002,
+            ),
           ],
         ),
       ),

@@ -1045,7 +1045,7 @@ class _Tab3State extends State<Tab3> {
                       postState: true,
                       postID: 'post1',
                       createdAt: Timestamp.now(),
-                      userUid: 'jin3',
+                      userUid: 'jin',
                       imageURL: imageDownLoadURL,
                       mainAddress: spotMainAddress,
                       extraAddress: spotExtraAddress,

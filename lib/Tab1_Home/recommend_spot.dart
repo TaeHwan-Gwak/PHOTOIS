@@ -79,6 +79,7 @@ class _RecommendSpotState extends State<RecommendSpot> {
                     child: FutureBuilder<List<PostModel>>(
                       future: FireService().getFireModelMain1(
                           lat: 37.50839351655489, lon: 126.96352250024506),
+                      //TODO: 바꾸기
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           if (snapshot.hasData) {
