@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:intl/intl.dart';
-import '../Main/data.dart';
+import '../Main/data.dart'as my_data;
 import 'package:get/get.dart';
 import '../model/post_model.dart';
 import '../service/post_api_service.dart';
 import '../style/style.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PhotoInfo extends StatefulWidget {
   final PostModel data;
@@ -18,10 +20,12 @@ class PhotoInfo extends StatefulWidget {
 
 class _PhotoInfoState extends State<PhotoInfo> {
   late PostModel data;
-  final sizeController = Get.put((SizeController()));
+  final sizeController = Get.put((my_data.SizeController()));
+  final controller = Get.put(my_data.UserInfo());
   bool isFavorite = false;
   int isReportSelected = 0;
-
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
   NaverMapController? _controller;
   late NMarker marker;
 
@@ -42,8 +46,19 @@ class _PhotoInfoState extends State<PhotoInfo> {
     }
   }
 
+
+  Future<void> loadData() async {
+    var result = await firestore.collection('userInfo').doc(data.userUid).get();
+    controller.phoneNumber.value = result.data()!['phoneNumber'];
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    loadData();
+    final String uid = auth.currentUser!.uid;
     return Scaffold(
       backgroundColor: AppColor.backgroundColor,
       appBar: AppBar(
@@ -68,7 +83,6 @@ class _PhotoInfoState extends State<PhotoInfo> {
             )),
         actions: [
           PopupMenuButton<String>(
-            iconColor: AppColor.objectColor,
             color: AppColor.objectColor,
             onSelected: (value) {
               if (value == 'report') {
@@ -103,7 +117,7 @@ class _PhotoInfoState extends State<PhotoInfo> {
               );
 
               // TODO: userUID 집어넣기
-              if (data.userUid == 'jin') {
+              if (data.userUid == uid) {
                 menuItems.add(
                   PopupMenuItem<String>(
                     value: 'delete',
@@ -151,7 +165,7 @@ class _PhotoInfoState extends State<PhotoInfo> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "@jingjing_2_ 님의 게시물",
+                    controller.phoneNumber.value,
                     style: TextStyle(
                         color: AppColor.textColor,
                         fontSize: sizeController.middleFontSize.value + 1,
