@@ -80,7 +80,7 @@ class _MyPageState extends State<MyPage> {
                     ));
                   }),
                   Visibility(
-                      visible: uid == 'iuiqdD2URcWFHzgjIVtFF9EANM62',
+                      visible: true,
                       child: Column(
                         children: [
                           const Divider(
@@ -91,7 +91,8 @@ class _MyPageState extends State<MyPage> {
                             ));
                           }),
                         ],
-                      )),
+                      )
+                  ),
                 ],
               )),
           const Expanded(child: SizedBox()),

@@ -308,7 +308,7 @@ class _ModifyMyInfoState extends State<ModifyMyInfo> {
                                 return null;
                               },
                               onSaved: (value) {
-                                controller.instagramID.value = '@${value!}';
+                                controller.instagramID.value = value!;
                               },
                             ),
                           ),

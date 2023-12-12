@@ -702,29 +702,17 @@ class _SearchSpotState extends State<SearchSpot> {
                                 for (PostModel data in finalFilterPost) {
                                   print(data.userUid);
                                   final marker = NMarker(
-                                      id: data.content ?? '',
+                                      id: data.imageURL ?? '',
                                       position: NLatLng(data.latitude ?? 0.0,
                                           data.longitude ?? 0.0),
                                       icon: await NOverlayImage.fromWidget(
                                         widget: Column(
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0),
-                                              child: SizedBox(
-                                                height: 48,
-                                                width: 48,
-                                                child: Image.network(
-                                                  data.imageURL ??
-                                                      'No imageURL',
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ),
-                                            const Icon(Icons.place,
-                                                size: 24,
-                                                color:
-                                                    AppColor.backgroundColor),
+                                            Icon(
+                                              Icons.place,
+                                              size: 24,
+                                              color: AppColor.backgroundColor,
+                                            )
                                           ],
                                         ),
                                         size: const Size(80, 80),

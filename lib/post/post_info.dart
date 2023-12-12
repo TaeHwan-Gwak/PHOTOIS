@@ -180,7 +180,7 @@ class _PhotoInfoState extends State<PhotoInfo> {
                             fontWeight: FontWeight.w500),
                       ),
                       Text(
-                        instagramID == '' ? "" : "@${instagramID}",
+                        (instagramID == '') ? '' : "@${instagramID}",
                         style: TextStyle(
                             color: AppColor.textColor,
                             fontSize: sizeController.middleFontSize.value,

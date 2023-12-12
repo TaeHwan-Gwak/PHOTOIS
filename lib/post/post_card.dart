@@ -114,8 +114,7 @@ class _PostCardState extends State<PostCard> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 child: Text(
-                  instagramID,
-                  //(instagramID == '') ? '' : "@{instagramID}",
+                  (instagramID == '') ? '' : "@${instagramID}",
                   style: TextStyle(
                       color: AppColor.textColor,
                       fontSize: sizeController.middleFontSize.value - 3,

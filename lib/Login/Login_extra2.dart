@@ -235,7 +235,7 @@ class _LoginExtra2State extends State<LoginExtra2> {
                                   return null;
                                 },
                                 onSaved: (value) {
-                                  controller.instagramID.value = '@${value!}';
+                                  controller.instagramID.value = value!;
                                 },
                               ),
                             ),
